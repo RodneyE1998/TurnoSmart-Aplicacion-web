@@ -10,16 +10,65 @@
 	content="Dashboard template using Thymeleaf and Bootstrap in Spring Boot" />
 <meta name="robots" content="noindex,nofollow" />
 <title>TurnoSmart</title>
-<!-- Favicon icon -->
+
+<!-- Favicon -->
 <link rel="icon" type="image/png" sizes="16x16"
 	th:href="@{/assets/images/icono.png}" />
-<!-- Bootstrap and custom CSS -->
+
+<!-- Agrega el CSS de Material Design Icons -->
+<link
+	href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css"
+	rel="stylesheet">
+
+<!-- CSS Files -->
 <link th:href="@{/assets/libs/flot/css/float-chart.css}"
 	rel="stylesheet" />
 <link th:href="@{/dist/css/style.min.css}" rel="stylesheet" />
+
+<style>
+/* Estilos del Sidebar */
+.sidebar-nav {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.sidebar-nav .menu-items {
+	flex-grow: 1;
+}
+
+/* Estilos para el contenedor de bienvenida */
+.page-content {
+	background-color: #f4f5f7;
+	border-radius: 10px;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 40px;
+	max-width: 800px;
+	margin: 40px auto;
+	text-align: center;
+}
+
+.page-content h1 {
+	font-size: 2em;
+	color: #333;
+	margin-bottom: 10px;
+}
+
+.page-content p {
+	color: #555;
+	font-size: 1.2em;
+}
+
+/* Animación de cambio de color en el texto del footer */
+.footer p {
+	transition: color 1s ease;
+	animation: colorChange 5s infinite;
+}
+</style>
 </head>
 
 <body>
+
 	<!-- ============================================================== -->
 	<!-- Preloader -->
 	<!-- ============================================================== -->
@@ -31,21 +80,21 @@
 	</div>
 
 	<!-- ============================================================== -->
-	<!-- Main wrapper -->
+	<!-- Main Wrapper -->
 	<!-- ============================================================== -->
 	<div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5"
 		data-sidebartype="full" data-sidebar-position="absolute"
 		data-header-position="absolute" data-boxed-layout="full">
 
 		<!-- ============================================================== -->
-		<!-- Topbar header BARRA SUPERIOR -->
+		<!-- Topbar Header -->
 		<!-- ============================================================== -->
 		<header class="topbar" data-navbarbg="skin5">
 			<nav class="navbar top-navbar navbar-expand-md navbar-dark">
 				<div class="navbar-header" data-logobg="skin5">
 					<a class="navbar-brand" th:href="@{/}"> <b
 						class="logo-icon ps-2"> <img
-							th:src="@{/assets/images/icono.png}" alt="homepage"
+							th:src="@{/assets/images/icono.png}" alt="TurnoSmart Logo"
 							class="light-logo" width="25" />
 					</b> <span class="logo-text ms-2"
 						style="color: orange; font-family: 'Arial', sans-serif; font-size: 24px;">
@@ -64,10 +113,9 @@
 								class="mdi mdi-menu font-24"></i>
 						</a></li>
 					</ul>
-					<!-- Comentario visual PERFIL DOCENTE -->
-					<span class="perfil-docente"
-						style="color: white; font-family: 'Arial', sans-serif; font-size: 20px; margin-left: auto; margin-right: 20px;">
-						PERFIL REPRESENTANTE </span>
+					<span class="perfil-docente text-white"
+						style="font-family: 'Arial', sans-serif; font-size: 20px; margin-left: auto; margin-right: 20px;">
+						UNIDAD EDUCATIVA PARTICULAR "ANTONIO FLORES" </span>
 				</div>
 			</nav>
 		</header>
@@ -90,10 +138,18 @@
 								class="mdi mdi-chart-bar"></i><span class="hide-menu">Charts</span>
 						</a></li>
 						<li class="sidebar-item"><a
-							class="sidebar-link waves-effect waves-dark sidebar-link"
-							th:href="@{/widgets}" aria-expanded="false"> <i
-								class="mdi mdi-chart-bubble"></i><span class="hide-menu">Widgets</span>
-						</a></li>
+							class="sidebar-link has-arrow waves-effect waves-dark"
+							href="javascript:void(0)" aria-expanded="false"><i
+								class="mdi mdi-receipt"></i><span class="hide-menu">CITAS
+							</span></a>
+							<ul aria-expanded="false" class="collapse first-level">
+								<li class="sidebar-item"><a href="form-basic.html"
+									class="sidebar-link"><i class="mdi mdi-note-outline"></i><span
+										class="hide-menu"> Básica Superior </span></a></li>
+								<li class="sidebar-item"><a href="form-wizard.html"
+									class="sidebar-link"><i class="mdi mdi-note-plus"></i><span
+										class="hide-menu"> Bachillerato </span></a></li>
+							</ul></li>
 						<li class="sidebar-item"><a
 							class="sidebar-link has-arrow waves-effect waves-dark"
 							href="javascript:void(0)" aria-expanded="false"><i
@@ -107,9 +163,9 @@
 										class="hide-menu"> REPRESENTANTE </span></a></li>
 							</ul></li>
 						<!-- Agregar elementos <li> vacíos para espacio adicional -->
-						<li class="sidebar-item" style="height: 120px;"></li>
-						<li class="sidebar-item" style="height: 120px;"></li>
-						<li class="sidebar-item" style="height: 120px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
 						<!-- Espacio en blanco para empujar el botón de Logout hacia abajo -->
 						<li class="sidebar-item mt-auto"><a
 							class="sidebar-link waves-effect waves-dark sidebar-link text-danger"
@@ -122,27 +178,149 @@
 			</div>
 		</aside>
 
+		<div class="page-wrapper">
+			<!-- ============================================================== -->
+			<!-- Bread crumb and right sidebar toggle -->
+			<!-- ============================================================== -->
 
+			<!-- Imagen del Colegio -->
+			<div style="text-align: center; margin-top: 20px;">
+				<img
+					src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu1b3tsol6AvxLvoFz9suaU05kfP5jusUw1w&s"
+					alt="Logo del Colegio"
+					style="max-width: 200px; border-radius: 10px;">
+			</div>
+
+			<!-- Contenido Principal -->
+			<div class="page-content">
+				<h1>Bienvenido(a) al Perfil Representante</h1>
+				<p>Estamos felices de tenerlo(a) aquí.</p>
+			</div>
+
+			<!-- ============================================================== -->
+			<!-- Sección Dinámica - Quienes Somos, Principios y Políticas -->
+			<!-- ============================================================== -->
+			<div class="container-fluid mt-5">
+				<div class="row">
+					<!-- Quienes Somos -->
+					<div class="col-md-6">
+						<div class="card">
+							<div class="card-header bg-primary text-white">
+								<h4>Quienes Somos</h4>
+							</div>
+							<div class="card-body">
+								<p class="lead">El CEIAF es una institución educativa de
+									carácter laico, cimentada en valores éticos y morales que
+									fundamentan su concepción Holística del ser humano y que
+									promueve un ambiente de amor y respeto a la naturaleza y la
+									individualidad del ser, valorando profundamente nuestra
+									identidad ecuatoriana. Principios Institucionales Generar un
+									entorno de confianza y transparencia en todo el accionar
+									educativo. Cumplir con efectividad todas l as acciones
+									necesarias por el bienestar propio y de toda la Comunidad
+									Educativa.</p>
+							</div>
+						</div>
+					</div>
+
+					<!-- Imagen del CEIAF -->
+					<div class="col-md-6">
+						<div class="card">
+							<div class="card-body">
+								<img
+									src="https://ceiaf.edu.ec/wp-content/uploads/2021/06/ima1-exterior-ceiaf1.jpg"
+									alt="Imagen del CEIAF" class="img-fluid"
+									style="border-radius: 10px;">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+			<!-- ============================================================== -->
+			<!-- Tableros o tarjetas con enlaces -->
+			<!-- ============================================================== -->
+			<div class="row mt-4">
+				<!-- Column CEIAF -->
+				<div class="col-md-6 col-lg-3">
+					<a href="https://ceiaf.edu.ec/" target="_blank" class="card-link">
+						<div class="card card-hover">
+							<div class="box bg-cyan text-center">
+								<h1 class="font-light text-white">
+									<i class="mdi mdi-view-dashboard"></i>
+								</h1>
+								<h6 class="text-white">CEIAF</h6>
+							</div>
+						</div>
+					</a>
+				</div>
+
+				<!-- Column PERFIL -->
+				<div class="col-md-6 col-lg-3">
+					<a href="enlace-aqui" class="card-link">
+						<div class="card card-hover">
+							<div class="box bg-danger text-center">
+								<h1 class="font-light text-white">
+									<i class="mdi mdi-account"></i>
+								</h1>
+								<h6 class="text-white">PERFIL</h6>
+							</div>
+						</div>
+					</a>
+				</div>
+
+				<!-- Column CITAS -->
+				<div class="col-md-6 col-lg-3">
+					<a href="enlace-aqui" class="card-link">
+						<div class="card card-hover">
+							<div class="box bg-success text-center">
+								<h1 class="font-light text-white">
+									<i class="mdi mdi-calendar-check"></i>
+								</h1>
+								<h6 class="text-white">CITAS</h6>
+							</div>
+						</div>
+					</a>
+				</div>
+
+				<!-- Column DOCENTES -->
+				<div class="col-md-6 col-lg-3">
+					<a href="enlace-aqui" class="card-link">
+						<div class="card card-hover">
+							<div class="box bg-warning text-center">
+								<h1 class="font-light text-white">
+									<i class="mdi mdi-school"></i>
+								</h1>
+								<h6 class="text-white">DOCENTES</h6>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+
+			<!-- ============================================================== -->
+			<!-- Footer Dinámico -->
+			<!-- ============================================================== -->
+			<footer class="footer text-center mt-5">
+				<p>
+					All Rights Reserved by TurnoSmart. Designed and Developed by <a
+						href="https://www.wrappixel.com" target="_blank">WrapPixel</a>.
+				</p>
+			</footer>
+		</div>
 
 		<!-- ============================================================== -->
-		<!-- Footer -->
-		<!-- ============================================================== -->
-		<footer class="footer text-center">
-			All Rights Reserved by Matrix-admin. Designed and Developed by <a
-				href="https://www.wrappixel.com">WrapPixel</a>.
-		</footer>
-	</div>
-
-	<!-- ============================================================== -->
-	<!-- Scripts -->
-	<!-- ============================================================== -->
-	<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
-	<script
-		th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
-	<script
-		th:src="@{/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
-	<script th:src="@{/dist/js/waves.js}"></script>
-	<script th:src="@{/dist/js/sidebarmenu.js}"></script>
-	<script th:src="@{/dist/js/custom.min.js}"></script>
+		<!-- JavaScript Files -->
+		<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
+		<script
+			th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+		<script
+			th:src="@{/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
+		<script th:src="@{/dist/js/waves.js}"></script>
+		<script th:src="@{/dist/js/sidebarmenu.js}"></script>
+		<script th:src="@{/dist/js/custom.min.js}"></script>
 </body>
 </html>
+
+

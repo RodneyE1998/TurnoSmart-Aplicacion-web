@@ -50,6 +50,7 @@ public class SecurityConfig {
 	        )
 	        .formLogin(form -> form
 	            .loginPage("/login")  // Página de inicio de sesión personalizada
+	            .failureUrl("/login?error=true") // Redirige con un parámetro si hay error
 	            .defaultSuccessUrl("/default", true)  // Redirección a "/default" después del login
 	            .permitAll()
 	        )

@@ -10,19 +10,64 @@
 	content="Dashboard template using Thymeleaf and Bootstrap in Spring Boot" />
 <meta name="robots" content="noindex,nofollow" />
 <title>TurnoSmart</title>
-<!-- Favicon icon -->
+
+<!-- Favicon -->
 <link rel="icon" type="image/png" sizes="16x16"
 	th:href="@{/assets/images/icono.png}" />
-<!-- Bootstrap and custom CSS -->
+
+<!-- Agrega el CSS de Material Design Icons -->
+<link
+	href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css"
+	rel="stylesheet">
+
+<!-- CSS Files -->
 <link th:href="@{/assets/libs/flot/css/float-chart.css}"
 	rel="stylesheet" />
 <link th:href="@{/dist/css/style.min.css}" rel="stylesheet" />
-</head>
 
+<style>
+/* Estilos del Sidebar */
+.sidebar-nav {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.sidebar-nav .menu-items {
+	flex-grow: 1;
+}
+
+/* Estilos para el contenedor de bienvenida */
+.page-content {
+	background-color: #f4f5f7;
+	border-radius: 10px;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 40px;
+	max-width: 800px;
+	margin: 40px auto;
+	text-align: center;
+}
+
+.page-content h1 {
+	font-size: 2em;
+	color: #333;
+	margin-bottom: 10px;
+}
+
+.page-content p {
+	color: #555;
+	font-size: 1.2em;
+}
+
+/* Animación de cambio de color en el texto del footer */
+.footer p {
+	transition: color 1s ease;
+	animation: colorChange 5s infinite;
+}
+</style>
+</head>
 <body>
-	<!-- ============================================================== -->
 	<!-- Preloader -->
-	<!-- ============================================================== -->
 	<div class="preloader">
 		<div class="lds-ripple">
 			<div class="lds-pos"></div>
@@ -30,22 +75,18 @@
 		</div>
 	</div>
 
-	<!-- ============================================================== -->
-	<!-- Main wrapper -->
-	<!-- ============================================================== -->
+	<!-- Main Wrapper -->
 	<div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5"
 		data-sidebartype="full" data-sidebar-position="absolute"
 		data-header-position="absolute" data-boxed-layout="full">
 
-		<!-- ============================================================== -->
-		<!-- Topbar header BARRA SUPERIOR -->
-		<!-- ============================================================== -->
+		<!-- Topbar Header -->
 		<header class="topbar" data-navbarbg="skin5">
 			<nav class="navbar top-navbar navbar-expand-md navbar-dark">
 				<div class="navbar-header" data-logobg="skin5">
 					<a class="navbar-brand" th:href="@{/}"> <b
 						class="logo-icon ps-2"> <img
-							th:src="@{/assets/images/icono.png}" alt="homepage"
+							th:src="@{/assets/images/icono.png}" alt="TurnoSmart Logo"
 							class="light-logo" width="25" />
 					</b> <span class="logo-text ms-2"
 						style="color: orange; font-family: 'Arial', sans-serif; font-size: 24px;">
@@ -64,16 +105,15 @@
 								class="mdi mdi-menu font-24"></i>
 						</a></li>
 					</ul>
-					<!-- Comentario visual PERFIL DOCENTE -->
-					<span class="perfil-docente"
-						style="color: white; font-family: 'Arial', sans-serif; font-size: 20px; margin-left: auto; margin-right: 20px;">
-						PERFIL DOCENTE </span>
+					<span class="perfil-docente text-white"
+						style="font-family: 'Arial', sans-serif; font-size: 20px; margin-left: auto; margin-right: 20px;">
+						UNIDAD EDUCATIVA PARTICULAR "ANTONIO FLORES" </span>
 				</div>
 			</nav>
 		</header>
 
 		<!-- ============================================================== -->
-		<!-- Left Sidebar  BARRA LATERAL-->
+		<!-- Left Sidebar BARRA LATERAL-->
 		<!-- ============================================================== -->
 		<aside class="left-sidebar" data-sidebarbg="skin5">
 			<div class="scroll-sidebar">
@@ -90,10 +130,18 @@
 								class="mdi mdi-chart-bar"></i><span class="hide-menu">Charts</span>
 						</a></li>
 						<li class="sidebar-item"><a
-							class="sidebar-link waves-effect waves-dark sidebar-link"
-							th:href="@{/widgets}" aria-expanded="false"> <i
-								class="mdi mdi-chart-bubble"></i><span class="hide-menu">Widgets</span>
-						</a></li>
+								class="sidebar-link has-arrow waves-effect waves-dark"
+								href="javascript:void(0)" aria-expanded="false"><i
+									class="mdi mdi-receipt"></i><span class="hide-menu">CITAS
+								</span></a>
+								<ul aria-expanded="false" class="collapse first-level">
+									<li class="sidebar-item"><a href="form-basic.html"
+										class="sidebar-link"><i class="mdi mdi-note-outline"></i><span
+											class="hide-menu"> Básica Superior </span></a></li>
+									<li class="sidebar-item"><a href="form-wizard.html"
+										class="sidebar-link"><i class="mdi mdi-note-plus"></i><span
+											class="hide-menu"> Bachillerato </span></a></li>
+								</ul></li>
 						<li class="sidebar-item"><a
 							class="sidebar-link has-arrow waves-effect waves-dark"
 							href="javascript:void(0)" aria-expanded="false"><i
@@ -104,12 +152,12 @@
 										class="hide-menu"> USUARIO </span></a></li>
 								<li class="sidebar-item"><a href="icon-fontawesome.html"
 									class="sidebar-link"><i class="mdi mdi-emoticon-cool"></i><span
-										class="hide-menu"> DOCENTE </span></a></li>
+										class="hide-menu"> REPRESENTANTE </span></a></li>
 							</ul></li>
 						<!-- Agregar elementos <li> vacíos para espacio adicional -->
-						<li class="sidebar-item" style="height: 120px;"></li>
-						<li class="sidebar-item" style="height: 120px;"></li>
-						<li class="sidebar-item" style="height: 120px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
 						<!-- Espacio en blanco para empujar el botón de Logout hacia abajo -->
 						<li class="sidebar-item mt-auto"><a
 							class="sidebar-link waves-effect waves-dark sidebar-link text-danger"
@@ -122,27 +170,125 @@
 			</div>
 		</aside>
 
+		<div class="page-wrapper">
+			<!-- ============================================================== -->
+			<!-- Bread crumb and right sidebar toggle -->
+			<!-- ============================================================== -->
+
+			<!-- Imagen del Colegio -->
+			<div style="text-align: center; margin-top: 20px;">
+				<img
+					src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu1b3tsol6AvxLvoFz9suaU05kfP5jusUw1w&s"
+					alt="Logo del Colegio"
+					style="max-width: 200px; border-radius: 10px;">
+			</div>
+
+			<!-- Contenido Principal -->
+			<div class="page-content">
+				<h1>Bienvenido(a) al Perfil Docente</h1>
+				<p>Estamos felices de tenerlo(a) aquí.</p>
+				<p>En esta sección, puede acceder a todas las herramientas y
+					opciones dedicadas a su perfil de docente.</p>
+			</div>
+			<!-- ============================================================== -->
+			<!-- End Bread crumb and right sidebar toggle -->
+			<!-- ============================================================== -->
+			<!-- ============================================================== -->
+			<!-- Container fluid  -->
+			<!-- ============================================================== -->
+			<div class="container-fluid">
+				<!-- ============================================================== -->
+				<!-- Sales Cards  -->
+				<!-- ============================================================== -->
+				<div class="row">
+					<!-- Column -->
+					<div class="col-md-6 col-lg-2 col-xlg-3">
+						<a href="https://ceiaf.edu.ec/" target="_blank" class="card-link">
+							<div class="card card-hover">
+								<div class="box bg-cyan text-center">
+									<h1 class="font-light text-white">
+										<i class="mdi mdi-view-dashboard"></i>
+									</h1>
+									<h6 class="text-white">CEIAF</h6>
+								</div>
+							</div>
+						</a>
+					</div>
+					<!-- Column -->
+					<div class="col-md-6 col-lg-4 col-xlg-3">
+						<a
+							href="https://www.soluciones.com.ec/ceiaf/2425/index.php/login/"
+							target="_blank" class="card-link">
+							<div class="card card-hover">
+								<div class="box bg-success text-center">
+									<h1 class="font-light text-white">
+										<i class="mdi mdi-chart-areaspline"></i>
+									</h1>
+									<h6 class="text-white">SISTEMA DE NOTAS</h6>
+								</div>
+							</div>
+						</a>
+					</div>
+					<!-- Column -->
+					<div class="col-md-6 col-lg-2 col-xlg-3">
+						<a href="https://www.youtube.com/channel/UCVCTxRlvY8na1Fc201VUqMw"
+							target="_blank" class="card-link">
+							<div class="card card-hover">
+								<div class="box bg-danger text-center">
+									<!-- Cambié bg-warning a bg-danger para el color rojo -->
+									<h1 class="font-light text-white">
+										<i class="mdi mdi-youtube"></i>
+										<!-- Reemplazamos el ícono actual por el de YouTube -->
+									</h1>
+									<h6 class="text-white">Youtube</h6>
+								</div>
+							</div>
+						</a>
+					</div>
+					<!-- Column -->
+					<div class="col-md-6 col-lg-2 col-xlg-3">
+						<div class="card card-hover">
+							<div class="box bg-warning text-center">
+								<!-- Cambié bg-success por bg-warning para el color amarillo -->
+								<h1 class="font-light text-white">
+									<i class="mdi mdi-calendar-check"></i>
+								</h1>
+								<h6 class="text-white">CITAS</h6>
+							</div>
+						</div>
+					</div>
+					<!-- Column -->
+					<div class="col-md-6 col-lg-2 col-xlg-3">
+						<div class="card card-hover">
+							<div class="box bg-info text-center">
+								<h1 class="font-light text-white">
+									<!-- Ícono de perfil -->
+									<i class="mdi mdi-account-circle"></i>
+								</h1>
+								<h6 class="text-white">Perfil</h6>
+								<!-- Texto debajo del ícono -->
+							</div>
+						</div>
+					</div>
 
 
-		<!-- ============================================================== -->
-		<!-- Footer -->
-		<!-- ============================================================== -->
-		<footer class="footer text-center">
-			All Rights Reserved by Matrix-admin. Designed and Developed by <a
-				href="https://www.wrappixel.com">WrapPixel</a>.
-		</footer>
-	</div>
+					<!-- Footer Dinámico -->
+					<footer class="footer text-center">
+						<p>
+							All Rights Reserved by TurnoSmart. Designed and Developed by <a
+								href="https://www.wrappixel.com">WrapPixel</a>.
+						</p>
+					</footer>
+				</div>
 
-	<!-- ============================================================== -->
-	<!-- Scripts -->
-	<!-- ============================================================== -->
-	<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
-	<script
-		th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
-	<script
-		th:src="@{/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
-	<script th:src="@{/dist/js/waves.js}"></script>
-	<script th:src="@{/dist/js/sidebarmenu.js}"></script>
-	<script th:src="@{/dist/js/custom.min.js}"></script>
+				<!-- JavaScript Files -->
+				<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
+				<script
+					th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+				<script
+					th:src="@{/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
+				<script th:src="@{/dist/js/waves.js}"></script>
+				<script th:src="@{/dist/js/sidebarmenu.js}"></script>
+				<script th:src="@{/dist/js/custom.min.js}"></script>
 </body>
 </html>
