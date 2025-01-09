@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="keywords"
+	content="dashboard, web, bootstrap, thymeleaf, spring boot, matrix lite" />
+<meta name="description"
+	content="Dashboard template using Thymeleaf and Bootstrap in Spring Boot" />
+<meta name="robots" content="noindex,nofollow" />
+<title>TurnoSmart</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="16x16"
+	th:href="@{/assets/images/icono.png}" />
+
+<!-- Agrega el CSS de Material Design Icons -->
+<link
+	href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css"
+	rel="stylesheet">
+
+<!-- CSS Files -->
+<link th:href="@{/assets/libs/flot/css/float-chart.css}"
+	rel="stylesheet" />
+<link th:href="@{/dist/css/style.min.css}" rel="stylesheet" />
+
+<style>
+/* Estilos del Sidebar */
+.sidebar-nav {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.sidebar-nav .menu-items {
+	flex-grow: 1;
+}
+
+/* Estilos para el contenedor de bienvenida */
+.page-content {
+	background-color: #f4f5f7;
+	border-radius: 10px;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 40px;
+	max-width: 800px;
+	margin: 40px auto;
+	text-align: center;
+}
+
+.page-content h1 {
+	font-size: 2em;
+	color: #333;
+	margin-bottom: 10px;
+}
+
+.page-content p {
+	color: #555;
+	font-size: 1.2em;
+}
+
+/* Animación de cambio de color en el texto del footer */
+.footer p {
+	transition: color 1s ease;
+	animation: colorChange 5s infinite;
+}
+</style>
+</head>
+
+<body>
+
+	<!-- ============================================================== -->
+	<!-- Preloader -->
+	<!-- ============================================================== -->
+	<div class="preloader">
+		<div class="lds-ripple">
+			<div class="lds-pos"></div>
+			<div class="lds-pos"></div>
+		</div>
+	</div>
+
+	<!-- ============================================================== -->
+	<!-- Main Wrapper -->
+	<!-- ============================================================== -->
+	<div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5"
+		data-sidebartype="full" data-sidebar-position="absolute"
+		data-header-position="absolute" data-boxed-layout="full">
+
+		<!-- ============================================================== -->
+		<!-- Topbar Header -->
+		<!-- ============================================================== -->
+		<header class="topbar" data-navbarbg="skin5">
+			<nav class="navbar top-navbar navbar-expand-md navbar-dark">
+				<div class="navbar-header" data-logobg="skin5">
+					<a class="navbar-brand"
+						th:href="@{/representante/PrincipalRepresentante}"> <b
+						class="logo-icon ps-2"> <img
+							th:src="@{/assets/images/icono.png}" alt="TurnoSmart Logo"
+							class="light-logo" width="25" />
+					</b> <span class="logo-text ms-2"
+						style="color: orange; font-family: 'Arial', sans-serif; font-size: 24px;">
+							TurnoSmart </span>
+					</a> <a class="nav-toggler waves-effect waves-light d-block d-md-none"
+						href="javascript:void(0)"> <i class="ti-menu ti-close"></i>
+					</a>
+				</div>
+
+				<div class="navbar-collapse collapse" id="navbarSupportedContent"
+					data-navbarbg="skin5">
+					<ul class="navbar-nav float-start me-auto">
+						<li class="nav-item d-none d-lg-block"><a
+							class="nav-link sidebartoggler waves-effect waves-light"
+							href="javascript:void(0)" data-sidebartype="mini-sidebar"> <i
+								class="mdi mdi-menu font-24"></i>
+						</a></li>
+					</ul>
+					<span class="perfil-docente text-white"
+						style="font-family: 'Arial', sans-serif; font-size: 20px; margin-left: auto; margin-right: 20px;">
+						UNIDAD EDUCATIVA PARTICULAR "ANTONIO FLORES" </span>
+				</div>
+			</nav>
+		</header>
+
+		<!-- ============================================================== -->
+		<!-- Left Sidebar BARRA LATERAL-->
+		<!-- ============================================================== -->
+		<aside class="left-sidebar" data-sidebarbg="skin5">
+			<div class="scroll-sidebar">
+				<nav class="sidebar-nav">
+					<ul id="sidebarnav" class="pt-4">
+						<li class="sidebar-item"><a
+							class="sidebar-link waves-effect waves-dark sidebar-link"
+							href="/representante/Citas" aria-expanded="false"> <i
+								class="mdi mdi-view-dashboard"></i><span class="hide-menu">Citas</span>
+						</a></li>
+						<li class="sidebar-item"><a
+							class="sidebar-link has-arrow waves-effect waves-dark"
+							href="javascript:void(0)" aria-expanded="false"><i
+								class="mdi mdi-receipt"></i><span class="hide-menu">Docentes
+							</span></a>
+							<ul aria-expanded="false" class="collapse first-level">
+								<li class="sidebar-item"><a
+									href="/representante/DocentesBasica" class="sidebar-link">
+										<i class="mdi mdi-note-outline"></i> <span class="hide-menu">
+											Básica Superior </span>
+								</a></li>
+								<li class="sidebar-item"><a
+									href="/representante/DocentesBachillerato" class="sidebar-link"><i
+										class="mdi mdi-note-plus"></i><span class="hide-menu">
+											Bachillerato </span></a></li>
+							</ul></li>
+						<li class="sidebar-item"><a
+							class="sidebar-link has-arrow waves-effect waves-dark"
+							href="javascript:void(0)" aria-expanded="false"><i
+								class="mdi mdi-face"></i><span class="hide-menu">Perfil </span></a>
+							<ul aria-expanded="false" class="collapse first-level">
+								<li class="sidebar-item"><a href="/representante/Perfil-Representante"
+									class="sidebar-link"><i class="mdi mdi-emoticon"></i><span
+										class="hide-menu"> USUARIO </span></a></li>
+							</ul></li>
+						<!-- Agregar elementos <li> vacíos para espacio adicional -->
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<!-- Espacio en blanco para empujar el botón de Logout hacia abajo -->
+						<li class="sidebar-item mt-auto"><a
+							class="sidebar-link waves-effect waves-dark sidebar-link text-danger"
+							th:href="@{/logout}" aria-expanded="false"> <i
+								class="mdi mdi-logout"></i><span class="hide-menu">Cerrar
+									Sesión</span>
+						</a></li>
+					</ul>
+				</nav>
+			</div>
+		</aside>
+
+		<div class="page-wrapper">
+			<!-- ============================================================== -->
+			<!-- Bread crumb and right sidebar toggle -->
+			<!-- ============================================================== -->
+
+			<!-- Imagen del Colegio -->
+			<div style="text-align: center; margin-top: 20px;">
+				<img
+					src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu1b3tsol6AvxLvoFz9suaU05kfP5jusUw1w&s"
+					alt="Logo del Colegio"
+					style="max-width: 200px; border-radius: 10px;">
+			</div>
+
+			<!-- Contenido Principal -->
+			<div class="page-content">
+				<h1>Docentes Basica Superior</h1>
+			</div>
+
+			<!-- ============================================================== -->
+			<!-- Start Page Content -->
+			<!-- ============================================================== -->
+			<div class="container">
+				<div class="row el-element-overlay">
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img1.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img1.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Josselyn Cárdenas</h4>
+									<span class="text-muted">Docente de Matemáticas y
+										Geometria de 8vo y 9no</span> <span class="text-muted">/
+										Tutora de 8vo "C"</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img2.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img2.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Ana Dávalos</h4>
+									<span class="text-muted">Docente de Matemáticas y
+										Geometría de 10mo / Tutora 1ro "B"</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img3.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img3.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Rodney Escobar</h4>
+									<span class="text-muted">Docente Dibujo Técnico / Tutor
+										8vo "B"</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img4.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img4.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Joselyn Mendoza</h4>
+									<span class="text-muted">Docente de Inglés / Tutora 8vo
+										"A"</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img3.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img3.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Josselyn Villareal</h4>
+									<span class="text-muted">Docente de Science / Tutora
+										10mo "A"</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img5.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img5.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Andres Rodríguez</h4>
+									<span class="text-muted">Docente de Discovery / Tutor
+										10mo "B"</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img6.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img6.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Carolina Armijos</h4>
+									<span class="text-muted">Docente de Ciencias Sociales </span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img1.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img1.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Lorena Almachi</h4>
+									<span class="text-muted">Docente de Ciencias Naturales /
+										Tutora 9no "B"</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img1.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img1.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Santiago Rivera</h4>
+									<span class="text-muted">Docente de Educación Física /
+										Tutor 2do "A"</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img2.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img2.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Karen Romero</h4>
+									<span class="text-muted">Docente de Acompañamiento</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img3.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img3.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">María Llamuca</h4>
+									<span class="text-muted">Docente de Lenguaje de 8vo y
+										9no / Tutora 9no "A"</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img4.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img4.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Mishell Vega</h4>
+									<span class="text-muted">Docente de Lenguaje de 10mo </span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img4.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img4.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Cristina Parra</h4>
+									<span class="text-muted">INSPECTORA Básica Superior</span>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-lg-3 col-md-6">
+						<div class="card">
+							<div class="el-card-item">
+								<div class="el-card-avatar el-overlay-1">
+									<img src="../assets/images/big/img6.jpg" alt="user" />
+									<div class="el-overlay">
+										<ul class="list-style-none el-info">
+											<li class="el-item"><a
+												class="
+                              btn
+                              default
+                              btn-outline
+                              image-popup-vertical-fit
+                              el-link
+                            "
+												href="../assets/images/big/img6.jpg"><i
+													class="mdi mdi-magnify-plus"></i></a></li>
+											<li class="el-item"><a
+												class="btn default btn-outline el-link"
+												href="/representante/Citas"><i class="mdi mdi-link"></i></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="el-card-content">
+									<h4 class="mb-0">Tamia Merizalde</h4>
+									<span class="text-muted">Psicologa del DECE </span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- ============================================================== -->
+			<!-- End PAge Content -->
+			<!-- ============================================================== -->
+
+			<!-- ============================================================== -->
+			<!-- Footer Dinámico -->
+			<!-- ============================================================== -->
+			<footer class="footer text-center mt-5">
+				<p>
+					All Rights Reserved by TurnoSmart. Designed and Developed by <a
+						href="https://www.wrappixel.com" target="_blank">Rodney
+						Escobar</a>.
+				</p>
+			</footer>
+		</div>
+
+		<!-- ============================================================== -->
+		<!-- JavaScript Files -->
+		<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
+		<script
+			th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+		<script
+			th:src="@{/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
+		<script th:src="@{/dist/js/waves.js}"></script>
+		<script th:src="@{/dist/js/sidebarmenu.js}"></script>
+		<script th:src="@{/dist/js/custom.min.js}"></script>
+</body>
+</html>
+
+

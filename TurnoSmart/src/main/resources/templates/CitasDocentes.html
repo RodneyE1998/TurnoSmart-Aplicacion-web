@@ -66,12 +66,8 @@
 }
 </style>
 </head>
-
 <body>
-
-	<!-- ============================================================== -->
 	<!-- Preloader -->
-	<!-- ============================================================== -->
 	<div class="preloader">
 		<div class="lds-ripple">
 			<div class="lds-pos"></div>
@@ -79,22 +75,17 @@
 		</div>
 	</div>
 
-	<!-- ============================================================== -->
 	<!-- Main Wrapper -->
-	<!-- ============================================================== -->
 	<div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5"
 		data-sidebartype="full" data-sidebar-position="absolute"
 		data-header-position="absolute" data-boxed-layout="full">
 
-		<!-- ============================================================== -->
 		<!-- Topbar Header -->
-		<!-- ============================================================== -->
 		<header class="topbar" data-navbarbg="skin5">
 			<nav class="navbar top-navbar navbar-expand-md navbar-dark">
 				<div class="navbar-header" data-logobg="skin5">
-					<a class="navbar-brand"
-						th:href="@{/representante/PrincipalRepresentante}"> <b
-						class="logo-icon ps-2"> <img
+					<a class="navbar-brand" th:href="@{/docente/PrincipalDocente}">
+						<b class="logo-icon ps-2"> <img
 							th:src="@{/assets/images/icono.png}" alt="TurnoSmart Logo"
 							class="light-logo" width="25" />
 					</b> <span class="logo-text ms-2"
@@ -130,34 +121,17 @@
 					<ul id="sidebarnav" class="pt-4">
 						<li class="sidebar-item"><a
 							class="sidebar-link waves-effect waves-dark sidebar-link"
-							href="/representante/Citas" aria-expanded="false"> <i
-								class="mdi mdi-view-dashboard"></i><span class="hide-menu">Citas</span>
+							href="/docente/Citas" aria-expanded="false"> <i
+								class="mdi mdi-chart-bar"></i><span class="hide-menu">CITAS</span>
 						</a></li>
-						<li class="sidebar-item"><a
-							class="sidebar-link has-arrow waves-effect waves-dark"
-							href="javascript:void(0)" aria-expanded="false"><i
-								class="mdi mdi-receipt"></i><span class="hide-menu">Docentes
-							</span></a>
-							<ul aria-expanded="false" class="collapse first-level">
-								<li class="sidebar-item"><a
-									href="/representante/DocentesBasica" class="sidebar-link">
-										<i class="mdi mdi-note-outline"></i> <span class="hide-menu">
-											Básica Superior </span>
-								</a></li>
-								<li class="sidebar-item"><a
-									href="/representante/DocentesBachillerato" class="sidebar-link"><i
-										class="mdi mdi-note-plus"></i><span class="hide-menu">
-											Bachillerato </span></a></li>
-							</ul></li>
 						<li class="sidebar-item"><a
 							class="sidebar-link has-arrow waves-effect waves-dark"
 							href="javascript:void(0)" aria-expanded="false"><i
 								class="mdi mdi-face"></i><span class="hide-menu">Perfil </span></a>
 							<ul aria-expanded="false" class="collapse first-level">
-								<li class="sidebar-item"><a
-									href="/representante/Perfil-Representante" class="sidebar-link"><i
-										class="mdi mdi-emoticon"></i><span class="hide-menu">
-											USUARIO </span></a></li>
+								<li class="sidebar-item"><a href="/docente/Perfil"
+									class="sidebar-link"><i class="mdi mdi-emoticon"></i><span
+										class="hide-menu"> USUARIO </span></a></li>
 							</ul></li>
 						<!-- Agregar elementos <li> vacíos para espacio adicional -->
 						<li class="sidebar-item" style="height: 250px;"></li>
@@ -177,7 +151,7 @@
 
 		<div class="page-wrapper">
 			<!-- ============================================================== -->
-			<!-- Bread crumb and right sidebar toggle -->
+			<!-- Imagen y contenido principal -->
 			<!-- ============================================================== -->
 
 			<!-- Imagen del Colegio -->
@@ -190,126 +164,102 @@
 
 			<!-- Contenido Principal -->
 			<div class="page-content">
-				<h1>Bienvenido(a) al Perfil Representante</h1>
-				<p>Estamos felices de tenerlo(a) aquí.</p>
-			</div>
-			
-			<!-- ============================================================== -->
-			<!-- Tableros o tarjetas con enlaces -->
-			<!-- ============================================================== -->
-			<div class="row mt-4">
-				<!-- Column CEIAF -->
-				<div class="col-md-6 col-lg-3">
-					<a href="https://ceiaf.edu.ec/" target="_blank" class="card-link">
-						<div class="card card-hover">
-							<div class="box bg-cyan text-center">
-								<h1 class="font-light text-white">
-									<i class="mdi mdi-view-dashboard"></i>
-								</h1>
-								<h6 class="text-white">CEIAF</h6>
-							</div>
+				<h1>AGENDA TU CITA CON EL REPRESENTANTE</h1>
+				<!-- Formulario de Agendar Citas -->
+				<div class="container">
+					<form th:action="@{/docentes/citas/agendar}" method="post">
+						<div class="form-group">
+							<label for="estudiante" style="font-size: 18px;">Seleccionar
+								Estudiante:</label> <select id="estudiante" name="idEstudiante"
+								class="form-control" th:each="estudiante : ${estudiantes}"
+								th:value="${estudiante.idEstudiante}"
+								th:text="${estudiante.nombre} + ' ' + ${estudiante.apellido}">
+								<option value="">-- Seleccionar Estudiante --</option>
+							</select>
 						</div>
-					</a>
-				</div>
 
-				<!-- Column PERFIL -->
-				<div class="col-md-6 col-lg-3">
-					<a href="/representante/Perfil-Representante" class="card-link">
-						<div class="card card-hover">
-							<div class="box bg-danger text-center">
-								<h1 class="font-light text-white">
-									<i class="mdi mdi-youtube"></i>
-								</h1>
-								<h6 class="text-white">YOUTUBE</h6>
-							</div>
+						<!-- Selector de Fecha -->
+						<div class="form-group">
+							<label for="estudiante" style="font-size: 18px;">Escoge
+								la fecha:</label> <input type="text" id="fecha" name="fechaCita"
+								class="form-control" placeholder="Selecciona la fecha" required>
 						</div>
-					</a>
-				</div>
 
-
-				<!-- Column CITAS -->
-				<div class="col-md-6 col-lg-3">
-					<a href="/representante/Citas" class="card-link">
-						<div class="card card-hover">
-							<div class="box bg-success text-center">
-								<h1 class="font-light text-white">
-									<i class="mdi mdi-calendar-check"></i>
-								</h1>
-								<h6 class="text-white">CITAS</h6>
-							</div>
+						<!-- Selector de Hora -->
+						<div class="form-group">
+							<label for="estudiante" style="font-size: 18px;">Escoge
+								la hora:</label> <input type="text" id="hora" name="horaCita"
+								class="form-control" placeholder="Selecciona la hora" required>
 						</div>
-					</a>
-				</div>
 
-				<!-- Column DOCENTES -->
-				<div class="col-md-6 col-lg-3">
-					<a href="/representante/DocentesBasica" class="card-link">
-						<div class="card card-hover">
-							<div class="box bg-warning text-center">
-								<h1 class="font-light text-white">
-									<i class="mdi mdi-school"></i>
-								</h1>
-								<h6 class="text-white">DOCENTES</h6>
-							</div>
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary"
+								style="font-size: 18px; padding: 15px 30px;">Agendar
+								Cita</button>
 						</div>
-					</a>
-				</div>
-
-			<!-- ============================================================== -->
-			<!-- Sección Dinámica - Quienes Somos, Principios y Políticas -->
-			<!-- ============================================================== -->
-			<div class="container-fluid mt-5">
-				<div class="row">
-					<!-- Quienes Somos -->
-					<div class="col-md-6">
-						<div class="card">
-							<div class="card-header bg-primary text-white">
-								<h4>Quienes Somos</h4>
-							</div>
-							<div class="card-body">
-								<p class="lead">El CEIAF es una institución educativa de
-									carácter laico, cimentada en valores éticos y morales que
-									fundamentan su concepción Holística del ser humano y que
-									promueve un ambiente de amor y respeto a la naturaleza y la
-									individualidad del ser, valorando profundamente nuestra
-									identidad ecuatoriana. Principios Institucionales Generar un
-									entorno de confianza y transparencia en todo el accionar
-									educativo. Cumplir con efectividad todas las acciones
-									necesarias por el bienestar propio y de toda la Comunidad
-									Educativa.</p>
-							</div>
-						</div>
-					</div>
-
-					<!-- Imagen del CEIAF -->
-					<div class="col-md-6">
-						<div class="card">
-							<div class="card-body">
-								<img
-									src="https://ceiaf.edu.ec/wp-content/uploads/2021/06/ima1-exterior-ceiaf1.jpg"
-									alt="Imagen del CEIAF" class="img-fluid"
-									style="border-radius: 10px;">
-							</div>
-						</div>
-					</div>
+					</form>
 				</div>
 			</div>
 
+			<!-- Agrega los estilos y scripts de Flatpickr -->
+			<link rel="stylesheet"
+				href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+			<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-			
+			<!-- Inicialización de Flatpickr para Fecha y Hora -->
+			<script>
+				document.addEventListener("DOMContentLoaded", function() {
+					// Configuración para el selector de fecha
+					flatpickr("#fecha", {
+						dateFormat : "Y-m-d", // Formato de fecha
+						minDate : "today", // No permite seleccionar fechas pasadas
+						locale : {
+							firstDayOfWeek : 1, // Semana comienza el lunes
+							weekdays : {
+								shorthand : [ "Dom", "Lun", "Mar", "Mié",
+										"Jue", "Vie", "Sáb" ],
+								longhand : [ "Domingo", "Lunes", "Martes",
+										"Miércoles", "Jueves", "Viernes",
+										"Sábado" ]
+							},
+							months : {
+								shorthand : [ "Ene", "Feb", "Mar", "Abr",
+										"May", "Jun", "Jul", "Ago", "Sep",
+										"Oct", "Nov", "Dic" ],
+								longhand : [ "Enero", "Febrero", "Marzo",
+										"Abril", "Mayo", "Junio", "Julio",
+										"Agosto", "Septiembre", "Octubre",
+										"Noviembre", "Diciembre" ]
+							}
+						}
+					});
+
+					// Configuración para el selector de hora
+					flatpickr("#hora", {
+						enableTime : true,
+						noCalendar : true, // Oculta el calendario
+						dateFormat : "H:i", // Solo formato de hora
+						time_24hr : true, // Formato de 24 horas
+					});
+				});
+			</script>
+
+
+
 
 			<!-- ============================================================== -->
-			<!-- Footer Dinámico -->
+			<!-- Footer Dinámico   -->
 			<!-- ============================================================== -->
-			<footer class="footer text-center mt-5">
-				<p>
-					All Rights Reserved by TurnoSmart. Designed and Developed by <a
-						href="https://www.wrappixel.com" target="_blank">WrapPixel</a>.
-				</p>
-			</footer>
+			<div class="row">
+				<footer class="footer text-center">
+					<p>
+						All Rights Reserved by TurnoSmart. Designed and Developed by <a
+							href="https://www.wrappixel.com">RodneyEscobar</a>.
+					</p>
+				</footer>
+			</div>
 		</div>
 
-		<!-- ============================================================== -->
 		<!-- JavaScript Files -->
 		<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
 		<script
@@ -321,5 +271,3 @@
 		<script th:src="@{/dist/js/custom.min.js}"></script>
 </body>
 </html>
-
-

@@ -59,4 +59,9 @@ public class Cita implements Serializable {
     @OneToMany(mappedBy = "cita")
     @ToString.Exclude
     private List<HistorialCita> historialCitas;
+    
+    @ManyToOne
+    @JoinColumn(name = "id_estudiante")
+    private Estudiante estudiante;
+
 }

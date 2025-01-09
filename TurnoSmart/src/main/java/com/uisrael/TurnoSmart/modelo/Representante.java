@@ -50,4 +50,8 @@ public class Representante implements Serializable{
     )
     @ToString.Exclude
     private List<Rendimiento> rendimientos;
+    
+    @OneToMany(mappedBy = "representante")
+    private List<Estudiante> estudiantes;
+
 }

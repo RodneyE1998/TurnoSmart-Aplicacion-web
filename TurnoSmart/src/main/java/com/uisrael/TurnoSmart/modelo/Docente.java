@@ -17,37 +17,35 @@ import lombok.ToString;
 
 @Entity
 @Data
-public class Docente implements Serializable {/**
-	 * 
-	 */
+public class Docente implements Serializable {
+	/**
+	* 
+	*/
 	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idDocente;
-    private String nombre;
-    private String apellido;
-    private String email;
-    private String telefono;
-    private String numeroIdentificacion; 
-    
-    @OneToMany(mappedBy = "docente", fetch = FetchType.EAGER)
-    private List<HorarioDisponible> horariosDisponibles;
-    
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "citas_docentes",
-        joinColumns = @JoinColumn(name = "id_docente"),
-        inverseJoinColumns = @JoinColumn(name = "id_cita")
-    )
-    @ToString.Exclude
-    private List<Cita> citas;
-    
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "rendimientos_docentes",
-        joinColumns = @JoinColumn(name = "id_docente"),
-        inverseJoinColumns = @JoinColumn(name = "id_rendimiento")
-    )
-    @ToString.Exclude
-    private List<Rendimiento> rendimientos;
+	private String nombre;
+	private String apellido;
+	private String email;
+	private String telefono;
+	private String numeroIdentificacion;
+
+	@OneToMany(mappedBy = "docente", fetch = FetchType.EAGER)
+	private List<HorarioDisponible> horariosDisponibles;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "citas_docentes", joinColumns = @JoinColumn(name = "id_docente"), inverseJoinColumns = @JoinColumn(name = "id_cita"))
+	@ToString.Exclude
+	private List<Cita> citas;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "rendimientos_docentes", joinColumns = @JoinColumn(name = "id_docente"), inverseJoinColumns = @JoinColumn(name = "id_rendimiento"))
+	@ToString.Exclude
+	private List<Rendimiento> rendimientos;
+
+	@ManyToMany(mappedBy = "docentes")
+	@ToString.Exclude
+	private List<Estudiante> estudiantes;
+
 }

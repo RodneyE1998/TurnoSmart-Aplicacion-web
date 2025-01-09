@@ -34,20 +34,23 @@ public class DocenteServicioImpl implements DocenteServicio{
 
 	@Override
 	public Docente createDocente(Docente docente) {
-		// TODO Auto-generated method stub
 		return docenteRepository.save(docente);
 	}
 
 	@Override
 	public Docente updateDocente(Docente docente) {
-		// TODO Auto-generated method stub
 		return docenteRepository.save(docente);
 	}
 
 	@Override
 	public void deleteDocente(String numeroIdentificacion) {
-		// TODO Auto-generated method stub
 		docenteRepository.deleteByNumeroIdentificacion(numeroIdentificacion);
+	}
+
+	@Override
+	public List<Docente> obtenerDocentesPorEstudiante(Integer idEstudiante) {
+		// TODO Auto-generated method stub
+		return docenteRepository.findByEstudiantesIdEstudiante(idEstudiante);
 	}
 
 }

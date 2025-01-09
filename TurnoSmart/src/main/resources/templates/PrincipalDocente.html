@@ -84,8 +84,8 @@
 		<header class="topbar" data-navbarbg="skin5">
 			<nav class="navbar top-navbar navbar-expand-md navbar-dark">
 				<div class="navbar-header" data-logobg="skin5">
-					<a class="navbar-brand" th:href="@{/}"> <b
-						class="logo-icon ps-2"> <img
+					<a class="navbar-brand" th:href="@{/docente/PrincipalDocente}">
+						<b class="logo-icon ps-2"> <img
 							th:src="@{/assets/images/icono.png}" alt="TurnoSmart Logo"
 							class="light-logo" width="25" />
 					</b> <span class="logo-text ms-2"
@@ -121,38 +121,17 @@
 					<ul id="sidebarnav" class="pt-4">
 						<li class="sidebar-item"><a
 							class="sidebar-link waves-effect waves-dark sidebar-link"
-							th:href="@{/dashboard}" aria-expanded="false"> <i
-								class="mdi mdi-view-dashboard"></i><span class="hide-menu">Dashboard</span>
+							href="/docente/Citas" aria-expanded="false"> <i
+								class="mdi mdi-chart-bar"></i><span class="hide-menu">CITAS</span>
 						</a></li>
-						<li class="sidebar-item"><a
-							class="sidebar-link waves-effect waves-dark sidebar-link"
-							th:href="@{/charts}" aria-expanded="false"> <i
-								class="mdi mdi-chart-bar"></i><span class="hide-menu">Charts</span>
-						</a></li>
-						<li class="sidebar-item"><a
-								class="sidebar-link has-arrow waves-effect waves-dark"
-								href="javascript:void(0)" aria-expanded="false"><i
-									class="mdi mdi-receipt"></i><span class="hide-menu">CITAS
-								</span></a>
-								<ul aria-expanded="false" class="collapse first-level">
-									<li class="sidebar-item"><a href="form-basic.html"
-										class="sidebar-link"><i class="mdi mdi-note-outline"></i><span
-											class="hide-menu"> Básica Superior </span></a></li>
-									<li class="sidebar-item"><a href="form-wizard.html"
-										class="sidebar-link"><i class="mdi mdi-note-plus"></i><span
-											class="hide-menu"> Bachillerato </span></a></li>
-								</ul></li>
 						<li class="sidebar-item"><a
 							class="sidebar-link has-arrow waves-effect waves-dark"
 							href="javascript:void(0)" aria-expanded="false"><i
 								class="mdi mdi-face"></i><span class="hide-menu">Perfil </span></a>
 							<ul aria-expanded="false" class="collapse first-level">
-								<li class="sidebar-item"><a href="icon-material.html"
+								<li class="sidebar-item"><a href="/docente/Perfil"
 									class="sidebar-link"><i class="mdi mdi-emoticon"></i><span
 										class="hide-menu"> USUARIO </span></a></li>
-								<li class="sidebar-item"><a href="icon-fontawesome.html"
-									class="sidebar-link"><i class="mdi mdi-emoticon-cool"></i><span
-										class="hide-menu"> REPRESENTANTE </span></a></li>
 							</ul></li>
 						<!-- Agregar elementos <li> vacíos para espacio adicional -->
 						<li class="sidebar-item" style="height: 250px;"></li>
@@ -190,9 +169,7 @@
 				<p>En esta sección, puede acceder a todas las herramientas y
 					opciones dedicadas a su perfil de docente.</p>
 			</div>
-			<!-- ============================================================== -->
-			<!-- End Bread crumb and right sidebar toggle -->
-			<!-- ============================================================== -->
+
 			<!-- ============================================================== -->
 			<!-- Container fluid  -->
 			<!-- ============================================================== -->
@@ -247,48 +224,55 @@
 					</div>
 					<!-- Column -->
 					<div class="col-md-6 col-lg-2 col-xlg-3">
-						<div class="card card-hover">
-							<div class="box bg-warning text-center">
-								<!-- Cambié bg-success por bg-warning para el color amarillo -->
-								<h1 class="font-light text-white">
-									<i class="mdi mdi-calendar-check"></i>
-								</h1>
-								<h6 class="text-white">CITAS</h6>
+						<a href="/docente/Citas" class="card-link">
+							<div class="card card-hover">
+								<div class="box bg-warning text-center">
+									<h1 class="font-light text-white">
+										<i class="mdi mdi-calendar-check"></i>
+									</h1>
+									<h6 class="text-white">CITAS</h6>
+								</div>
 							</div>
-						</div>
+						</a>
 					</div>
-					<!-- Column -->
+
+					<!-- Columna Perfil -->
 					<div class="col-md-6 col-lg-2 col-xlg-3">
-						<div class="card card-hover">
-							<div class="box bg-info text-center">
-								<h1 class="font-light text-white">
-									<!-- Ícono de perfil -->
-									<i class="mdi mdi-account-circle"></i>
-								</h1>
-								<h6 class="text-white">Perfil</h6>
-								<!-- Texto debajo del ícono -->
+						<a href="/docente/Perfil" class="card-link">
+							<div class="card card-hover">
+								<div class="box bg-info text-center">
+									<h1 class="font-light text-white">
+										<!-- Ícono de perfil -->
+										<i class="mdi mdi-account-circle"></i>
+									</h1>
+									<h6 class="text-white">Perfil</h6>
+									<!-- Texto debajo del ícono -->
+								</div>
 							</div>
-						</div>
+						</a>
 					</div>
 
-
-					<!-- Footer Dinámico -->
-					<footer class="footer text-center">
-						<p>
-							All Rights Reserved by TurnoSmart. Designed and Developed by <a
-								href="https://www.wrappixel.com">WrapPixel</a>.
-						</p>
-					</footer>
 				</div>
+			</div>
 
-				<!-- JavaScript Files -->
-				<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
-				<script
-					th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
-				<script
-					th:src="@{/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
-				<script th:src="@{/dist/js/waves.js}"></script>
-				<script th:src="@{/dist/js/sidebarmenu.js}"></script>
-				<script th:src="@{/dist/js/custom.min.js}"></script>
+
+			<!-- Footer Dinámico -->
+			<footer class="footer text-center">
+				<p>
+					All Rights Reserved by TurnoSmart. Designed and Developed by <a
+						href="https://www.wrappixel.com">RodneyEscobar</a>.
+				</p>
+			</footer>
+		</div>
+
+		<!-- JavaScript Files -->
+		<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
+		<script
+			th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+		<script
+			th:src="@{/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
+		<script th:src="@{/dist/js/waves.js}"></script>
+		<script th:src="@{/dist/js/sidebarmenu.js}"></script>
+		<script th:src="@{/dist/js/custom.min.js}"></script>
 </body>
 </html>

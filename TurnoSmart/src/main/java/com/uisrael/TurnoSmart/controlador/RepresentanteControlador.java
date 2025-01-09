@@ -12,6 +12,26 @@ public class RepresentanteControlador {
     public String mostrarPaginaRepresentante() {
     	return "PrincipalRepresentante";
     }
+    
+	@GetMapping("/DocentesBasica")
+	public String mostrarDocentesBasica() {
+	    return "DocenteBasica";
+	}
+	
+	@GetMapping("/DocentesBachillerato")
+	public String mostrarDocentesBachillerato() {
+	    return "DocenteBachillerato";
+	}
+	
+	@GetMapping("/Citas")
+	public String mostrarPaginacitas() {
+	    return "CitasRepresentantes";
+	}
+	
+	@GetMapping("/Perfil-Representante")
+	public String mostrarPerfilRepresentante() {
+	    return "PerfilRepresentante";
+	}
 
     
 

@@ -18,7 +18,7 @@ import com.uisrael.TurnoSmart.servicio.CitaServicio;
 
 
 @RestController
-@RequestMapping("/api/citas")
+@RequestMapping("/citas")
 public class CitaControlador implements Serializable {
 
 	/**

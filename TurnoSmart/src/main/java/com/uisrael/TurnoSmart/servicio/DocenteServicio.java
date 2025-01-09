@@ -10,5 +10,7 @@ public interface DocenteServicio {
     Docente createDocente(Docente docente);
     Docente updateDocente(Docente docente);
     void deleteDocente(String numeroIdentificacion);
+    
+    List<Docente> obtenerDocentesPorEstudiante(Integer idEstudiante);
 
 }
