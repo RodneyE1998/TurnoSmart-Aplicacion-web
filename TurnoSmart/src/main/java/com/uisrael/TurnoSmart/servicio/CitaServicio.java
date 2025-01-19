@@ -7,10 +7,20 @@ import com.uisrael.TurnoSmart.modelo.Cita;
 public interface CitaServicio {
 	
 	public List<Cita> getAllCitas();
+	
 	Cita getCitaById(Integer id);
-    Cita createCita(Cita cita);
-    Cita updateCita(Cita cita);
-    void deleteCita(Integer id);
+    
+	Cita createCita(Cita cita);
+    
+	Cita updateCita(Cita cita);
+    
+	void deleteCita(Integer id);
+	
+	void agendarCitaPorDocente(Cita cita, Integer idEstudiante, Integer idDocente);
+	
+	List<Cita> obtenerCitasPorDocente(Integer idDocente);
+
+
 	
 
 }

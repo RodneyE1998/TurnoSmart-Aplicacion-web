@@ -154,9 +154,10 @@
 							href="javascript:void(0)" aria-expanded="false"><i
 								class="mdi mdi-face"></i><span class="hide-menu">Perfil </span></a>
 							<ul aria-expanded="false" class="collapse first-level">
-								<li class="sidebar-item"><a href="/representante/Perfil-Representante"
-									class="sidebar-link"><i class="mdi mdi-emoticon"></i><span
-										class="hide-menu"> USUARIO </span></a></li>
+								<li class="sidebar-item"><a
+									href="/representante/Perfil-Representante" class="sidebar-link"><i
+										class="mdi mdi-emoticon"></i><span class="hide-menu">
+											USUARIO </span></a></li>
 							</ul></li>
 						<!-- Agregar elementos <li> vacíos para espacio adicional -->
 						<li class="sidebar-item" style="height: 250px;"></li>
@@ -188,8 +189,43 @@
 			</div>
 
 			<!-- Contenido Principal -->
+			<!-- Contenido Principal -->
 			<div class="page-content">
 				<h1>AGENDA TU CITA CON EL DOCENTE</h1>
+				<!-- Formulario de Agendar Citas -->
+				<div class="container">
+					<form th:action="@{/docentes/citas/agendar}" method="post">
+						<div class="form-group">
+							<label for="estudiante" style="font-size: 18px;">Seleccionar
+								Estudiante:</label> <select id="estudiante" name="idEstudiante"
+								class="form-control" th:each="estudiante : ${estudiantes}"
+								th:value="${estudiante.idEstudiante}"
+								th:text="${estudiante.nombre} + ' ' + ${estudiante.apellido}">
+								<option value="">-- Seleccionar Estudiante --</option>
+							</select>
+						</div>
+
+						<!-- Selector de Fecha -->
+						<div class="form-group">
+							<label for="estudiante" style="font-size: 18px;">Escoge
+								la fecha:</label> <input type="text" id="fecha" name="fechaCita"
+								class="form-control" placeholder="Selecciona la fecha" required>
+						</div>
+
+						<!-- Selector de Hora -->
+						<div class="form-group">
+							<label for="estudiante" style="font-size: 18px;">Escoge
+								la hora:</label> <input type="text" id="hora" name="horaCita"
+								class="form-control" placeholder="Selecciona la hora" required>
+						</div>
+
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary"
+								style="font-size: 18px; padding: 15px 30px;">Agendar
+								Cita</button>
+						</div>
+					</form>
+				</div>
 			</div>
 
 

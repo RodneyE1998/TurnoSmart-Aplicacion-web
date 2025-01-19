@@ -28,9 +28,9 @@ public class Cita implements Serializable {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idCita;
-	//@Temporal(TemporalType.DATE) se puede eliminar 
+	//@Temporal(TemporalType.DATE)  
     private LocalDate fechaCita;
-	//@Temporal(TemporalType.TIME) se puede eliminar 
+	//@Temporal(TemporalType.TIME) 
     private LocalTime  horaCita;
     private String estadoCita;
 

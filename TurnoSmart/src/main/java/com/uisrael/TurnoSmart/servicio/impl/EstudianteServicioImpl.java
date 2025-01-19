@@ -39,4 +39,9 @@ public class EstudianteServicioImpl implements EstudianteServicio {
 		return estudianteRepositorio.findByRepresentanteIdRepresentante(idRepresentante);
 	}
 
+	@Override
+	public List<Estudiante> obtenerEstudiantesPorDocente(Integer idDocente) {
+		return estudianteRepositorio.findByDocenteId(idDocente);
+	}
+
 }

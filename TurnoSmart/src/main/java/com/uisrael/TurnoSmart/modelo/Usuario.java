@@ -52,6 +52,25 @@ public class Usuario implements UserDetails, Serializable{/**
     @ToString.Exclude
     private List<Role> roles;
     
+    
+ // Métodos Getter y Setter explícitos para "docente"
+    public Docente getDocente() {
+        return docente;
+    }
+
+    public void setDocente(Docente docente) {
+        this.docente = docente;
+    }
+
+    // Métodos Getter y Setter explícitos para "representante" (opcional)
+    public Representante getRepresentante() {
+        return representante;
+    }
+
+    public void setRepresentante(Representante representante) {
+        this.representante = representante;
+    }
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()

@@ -65,6 +65,16 @@
 	animation: colorChange 5s infinite;
 }
 </style>
+
+<style>
+.table-header-dark th {
+	color: #111; /* Color letras de la Tabla*/
+	font-size: 18px; /* Tamaño más grande para las palabras */
+	font-weight: bold; /* Hace el texto más prominente */
+	text-transform: uppercase; /* Opcional: letras en mayúsculas */
+}
+</style>
+
 </head>
 <body>
 	<!-- Preloader -->
@@ -159,7 +169,7 @@
 
 		<div class="page-wrapper">
 			<!-- ============================================================== -->
-			<!-- Bread crumb and right sidebar toggle -->
+			<!-- Imagen y contenido principal -->
 			<!-- ============================================================== -->
 
 			<!-- Imagen del Colegio -->
@@ -172,118 +182,45 @@
 
 			<!-- Contenido Principal -->
 			<div class="page-content">
-				<h1>Bienvenido(a) al Perfil Docente</h1>
-				<p>Estamos felices de tenerlo(a) aquí.</p>
-				<p>En esta sección, puede acceder a todas las herramientas y
-					opciones dedicadas a su perfil de docente.</p>
+				<h1>Citas Agendadas</h1>
 			</div>
-			
-			<!-- Imágenes de los Horarios -->
-			<div style="text-align: center; margin-top: 30px;">
-				<!-- Imagen del Horario Básica -->
-				<img th:src="@{/assets/images/HorarioBasica.png}"
-					alt="Horario Básica"
-					style="max-width: 800px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 10px;">
 
-				<!-- Imagen del Horario Bachillerato -->
-				<img th:src="@{/assets/images/HorarioBachillerato.png}"
-					alt="Horario Bachillerato"
-					style="max-width: 800px; border: 1px solid #ccc; border-radius: 10px;">
-			</div>
+			<table class="table table-hover">
+				<thead class="table-header-dark">
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Estudiante</th>
+						<th scope="col">Representante</th>
+						<th scope="col">Fecha</th>
+						<th scope="col">Hora</th>
+						<th scope="col">Estado</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="cita, iterStat : ${citas}">
+						<th scope="row" th:text="${iterStat.index + 1}"></th>
+						<td
+							th:text="${cita.estudiante.nombre + ' ' + cita.estudiante.apellido}"></td>
+						<td
+							th:text="${cita.representante.nombre + ' ' + cita.representante.apellido}"></td>
+						<td th:text="${#temporals.format(cita.fechaCita, 'yyyy-MM-dd')}"></td>
+						<td th:text="${#temporals.format(cita.horaCita, 'HH:mm')}"></td>
+						<td th:text="${cita.estadoCita}"></td>
+					</tr>
+				</tbody>
+			</table>
 
 			<!-- ============================================================== -->
-			<!-- Container fluid  -->
+			<!-- Footer Dinámico   -->
 			<!-- ============================================================== -->
-			<div class="container-fluid">
-				<!-- ============================================================== -->
-				<!-- Sales Cards  -->
-				<!-- ============================================================== -->
-				<div class="row">
-					<!-- Column -->
-					<div class="col-md-6 col-lg-2 col-xlg-3">
-						<a href="https://ceiaf.edu.ec/" target="_blank" class="card-link">
-							<div class="card card-hover">
-								<div class="box bg-cyan text-center">
-									<h1 class="font-light text-white">
-										<i class="mdi mdi-view-dashboard"></i>
-									</h1>
-									<h6 class="text-white">CEIAF</h6>
-								</div>
-							</div>
-						</a>
-					</div>
-					<!-- Column -->
-					<div class="col-md-6 col-lg-4 col-xlg-3">
-						<a
-							href="https://www.soluciones.com.ec/ceiaf/2425/index.php/login/"
-							target="_blank" class="card-link">
-							<div class="card card-hover">
-								<div class="box bg-success text-center">
-									<h1 class="font-light text-white">
-										<i class="mdi mdi-chart-areaspline"></i>
-									</h1>
-									<h6 class="text-white">SISTEMA DE NOTAS</h6>
-								</div>
-							</div>
-						</a>
-					</div>
-					<!-- Column -->
-					<div class="col-md-6 col-lg-2 col-xlg-3">
-						<a href="https://www.youtube.com/channel/UCVCTxRlvY8na1Fc201VUqMw"
-							target="_blank" class="card-link">
-							<div class="card card-hover">
-								<div class="box bg-danger text-center">
-									<!-- Cambié bg-warning a bg-danger para el color rojo -->
-									<h1 class="font-light text-white">
-										<i class="mdi mdi-youtube"></i>
-										<!-- Reemplazamos el ícono actual por el de YouTube -->
-									</h1>
-									<h6 class="text-white">Youtube</h6>
-								</div>
-							</div>
-						</a>
-					</div>
-					<!-- Column -->
-					<div class="col-md-6 col-lg-2 col-xlg-3">
-						<a href="/docente/citas" class="card-link">
-							<div class="card card-hover">
-								<div class="box bg-warning text-center">
-									<h1 class="font-light text-white">
-										<i class="mdi mdi-calendar-check"></i>
-									</h1>
-									<h6 class="text-white">CITAS</h6>
-								</div>
-							</div>
-						</a>
-					</div>
-
-					<!-- Columna Perfil -->
-					<div class="col-md-6 col-lg-2 col-xlg-3">
-						<a href="/docente/Perfil" class="card-link">
-							<div class="card card-hover">
-								<div class="box bg-info text-center">
-									<h1 class="font-light text-white">
-										<!-- Ícono de perfil -->
-										<i class="mdi mdi-account-circle"></i>
-									</h1>
-									<h6 class="text-white">Perfil</h6>
-									<!-- Texto debajo del ícono -->
-								</div>
-							</div>
-						</a>
-					</div>
-
-				</div>
+			<div class="row">
+				<footer class="footer text-center">
+					<p>
+						All Rights Reserved by TurnoSmart. Designed and Developed by <a
+							href="https://www.wrappixel.com">RodneyEscobar</a>.
+					</p>
+				</footer>
 			</div>
-
-
-			<!-- Footer Dinámico -->
-			<footer class="footer text-center">
-				<p>
-					All Rights Reserved by TurnoSmart. Designed and Developed by <a
-						href="https://www.wrappixel.com">RodneyEscobar</a>.
-				</p>
-			</footer>
 		</div>
 
 		<!-- JavaScript Files -->

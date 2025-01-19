@@ -12,6 +12,9 @@ public interface EstudianteServicio {
 	Estudiante buscarEstudiantePorId(Integer id);
 	
 	public List<Estudiante> obtenerEstudiantesPorRepresentante(Integer idRepresentante);
+	
+	public List<Estudiante> obtenerEstudiantesPorDocente(Integer idDocente);
+
 
 
 }
