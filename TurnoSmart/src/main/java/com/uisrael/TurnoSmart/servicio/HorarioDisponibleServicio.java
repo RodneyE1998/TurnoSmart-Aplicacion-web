@@ -5,10 +5,15 @@ import java.util.List;
 import com.uisrael.TurnoSmart.modelo.HorarioDisponible;
 
 public interface HorarioDisponibleServicio {
-	List<HorarioDisponible> getAllHorariosDisponibles();
-    HorarioDisponible getHorarioDisponibleById(Integer id);
-    HorarioDisponible createHorarioDisponible(HorarioDisponible horarioDisponible);
-    HorarioDisponible updateHorarioDisponible(HorarioDisponible horarioDisponible);
-    void deleteHorarioDisponible(Integer id);
-
+	
+	HorarioDisponible guardarHorario(HorarioDisponible horario);
+	
+    void eliminarHorario(Integer idHorario);
+    
+    List<HorarioDisponible> obtenerHorariosPorDocente(Integer idDocente);
+    
+    List<HorarioDisponible> obtenerTodosLosHorarios();
+    
+    HorarioDisponible obtenerPorId(Integer idHorario);
+	
 }

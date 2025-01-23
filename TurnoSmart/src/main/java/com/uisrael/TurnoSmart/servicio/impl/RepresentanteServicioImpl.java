@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.uisrael.TurnoSmart.modelo.Representante;
+import com.uisrael.TurnoSmart.modelo.Usuario;
 import com.uisrael.TurnoSmart.repositorio.RepresentanteRepositorio;
+import com.uisrael.TurnoSmart.repositorio.UsuarioRepositorio;
 import com.uisrael.TurnoSmart.servicio.RepresentanteServicio;
 
 @Service
@@ -17,6 +19,9 @@ public class RepresentanteServicioImpl implements RepresentanteServicio {
 	
 	@Autowired
 	private RepresentanteRepositorio representanteRepository;
+	
+	@Autowired
+	private UsuarioRepositorio usuarioRepositorio;
 
 	@Override
 	public List<Representante> getAllRepresentantes() {
@@ -50,5 +55,12 @@ public class RepresentanteServicioImpl implements RepresentanteServicio {
 	public void deleteRepresentante(Integer idRepresentante) {
 	    representanteRepository.deleteByIdRepresentante(idRepresentante);
 	}
+
+	@Override
+    public Representante obtenerPorUsuario(String username) {
+        Usuario usuario = usuarioRepositorio.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return usuario.getRepresentante();
+    }
 
 }

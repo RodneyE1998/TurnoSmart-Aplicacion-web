@@ -14,6 +14,7 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Transient;
 import lombok.Data;
 import lombok.ToString;
 
@@ -63,5 +64,22 @@ public class Cita implements Serializable {
     @ManyToOne
     @JoinColumn(name = "id_estudiante")
     private Estudiante estudiante;
+    
+ // Relación con HorarioDisponible
+    @ManyToOne
+    @JoinColumn(name = "id_horario")
+    private HorarioDisponible horario;
+    
+ // Campo transitorio para nombres concatenados de docentes
+    @Transient
+    private String docentesConcatenados;
+
+    public String getDocentesConcatenados() {
+        return docentesConcatenados;
+    }
+
+    public void setDocentesConcatenados(String docentesConcatenados) {
+        this.docentesConcatenados = docentesConcatenados;
+    }
 
 }

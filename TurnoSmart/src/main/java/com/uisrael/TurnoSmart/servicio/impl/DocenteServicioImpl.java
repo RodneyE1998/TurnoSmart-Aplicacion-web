@@ -53,4 +53,9 @@ public class DocenteServicioImpl implements DocenteServicio{
 		return docenteRepository.findByEstudiantesIdEstudiante(idEstudiante);
 	}
 
+	@Override
+    public List<Docente> obtenerTodosLosDocentes() {
+        return docenteRepository.findAll();
+    }
+
 }

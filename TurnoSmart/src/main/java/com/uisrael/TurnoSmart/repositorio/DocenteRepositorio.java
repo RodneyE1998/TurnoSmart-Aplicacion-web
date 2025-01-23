@@ -15,5 +15,8 @@ public interface DocenteRepositorio extends JpaRepository<Docente, Integer> {
     
  // Método para encontrar docentes por el ID del estudiante
     List<Docente> findByEstudiantesIdEstudiante(Integer idEstudiante);
+    
+    List<Docente> findAll(); 
+
 
 }

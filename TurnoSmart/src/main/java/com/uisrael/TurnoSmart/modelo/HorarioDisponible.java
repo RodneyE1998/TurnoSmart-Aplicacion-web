@@ -3,6 +3,8 @@ package com.uisrael.TurnoSmart.modelo;
 import java.io.Serializable;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,6 +32,7 @@ public class HorarioDisponible implements Serializable {
     
     @ManyToOne
     @JoinColumn(name = "id_docente")
+    @JsonIgnore
     private Docente docente;
 
 }

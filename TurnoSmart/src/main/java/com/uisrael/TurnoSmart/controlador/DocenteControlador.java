@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.uisrael.TurnoSmart.modelo.Cita;
 import com.uisrael.TurnoSmart.modelo.Docente;
 import com.uisrael.TurnoSmart.modelo.Estudiante;
+import com.uisrael.TurnoSmart.modelo.Representante;
 import com.uisrael.TurnoSmart.modelo.Usuario;
 import com.uisrael.TurnoSmart.repositorio.UsuarioRepositorio;
 import com.uisrael.TurnoSmart.servicio.CitaServicio;
@@ -84,10 +85,10 @@ public class DocenteControlador {
 		// Redirigir a la página de éxito o listado
 		return "redirect:/docente/citas/agendadas";
 	}
-	
+
 	@GetMapping("/citas/agendadas")
 	public String mostrarCitasAgendadas(Model model, Principal principal) {
-	    // Obtener el username del docente autenticado
+	    // Obtener el docente autenticado
 	    String username = principal.getName();
 	    Docente docente = usuarioRepositorio.findByUsername(username)
 	                        .orElseThrow(() -> new RuntimeException("Usuario no encontrado"))
@@ -96,8 +97,29 @@ public class DocenteControlador {
 	    // Obtener las citas del docente
 	    List<Cita> citas = citaServicio.obtenerCitasPorDocente(docente.getIdDocente());
 
+	    // Clasificar las citas por tipo
+	    List<Cita> citasConEstudiante = citas.stream()
+	        .filter(cita -> cita.getEstudiante() != null)
+	        .toList();
+
+	    List<Cita> citasSinEstudiante = citas.stream()
+	        .filter(cita -> cita.getEstudiante() == null)
+	        .toList();
+
+	    // Agregar la lista de estudiantes relacionados a cada representante en las citas sin estudiante
+	    for (Cita cita : citasSinEstudiante) {
+	        Representante representante = cita.getRepresentante();
+	        if (representante != null) {
+	            // Cargar los estudiantes relacionados al representante
+	            representante.setEstudiantes(
+	                estudianteServicio.obtenerEstudiantesPorRepresentante(representante.getIdRepresentante())
+	            );
+	        }
+	    }
+
 	    // Pasar las citas al modelo
-	    model.addAttribute("citas", citas);
+	    model.addAttribute("citasConEstudiante", citasConEstudiante);
+	    model.addAttribute("citasSinEstudiante", citasSinEstudiante);
 
 	    return "CitasAgendadasDocente";
 	}

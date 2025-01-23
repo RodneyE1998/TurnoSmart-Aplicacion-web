@@ -10,7 +10,9 @@ import com.uisrael.TurnoSmart.modelo.Estudiante;
 
 public interface EstudianteRepositorio extends JpaRepository<Estudiante, Integer> {
 	
-	List<Estudiante> findByRepresentanteIdRepresentante(Integer idRepresentante);
+	@Query("SELECT e FROM Estudiante e WHERE e.representante.idRepresentante = :idRepresentante")
+	List<Estudiante> findByRepresentanteIdRepresentante(@Param("idRepresentante") Integer idRepresentante);
+
 	
 	@Query("SELECT e FROM Estudiante e JOIN e.docentes d WHERE d.idDocente = :idDocente")
     List<Estudiante> findByDocenteId(@Param("idDocente") Integer idDocente);

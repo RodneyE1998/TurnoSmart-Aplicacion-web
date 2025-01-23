@@ -25,20 +25,8 @@
 	rel="stylesheet" />
 <link th:href="@{/dist/css/style.min.css}" rel="stylesheet" />
 
-<!-- Bootstrap Bundle -->
-<script
-	th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
-
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- DataTables JavaScript -->
-<script
-	src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-
-<!-- DataTables CSS -->
 <link rel="stylesheet"
-	href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
 <style>
 /* Estilos del Sidebar */
@@ -80,35 +68,13 @@
 	animation: colorChange 5s infinite;
 }
 </style>
-
-<style>
-.table-header-dark th {
-	color: #111; /* Color letras de la Tabla*/
-	font-size: 18px; /* Tamaño más grande para las palabras */
-	font-weight: bold; /* Hace el texto más prominente */
-	text-transform: uppercase; /* Opcional: letras en mayúsculas */
-}
-</style>
-
-<style>
-.table-container {
-	max-width: 100%;
-	/* Ajusta el ancho máximo al 100% del contenedor padre */
-	overflow-x: auto;
-	/* Habilita el desplazamiento horizontal si el contenido es demasiado ancho */
-	margin-bottom: 20px; /* Espaciado entre las tablas */
-}
-
-.table {
-	white-space: nowrap;
-	/* Evita que las celdas de la tabla hagan salto de línea */
-}
-</style>
-
-
 </head>
+
 <body>
+
+	<!-- ============================================================== -->
 	<!-- Preloader -->
+	<!-- ============================================================== -->
 	<div class="preloader">
 		<div class="lds-ripple">
 			<div class="lds-pos"></div>
@@ -116,17 +82,22 @@
 		</div>
 	</div>
 
+	<!-- ============================================================== -->
 	<!-- Main Wrapper -->
+	<!-- ============================================================== -->
 	<div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5"
 		data-sidebartype="full" data-sidebar-position="absolute"
 		data-header-position="absolute" data-boxed-layout="full">
 
+		<!-- ============================================================== -->
 		<!-- Topbar Header -->
+		<!-- ============================================================== -->
 		<header class="topbar" data-navbarbg="skin5">
 			<nav class="navbar top-navbar navbar-expand-md navbar-dark">
 				<div class="navbar-header" data-logobg="skin5">
-					<a class="navbar-brand" th:href="@{/docente/PrincipalDocente}">
-						<b class="logo-icon ps-2"> <img
+					<a class="navbar-brand"
+						th:href="@{/representante/PrincipalRepresentante}"> <b
+						class="logo-icon ps-2"> <img
 							th:src="@{/assets/images/icono.png}" alt="TurnoSmart Logo"
 							class="light-logo" width="25" />
 					</b> <span class="logo-text ms-2"
@@ -163,30 +134,43 @@
 						<li class="sidebar-item"><a
 							class="sidebar-link has-arrow waves-effect waves-dark"
 							href="javascript:void(0)" aria-expanded="false"><i
-								class="mdi mdi-face"></i><span class="hide-menu">Perfil </span></a>
+								class="mdi mdi-receipt"></i><span class="hide-menu">Docentes
+							</span></a>
 							<ul aria-expanded="false" class="collapse first-level">
-								<li class="sidebar-item"><a href="/docente/Perfil"
-									class="sidebar-link"><i class="mdi mdi-emoticon"></i><span
-										class="hide-menu"> USUARIO </span></a></li>
+								<li class="sidebar-item"><a
+									href="/representante/DocentesBasica" class="sidebar-link">
+										<i class="mdi mdi-note-outline"></i> <span class="hide-menu">
+											Básica Superior </span>
+								</a></li>
+								<li class="sidebar-item"><a
+									href="/representante/DocentesBachillerato" class="sidebar-link"><i
+										class="mdi mdi-note-plus"></i><span class="hide-menu">
+											Bachillerato </span></a></li>
 							</ul></li>
 						<li class="sidebar-item"><a
 							class="sidebar-link has-arrow waves-effect waves-dark"
 							href="javascript:void(0)" aria-expanded="false"><i
-								class="mdi mdi-receipt"></i><span class="hide-menu">CITAS
-							</span></a>
+								class="mdi mdi-face"></i><span class="hide-menu">Perfil </span></a>
 							<ul aria-expanded="false" class="collapse first-level">
-								<li class="sidebar-item"><a href="/docente/citas"
-									class="sidebar-link"><i class="mdi mdi-note-outline"></i><span
-										class="hide-menu"> AGENDAR CITAS </span></a></li>
-								<li class="sidebar-item"><a href="/docente/citas/agendadas"
-									class="sidebar-link"><i class="mdi mdi-note-plus"></i><span
-										class="hide-menu"> CITAS AGENDADAS </span></a></li>
+								<li class="sidebar-item"><a
+									href="/representante/Perfil-Representante" class="sidebar-link"><i
+										class="mdi mdi-emoticon"></i><span class="hide-menu">
+											USUARIO </span></a></li>
 							</ul></li>
 						<li class="sidebar-item"><a
-							class="sidebar-link waves-effect waves-dark sidebar-link"
-							href="/docente/horarios" aria-expanded="false"> <i
-								class="mdi mdi-view-dashboard"></i><span class="hide-menu">Horarios</span>
-						</a></li>
+							class="sidebar-link has-arrow waves-effect waves-dark"
+							href="javascript:void(0)" aria-expanded="false"><i
+								class="mdi mdi-account-key"></i><span class="hide-menu">CITAS
+							</span></a>
+							<ul aria-expanded="false" class="collapse first-level">
+								<li class="sidebar-item"><a href="/representante/Citas"
+									class="sidebar-link"><i class="mdi mdi-all-inclusive"></i><span
+										class="hide-menu"> Agendar Cita </span></a></li>
+								<li class="sidebar-item"><a
+									href="/representante/citas-agendadas" class="sidebar-link"><i
+										class="mdi mdi-all-inclusive"></i><span class="hide-menu">
+											Citas Agendadas </span></a></li>
+							</ul></li>
 						<!-- Agregar elementos <li> vacíos para espacio adicional -->
 						<li class="sidebar-item" style="height: 250px;"></li>
 						<li class="sidebar-item" style="height: 250px;"></li>
@@ -205,7 +189,7 @@
 
 		<div class="page-wrapper">
 			<!-- ============================================================== -->
-			<!-- Imagen y contenido principal -->
+			<!-- Bread crumb and right sidebar toggle -->
 			<!-- ============================================================== -->
 
 			<!-- Imagen del Colegio -->
@@ -217,64 +201,45 @@
 			</div>
 
 			<!-- Contenido Principal -->
-			<div class="page-content">
-				<h1>Citas Agendadas</h1>
-			</div>
-
-			<h4>Citas Solicitadas por los Docentes</h4>
-			<div class="table-container">
-				<table id="tablaCitasDocentes" class="table table-hover">
-					<thead class="table-header-dark">
+			<div class="container mt-5">
+				<!-- Tabla de citas solicitadas por el representante -->
+				<h4>Citas Solicitadas por el Representante</h4>
+				<table class="table table-striped">
+					<thead>
 						<tr>
-							<th>#</th>
+							<th>Fecha</th>
+							<th>Hora</th>
+							<th>Docente</th>
+							<th>Estado</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="cita : ${citasPorRepresentante}">
+							<td th:text="${cita.fechaCita}"></td>
+							<td th:text="${cita.horaCita}"></td>
+							<td
+								th:text="${cita.docentes[0].nombre + ' ' + cita.docentes[0].apellido}"></td>
+							<td th:text="${cita.estadoCita}"></td>
+						</tr>
+					</tbody>
+				</table>
+
+				<!-- Tabla de citas solicitadas por los docentes -->
+				<h4>Citas Solicitadas por los Docentes</h4>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Fecha</th>
+							<th>Hora</th>
 							<th>Estudiante</th>
-							<th>Representante</th>
-							<th>Fecha</th>
-							<th>Hora</th>
 							<th>Estado</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="cita, iterStat : ${citasConEstudiante}">
-							<th scope="row" th:text="${iterStat.index + 1}"></th>
-							<td
-								th:text="${cita.estudiante.nombre + ' ' + cita.estudiante.apellido}"></td>
-							<td
-								th:text="${cita.representante.nombre + ' ' + cita.representante.apellido}"></td>
-							<td th:text="${#temporals.format(cita.fechaCita, 'yyyy-MM-dd')}"></td>
-							<td th:text="${#temporals.format(cita.horaCita, 'HH:mm')}"></td>
-							<td th:text="${cita.estadoCita}"></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-
-			<h4>Citas Solicitadas por el Representante</h4>
-			<div class="table-container">
-				<table id="tablaCitasRepresentantes" class="table table-hover">
-					<thead class="table-header-dark">
-						<tr>
-							<th>#</th>
-							<th>Representante</th>
-							<th>Estudiantes</th>
-							<th>Fecha</th>
-							<th>Hora</th>
-							<th>Estado</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="cita, iterStat : ${citasSinEstudiante}">
-							<th scope="row" th:text="${iterStat.index + 1}"></th>
-							<td
-								th:text="${cita.representante.nombre + ' ' + cita.representante.apellido}"></td>
-							<td>
-								<ul>
-									<li th:each="estudiante : ${cita.representante.estudiantes}"
-										th:text="${estudiante.nombre + ' ' + estudiante.apellido}"></li>
-								</ul>
-							</td>
-							<td th:text="${#temporals.format(cita.fechaCita, 'yyyy-MM-dd')}"></td>
-							<td th:text="${#temporals.format(cita.horaCita, 'HH:mm')}"></td>
+						<tr th:each="cita : ${citasPorDocente}">
+							<td th:text="${cita.fechaCita}"></td>
+							<td th:text="${cita.horaCita}"></td>
+							<td th:text="${cita.estudiante.nombre + ' ' + cita.estudiante.apellido}"></td>
 							<td th:text="${cita.estadoCita}"></td>
 						</tr>
 					</tbody>
@@ -282,20 +247,19 @@
 			</div>
 
 
-
 			<!-- ============================================================== -->
-			<!-- Footer Dinámico   -->
+			<!-- Footer Dinámico -->
 			<!-- ============================================================== -->
-			<div class="row">
-				<footer class="footer text-center">
-					<p>
-						All Rights Reserved by TurnoSmart. Designed and Developed by <a
-							href="https://www.wrappixel.com">RodneyEscobar</a>.
-					</p>
-				</footer>
-			</div>
+			<footer class="footer text-center mt-5">
+				<p>
+					All Rights Reserved by TurnoSmart. Designed and Developed by <a
+						href="https://www.wrappixel.com" target="_blank">Rodney
+						Escobar</a>.
+				</p>
+			</footer>
 		</div>
 
+		<!-- ============================================================== -->
 		<!-- JavaScript Files -->
 		<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
 		<script
@@ -305,44 +269,7 @@
 		<script th:src="@{/dist/js/waves.js}"></script>
 		<script th:src="@{/dist/js/sidebarmenu.js}"></script>
 		<script th:src="@{/dist/js/custom.min.js}"></script>
-
-		<!-- Inicialización de DataTables -->
-		<script>
-			$(document).ready(function() {
-				$('#tablaCitasDocentes').DataTable({
-					paging : true,
-					searching : true,
-					info : true,
-					lengthChange : true,
-					pageLength : 5,
-					language : {
-						paginate : {
-							previous : "Anterior",
-							next : "Siguiente"
-						},
-						search : "Buscar:",
-						lengthMenu : "Mostrar _MENU_ registros por página",
-						info : "Mostrando _START_ a _END_ de _TOTAL_ registros"
-					}
-				});
-
-				$('#tablaCitasRepresentantes').DataTable({
-					paging : true,
-					searching : true,
-					info : true,
-					lengthChange : true,
-					pageLength : 5,
-					language : {
-						paginate : {
-							previous : "Anterior",
-							next : "Siguiente"
-						},
-						search : "Buscar:",
-						lengthMenu : "Mostrar _MENU_ registros por página",
-						info : "Mostrando _START_ a _END_ de _TOTAL_ registros"
-					}
-				});
-			});
-		</script>
 </body>
 </html>
+
+

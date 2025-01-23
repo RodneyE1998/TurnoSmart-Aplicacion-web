@@ -25,6 +25,9 @@
 	rel="stylesheet" />
 <link th:href="@{/dist/css/style.min.css}" rel="stylesheet" />
 
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
 <style>
 /* Estilos del Sidebar */
 .sidebar-nav {
@@ -129,11 +132,6 @@
 				<nav class="sidebar-nav">
 					<ul id="sidebarnav" class="pt-4">
 						<li class="sidebar-item"><a
-							class="sidebar-link waves-effect waves-dark sidebar-link"
-							href="/representante/Citas" aria-expanded="false"> <i
-								class="mdi mdi-view-dashboard"></i><span class="hide-menu">Citas</span>
-						</a></li>
-						<li class="sidebar-item"><a
 							class="sidebar-link has-arrow waves-effect waves-dark"
 							href="javascript:void(0)" aria-expanded="false"><i
 								class="mdi mdi-receipt"></i><span class="hide-menu">Docentes
@@ -158,6 +156,20 @@
 									href="/representante/Perfil-Representante" class="sidebar-link"><i
 										class="mdi mdi-emoticon"></i><span class="hide-menu">
 											USUARIO </span></a></li>
+							</ul></li>
+						<li class="sidebar-item"><a
+							class="sidebar-link has-arrow waves-effect waves-dark"
+							href="javascript:void(0)" aria-expanded="false"><i
+								class="mdi mdi-account-key"></i><span class="hide-menu">CITAS
+							</span></a>
+							<ul aria-expanded="false" class="collapse first-level">
+								<li class="sidebar-item"><a href="/representante/Citas"
+									class="sidebar-link"><i class="mdi mdi-all-inclusive"></i><span
+										class="hide-menu"> Agendar Cita </span></a></li>
+								<li class="sidebar-item"><a
+									href="/representante/citas-agendadas" class="sidebar-link"><i
+										class="mdi mdi-all-inclusive"></i><span class="hide-menu">
+											Citas Agendadas </span></a></li>
 							</ul></li>
 						<!-- Agregar elementos <li> vacíos para espacio adicional -->
 						<li class="sidebar-item" style="height: 250px;"></li>
@@ -189,43 +201,64 @@
 			</div>
 
 			<!-- Contenido Principal -->
-			<!-- Contenido Principal -->
 			<div class="page-content">
 				<h1>AGENDA TU CITA CON EL DOCENTE</h1>
-				<!-- Formulario de Agendar Citas -->
-				<div class="container">
-					<form th:action="@{/docentes/citas/agendar}" method="post">
-						<div class="form-group">
-							<label for="estudiante" style="font-size: 18px;">Seleccionar
-								Estudiante:</label> <select id="estudiante" name="idEstudiante"
-								class="form-control" th:each="estudiante : ${estudiantes}"
-								th:value="${estudiante.idEstudiante}"
-								th:text="${estudiante.nombre} + ' ' + ${estudiante.apellido}">
-								<option value="">-- Seleccionar Estudiante --</option>
-							</select>
-						</div>
 
-						<!-- Selector de Fecha -->
-						<div class="form-group">
-							<label for="estudiante" style="font-size: 18px;">Escoge
-								la fecha:</label> <input type="text" id="fecha" name="fechaCita"
-								class="form-control" placeholder="Selecciona la fecha" required>
-						</div>
-
-						<!-- Selector de Hora -->
-						<div class="form-group">
-							<label for="estudiante" style="font-size: 18px;">Escoge
-								la hora:</label> <input type="text" id="hora" name="horaCita"
-								class="form-control" placeholder="Selecciona la hora" required>
-						</div>
-
-						<div class="form-group">
-							<button type="submit" class="btn btn-primary"
-								style="font-size: 18px; padding: 15px 30px;">Agendar
-								Cita</button>
-						</div>
-					</form>
+				<!-- Mostrar mensaje de éxito -->
+				<div th:if="${success}" class="alert alert-success" role="alert">
+					<span th:text="${success}"></span>
 				</div>
+
+				<!-- Mostrar mensaje de error si existe -->
+				<div th:if="${error}" class="alert alert-danger" role="alert"
+					style="margin-bottom: 20px;">
+					<span th:text="${error}"></span>
+				</div>
+
+				<!-- Formulario para agendar cita -->
+				<form th:action="@{/representante/agendar-cita}" method="post">
+
+					<!-- Selector de Docente -->
+					<div class="form-group">
+						<label for="idDocente" style="font-size: 18px;">Seleccionar
+							Docente:</label> <select id="idDocente" name="idDocente"
+							class="form-control" required>
+							<option value="" disabled selected>-- Seleccionar
+								Docente --</option>
+							<th:block th:each="docente : ${docentes}">
+								<option th:value="${docente.idDocente}"
+									th:text="${docente.nombre + ' ' + docente.apellido}">
+								</option>
+							</th:block>
+						</select>
+					</div>
+
+					<!-- Selector de Horario -->
+					<div class="form-group">
+						<label for="idHorario" style="font-size: 18px;">Seleccionar
+							Horario Disponible:</label> <select id="idHorario" name="idHorario"
+							class="form-control" required>
+							<option value="" disabled selected>-- Seleccionar
+								Horario --</option>
+							<!-- Los horarios se cargarán dinámicamente -->
+						</select>
+					</div>
+
+
+					<!-- Selector de Fecha -->
+					<div class="form-group">
+						<label for="fecha" style="font-size: 18px;">Seleccionar
+							Fecha:</label> <input type="date" id="fecha" name="fecha"
+							class="form-control" required>
+					</div>
+
+					<!-- Botón para agendar cita -->
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary"
+							style="font-size: 18px; padding: 15px 30px;">Agendar
+							Cita</button>
+					</div>
+				</form>
 			</div>
 
 
@@ -251,6 +284,35 @@
 		<script th:src="@{/dist/js/waves.js}"></script>
 		<script th:src="@{/dist/js/sidebarmenu.js}"></script>
 		<script th:src="@{/dist/js/custom.min.js}"></script>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+		<script>
+    // Script para cargar horarios dinámicamente
+    document.getElementById("idDocente").addEventListener("change", function () {
+        const idDocente = this.value;
+        const horarioSelect = document.getElementById("idHorario");
+        
+        // Limpiar las opciones existentes
+        horarioSelect.innerHTML = '<option value="" disabled selected>-- Seleccionar Horario --</option>';
+
+        // Realizar la petición al backend para obtener horarios
+        fetch(`/representante/horarios/por-docente?idDocente=${idDocente}`)
+            .then(response => response.json())
+            .then(horarios => {
+                horarios.forEach(horario => {
+                    const option = document.createElement("option");
+                    option.value = horario.idHorario;
+                    option.textContent = `${horario.dia}: ${horario.horaInicio} - ${horario.horaFin}`;
+                    horarioSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                console.error("Error al cargar los horarios:", error);
+                alert("Ocurrió un error al cargar los horarios. Inténtalo nuevamente.");
+            });
+    });
+</script>
 </body>
 </html>
 

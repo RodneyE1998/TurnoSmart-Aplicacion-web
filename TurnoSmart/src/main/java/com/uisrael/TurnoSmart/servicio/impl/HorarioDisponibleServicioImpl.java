@@ -12,39 +12,38 @@ import com.uisrael.TurnoSmart.servicio.HorarioDisponibleServicio;
 
 @Service
 @Transactional
-public class HorarioDisponibleServicioImpl implements HorarioDisponibleServicio{
-	
+public class HorarioDisponibleServicioImpl implements HorarioDisponibleServicio {
+
 	@Autowired
-	private HorarioDisponibleRepositorio horarioDisponibleRepository;
+	private HorarioDisponibleRepositorio horarioRepositorio;
 
 	@Override
-	public List<HorarioDisponible> getAllHorariosDisponibles() {
+	public HorarioDisponible guardarHorario(HorarioDisponible horario) {
 		// TODO Auto-generated method stub
-		return horarioDisponibleRepository.findAll();
+		return horarioRepositorio.save(horario);
 	}
 
 	@Override
-	public HorarioDisponible getHorarioDisponibleById(Integer id) {
+	public void eliminarHorario(Integer idHorario) {
 		// TODO Auto-generated method stub
-		return horarioDisponibleRepository.findById(id).orElseThrow();
+		horarioRepositorio.deleteById(idHorario);
 	}
 
 	@Override
-	public HorarioDisponible createHorarioDisponible(HorarioDisponible horarioDisponible) {
+	public List<HorarioDisponible> obtenerHorariosPorDocente(Integer idDocente) {
 		// TODO Auto-generated method stub
-		return horarioDisponibleRepository.save(horarioDisponible);
+		return horarioRepositorio.findByDocenteIdDocente(idDocente);
 	}
 
 	@Override
-	public HorarioDisponible updateHorarioDisponible(HorarioDisponible horarioDisponible) {
-		// TODO Auto-generated method stub
-		return horarioDisponibleRepository.save(horarioDisponible);
+	public List<HorarioDisponible> obtenerTodosLosHorarios() {
+		return horarioRepositorio.findAll();
 	}
 
 	@Override
-	public void deleteHorarioDisponible(Integer id) {
-		// TODO Auto-generated method stub
-		horarioDisponibleRepository.deleteById(id);
+	public HorarioDisponible obtenerPorId(Integer idHorario) {
+		return horarioRepositorio.findById(idHorario)
+				.orElseThrow(() -> new IllegalArgumentException("Horario no encontrado con ID: " + idHorario));
 	}
 
 }
