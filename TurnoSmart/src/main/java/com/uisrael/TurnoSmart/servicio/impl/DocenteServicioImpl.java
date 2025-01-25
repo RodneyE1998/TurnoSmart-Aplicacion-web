@@ -1,5 +1,6 @@
 package com.uisrael.TurnoSmart.servicio.impl;
 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.uisrael.TurnoSmart.modelo.Docente;
+import com.uisrael.TurnoSmart.repositorio.CitaRepositorio;
 import com.uisrael.TurnoSmart.repositorio.DocenteRepositorio;
 import com.uisrael.TurnoSmart.servicio.DocenteServicio;
 
@@ -57,5 +59,7 @@ public class DocenteServicioImpl implements DocenteServicio{
     public List<Docente> obtenerTodosLosDocentes() {
         return docenteRepository.findAll();
     }
+
+	
 
 }

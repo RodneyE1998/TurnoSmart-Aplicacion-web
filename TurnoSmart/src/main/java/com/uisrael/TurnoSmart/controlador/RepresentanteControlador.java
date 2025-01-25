@@ -3,6 +3,7 @@ package com.uisrael.TurnoSmart.controlador;
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -166,7 +167,26 @@ public class RepresentanteControlador {
 	    return "CitasAgendadasRepresentante";
 	}
 
-
-
+	@PostMapping("/cancelar-cita")
+	@ResponseBody
+	public String cancelarCita(@RequestParam("idCita") Integer idCita) {
+	    try {
+	        citaServicio.cancelarCita(idCita);
+	        return "Cita cancelada exitosamente.";
+	    } catch (Exception e) {
+	        return "Error al cancelar la cita: " + e.getMessage();
+	    }
+	}
+	
+	@PostMapping("/confirmar-cita")
+	@ResponseBody
+	public String confirmarCita(@RequestParam("idCita") Integer idCita) {
+	    try {
+	        citaServicio.confirmarCita(idCita);
+	        return "Cita confirmada exitosamente.";
+	    } catch (Exception e) {
+	        return "Error al confirmar la cita: " + e.getMessage();
+	    }
+	}
 
 }

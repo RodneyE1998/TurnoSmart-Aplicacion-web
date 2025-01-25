@@ -1,15 +1,20 @@
 package com.uisrael.TurnoSmart.controlador;
 
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.uisrael.TurnoSmart.modelo.Cita;
 import com.uisrael.TurnoSmart.modelo.Docente;
@@ -123,6 +128,58 @@ public class DocenteControlador {
 
 	    return "CitasAgendadasDocente";
 	}
+	
+	@PostMapping("/modificar-cita")
+	@ResponseBody
+	public String modificarCita(@RequestBody Map<String, String> datos) {
+	    try {
+	        Integer idCita = Integer.parseInt(datos.get("idCita"));
+	        String nuevaFecha = datos.get("nuevaFecha");
+	        String nuevaHora = datos.get("nuevaHora");
+	        citaServicio.modificarCita(idCita, LocalDate.parse(nuevaFecha), LocalTime.parse(nuevaHora));
+	        return "Cita modificada exitosamente.";
+	    } catch (Exception e) {
+	        return "Error al modificar la cita: " + e.getMessage();
+	    }
+	}
+
+	
+	@PostMapping("/cancelar-cita")
+	@ResponseBody
+	public String cancelarCita(@RequestParam("idCita") Integer idCita) {
+	    try {
+	        citaServicio.cancelarCita(idCita);
+	        return "Cita cancelada exitosamente.";
+	    } catch (Exception e) {
+	        return "Error al cancelar la cita: " + e.getMessage();
+	    }
+	}
+	
+	@PostMapping("/guardar-cita")
+	@ResponseBody
+	public String guardarCita(@RequestBody Map<String, Object> datos) {
+	    Integer idCita = (Integer) datos.get("idCita");
+	    String nuevaFecha = (String) datos.get("nuevaFecha");
+	    String nuevaHora = (String) datos.get("nuevaHora");
+
+	    // Lógica para guardar la cita
+	    citaServicio.modificarCita(idCita, LocalDate.parse(nuevaFecha), LocalTime.parse(nuevaHora));
+
+	    return "Cita actualizada correctamente";
+	}
+	
+	@PostMapping("/confirmar-cita")
+	@ResponseBody
+	public String confirmarCita(@RequestParam("idCita") Integer idCita) {
+	    try {
+	        citaServicio.confirmarCita(idCita);
+	        return "Cita confirmada exitosamente.";
+	    } catch (Exception e) {
+	        return "Error al confirmar la cita: " + e.getMessage();
+	    }
+	}
+
+
 
 
 }

@@ -25,34 +25,8 @@ public class CitaControlador implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
 	
-	@Autowired
-	private CitaServicio citaService;
-	
-	@GetMapping
-    public List<Cita> getAllCitas() {
-        return citaService.getAllCitas();
-    }
-
-    @GetMapping("/{id}")
-    public Cita getCitaById(@PathVariable Integer id) {
-        return citaService.getCitaById(id);
-    }
-
-    @PostMapping
-    public Cita createCita(@RequestBody Cita cita) {
-        return citaService.createCita(cita);
-    }
-    
-    @PutMapping("/{id}")
-    public Cita updateCita(@PathVariable Integer id, @RequestBody Cita cita) {
-        return citaService.updateCita(cita);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteCita(@PathVariable Integer id) {
-        citaService.deleteCita(id);
-    }
 	
 	
 }

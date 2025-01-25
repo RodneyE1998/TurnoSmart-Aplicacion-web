@@ -1,7 +1,7 @@
 package com.uisrael.TurnoSmart.servicio.impl;
 
-
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,36 +34,6 @@ public class CitaServicioImpl implements CitaServicio {
 
 	@Autowired
 	private HorarioDisponibleRepositorio horarioRepositorio;
-
-	@Override
-	public List<Cita> getAllCitas() {
-		// TODO Auto-generated method stub
-		return citaRepositorio.findAll();
-	}
-
-	@Override
-	public Cita getCitaById(Integer id) {
-		// TODO Auto-generated method stub
-		return citaRepositorio.findById(id).orElseThrow();
-	}
-
-	@Override
-	public Cita createCita(Cita cita) {
-		// TODO Auto-generated method stub
-		return citaRepositorio.save(cita);
-	}
-
-	@Override
-	public Cita updateCita(Cita cita) {
-		// TODO Auto-generated method stub
-		return citaRepositorio.save(cita);
-	}
-
-	@Override
-	public void deleteCita(Integer id) {
-		// TODO Auto-generated method stub
-		citaRepositorio.deleteById(id);
-	}
 
 	@Override
 	@Transactional
@@ -132,5 +102,40 @@ public class CitaServicioImpl implements CitaServicio {
 		// TODO Auto-generated method stub
 		return citaRepositorio.findByRepresentanteIdRepresentante(idRepresentante);
 	}
+
+	@Override
+	@Transactional
+	public void modificarCita(Integer idCita, LocalDate nuevaFecha, LocalTime nuevaHora) {
+	    Cita cita = citaRepositorio.findById(idCita)
+	        .orElseThrow(() -> new IllegalArgumentException("Cita no encontrada"));
+	    cita.setFechaCita(nuevaFecha);
+	    cita.setHoraCita(nuevaHora);
+	    citaRepositorio.save(cita);
+	}
+
+
+	@Override
+	@Transactional
+	public void cancelarCita(Integer idCita) {
+		Cita cita = citaRepositorio.findById(idCita)
+				.orElseThrow(() -> new IllegalArgumentException("Cita no encontrada con ID: " + idCita));
+		cita.setEstadoCita("CANCELADA");
+		citaRepositorio.save(cita);
+	}
+
+	@Override
+	public void confirmarCita(Integer idCita) {
+	    // Buscar la cita por ID
+	    Cita cita = citaRepositorio.findById(idCita)
+	        .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+
+	    // Cambiar el estado a CONFIRMADA
+	    cita.setEstadoCita("CONFIRMADA");
+
+	    // Guardar los cambios en la base de datos
+	    citaRepositorio.save(cita);
+	}
+
+
 
 }
