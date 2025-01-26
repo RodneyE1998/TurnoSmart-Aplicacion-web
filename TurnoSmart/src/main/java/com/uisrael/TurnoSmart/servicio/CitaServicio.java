@@ -24,6 +24,8 @@ public interface CitaServicio {
     void confirmarCita(Integer idCita);
     
     Cita obtenerCitaPorId(Integer idCita);
+    
+    void marcarComoRealizada(Integer idCita);
 
 
 }

@@ -106,13 +106,12 @@ public class CitaServicioImpl implements CitaServicio {
 	@Override
 	@Transactional
 	public void modificarCita(Integer idCita, LocalDate nuevaFecha, LocalTime nuevaHora) {
-	    Cita cita = citaRepositorio.findById(idCita)
-	        .orElseThrow(() -> new IllegalArgumentException("Cita no encontrada"));
-	    cita.setFechaCita(nuevaFecha);
-	    cita.setHoraCita(nuevaHora);
-	    citaRepositorio.save(cita);
+		Cita cita = citaRepositorio.findById(idCita)
+				.orElseThrow(() -> new IllegalArgumentException("Cita no encontrada"));
+		cita.setFechaCita(nuevaFecha);
+		cita.setHoraCita(nuevaHora);
+		citaRepositorio.save(cita);
 	}
-
 
 	@Override
 	@Transactional
@@ -125,25 +124,34 @@ public class CitaServicioImpl implements CitaServicio {
 
 	@Override
 	public void confirmarCita(Integer idCita) {
-	    // Buscar la cita por ID
-	    Cita cita = citaRepositorio.findById(idCita)
-	        .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+		// Buscar la cita por ID
+		Cita cita = citaRepositorio.findById(idCita).orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
-	    // Cambiar el estado a CONFIRMADA
-	    cita.setEstadoCita("CONFIRMADA");
+		// Cambiar el estado a CONFIRMADA
+		cita.setEstadoCita("CONFIRMADA");
 
-	    // Guardar los cambios en la base de datos
-	    citaRepositorio.save(cita);
+		// Guardar los cambios en la base de datos
+		citaRepositorio.save(cita);
 	}
-	
+
 	@Override
 	public Cita obtenerCitaPorId(Integer idCita) {
-	    // Busca la cita por ID, lanzando excepción si no se encuentra
-	    return citaRepositorio.findById(idCita)
-	            .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + idCita));
+		// Busca la cita por ID, lanzando excepción si no se encuentra
+		return citaRepositorio.findById(idCita)
+				.orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + idCita));
 	}
 
+	@Override
+	@Transactional
+	public void marcarComoRealizada(Integer idCita) {
+		// Buscar la cita por ID
+		Cita cita = citaRepositorio.findById(idCita).orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
+		// Cambiar el estado a REALIZADA
+		cita.setEstadoCita("REALIZADA");
 
+		// Guardar el cambio
+		citaRepositorio.save(cita);
+	}
 
 }

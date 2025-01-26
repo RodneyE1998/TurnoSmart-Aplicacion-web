@@ -268,5 +268,43 @@ public class DocenteControlador {
 			return "Error al confirmar la cita: " + e.getMessage();
 		}
 	}
+	
+	@PostMapping("/citas/realizar")
+	@ResponseBody
+	public String marcarComoRealizada(@RequestParam("idCita") Integer idCita) {
+	    try {
+	        // Cambiar el estado de la cita a "REALIZADA"
+	        citaServicio.marcarComoRealizada(idCita);
+
+	        // Obtener la cita actualizada para enviar el correo
+	        Cita cita = citaServicio.obtenerCitaPorId(idCita);
+
+	        // Validar que la cita tenga un representante asociado
+	        if (cita.getRepresentante() == null) {
+	            throw new RuntimeException("No se encontró un representante asociado a esta cita.");
+	        }
+
+	        // Preparar los datos del correo
+	        String destinatario = cita.getRepresentante().getEmail(); // Correo del representante
+	        String asunto = "Confirmación de cita realizada";
+	        String mensaje = "Estimado/a " + cita.getRepresentante().getNombre() + ",\n\n" +
+	                "Le informamos que la cita realizada el " +
+	                cita.getFechaCita() + " a las " + cita.getHoraCita() + " ha sido completada con éxito.\n\n" +
+	                "Gracias por utilizar nuestra aplicación para agendar y gestionar sus citas.\n" +
+	                "No olvide seguir utilizando nuestro sistema para programar futuras reuniones.\n\n" +
+	                "Atentamente,\n" +
+	                "Colegio Antonio Flores";
+
+	        // Enviar correo electrónico
+	        emailServicio.enviarCorreo(destinatario, asunto, mensaje);
+
+	        // Retornar mensaje de éxito
+	        return "Cita marcada como realizada y correo enviado correctamente.";
+	    } catch (Exception e) {
+	        return "Error al marcar la cita como realizada: " + e.getMessage();
+	    }
+	}
+
+
 
 }

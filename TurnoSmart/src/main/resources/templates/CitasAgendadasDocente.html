@@ -301,8 +301,11 @@
 											type="button">Cancelar</button> <!-- Botón Cancelar -->
 										<button class="btn btn-danger btn-sm"
 											th:onclick="'cancelarCita(' + ${cita.idCita} + ')'"
-											type="button">Cancelar</button>
-
+											type="button">Cancelar</button> <!-- Botón Realizar -->
+										<button class="btn btn-primary btn-sm"
+											th:if="${cita.estadoCita == 'CONFIRMADA'}"
+											th:onclick="'realizarCita(' + ${cita.idCita} + ')'"
+											type="button">Realizado</button>
 									</td>
 								</tr>
 							</tbody>
@@ -352,7 +355,11 @@
 											Confirmar</button> <!-- Botón Cancelar -->
 										<button class="btn btn-danger btn-sm"
 											th:onclick="'cancelarCita(' + ${cita.idCita} + ')'">
-											Cancelar</button>
+											Cancelar</button> <!-- Botón Realizar -->
+										<button class="btn btn-primary btn-sm"
+											th:if="${cita.estadoCita == 'CONFIRMADA'}"
+											th:onclick="'realizarCita(' + ${cita.idCita} + ')'"
+											type="button">Realizado</button>
 									</td>
 
 								</tr>
@@ -567,5 +574,30 @@ function confirmarCita(idCita) {
     }
 }
 </script>
+
+<script>
+    function realizarCita(idCita) {
+        if (confirm("¿Está seguro de marcar esta cita como realizada?")) {
+            fetch('/docente/citas/realizar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: new URLSearchParams({
+                    idCita: idCita
+                })
+            })
+            .then(response => response.text())
+            .then(message => {
+                alert(message);
+                location.reload(); // Refrescar la página para reflejar los cambios
+            })
+            .catch(error => {
+                alert("Error al marcar la cita como realizada: " + error);
+            });
+        }
+    }
+</script>
+
 </body>
 </html>
