@@ -135,6 +135,14 @@ public class CitaServicioImpl implements CitaServicio {
 	    // Guardar los cambios en la base de datos
 	    citaRepositorio.save(cita);
 	}
+	
+	@Override
+	public Cita obtenerCitaPorId(Integer idCita) {
+	    // Busca la cita por ID, lanzando excepción si no se encuentra
+	    return citaRepositorio.findById(idCita)
+	            .orElseThrow(() -> new RuntimeException("Cita no encontrada con ID: " + idCita));
+	}
+
 
 
 

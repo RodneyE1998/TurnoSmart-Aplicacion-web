@@ -22,7 +22,8 @@ public interface CitaServicio {
     void cancelarCita(Integer idCita);
     
     void confirmarCita(Integer idCita);
+    
+    Cita obtenerCitaPorId(Integer idCita);
 
-	
 
 }

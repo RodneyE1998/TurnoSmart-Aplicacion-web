@@ -19,8 +19,10 @@ import com.uisrael.TurnoSmart.modelo.Cita;
 import com.uisrael.TurnoSmart.modelo.Docente;
 import com.uisrael.TurnoSmart.modelo.HorarioDisponible;
 import com.uisrael.TurnoSmart.modelo.Representante;
+import com.uisrael.TurnoSmart.repositorio.DocenteRepositorio;
 import com.uisrael.TurnoSmart.servicio.CitaServicio;
 import com.uisrael.TurnoSmart.servicio.DocenteServicio;
+import com.uisrael.TurnoSmart.servicio.EmailServicio;
 import com.uisrael.TurnoSmart.servicio.HorarioDisponibleServicio;
 import com.uisrael.TurnoSmart.servicio.RepresentanteServicio;
 
@@ -32,13 +34,18 @@ public class RepresentanteControlador {
 	private final DocenteServicio docenteServicio;
 	private final CitaServicio citaServicio;
 	private final RepresentanteServicio representanteServicio;
+	private final EmailServicio emailServicio;
+	private final DocenteRepositorio docenteRepositorio;
 
 	public RepresentanteControlador(HorarioDisponibleServicio horarioServicio, DocenteServicio docenteServicio,
-			CitaServicio citaServicio, RepresentanteServicio representanteServicio) {
+			CitaServicio citaServicio, RepresentanteServicio representanteServicio, EmailServicio emailServicio,
+			DocenteRepositorio docenteRepositorio) {
 		this.horarioServicio = horarioServicio;
 		this.docenteServicio = docenteServicio;
 		this.citaServicio = citaServicio;
 		this.representanteServicio = representanteServicio;
+		this.emailServicio = emailServicio;
+		this.docenteRepositorio = docenteRepositorio;
 	}
 
 	@GetMapping("/PrincipalRepresentante")
@@ -98,14 +105,34 @@ public class RepresentanteControlador {
 			// Llamar al servicio para agendar la cita
 			citaServicio.agendarCitaPorRepresentante(idDocente, idHorario, representante, fecha);
 
+			// Obtener el docente para enviar el correo
+			Docente docente = docenteRepositorio.findById(idDocente)
+					.orElseThrow(() -> new RuntimeException("Docente no encontrado con ID: " + idDocente));
+
+			// Crear los datos del correo
+			String destinatario = docente.getEmail(); // Correo del docente
+			String asunto = "Nueva cita agendada CEIAF";
+			String mensaje = "Estimado/a liceniado/a " + docente.getNombre() + " " + docente.getApellido() + ",\n\n"
+					+ "El representante " + representante.getNombre() + " " + representante.getApellido()
+					+ " ha agendado una nueva cita para la fecha:\n" + "Fecha: " + fecha + "\n" + "Hora: "
+					+ horario.getHoraInicio() + "\n\n" + "Por favor, revise el sistema para más detalles y espera su confirmación.\n\n"
+					+ "Atentamente,\n" + "Colegio Antonio Flores";
+
+			// Enviar el correo
+			emailServicio.enviarCorreo(destinatario, asunto, mensaje);
+
 			// Mensaje de éxito al modelo
-			model.addAttribute("success", "La cita fue agendada correctamente.");
+			model.addAttribute("success", "La cita fue agendada correctamente y se notificó al docente por correo.");
 
 			// Retornar directamente a la vista
 			return "CitasRepresentantes";
 		} catch (IllegalArgumentException e) {
 			// Agregar mensaje de error al modelo y redirigir al formulario
 			model.addAttribute("error", e.getMessage());
+			return "CitasRepresentantes";
+		} catch (Exception e) {
+			// Manejar cualquier otro error
+			model.addAttribute("error", "Error al agendar la cita: " + e.getMessage());
 			return "CitasRepresentantes";
 		}
 	}
@@ -146,47 +173,85 @@ public class RepresentanteControlador {
 			throw new IllegalArgumentException("Día inválido: " + diaSemana);
 		}
 	}
-	
+
 	@GetMapping("/citas-agendadas")
 	public String listarCitasRepresentante(Principal principal, Model model) {
-	    // Obtener el representante autenticado
-	    String username = principal.getName();
-	    Representante representante = representanteServicio.obtenerPorUsuario(username);
+		// Obtener el representante autenticado
+		String username = principal.getName();
+		Representante representante = representanteServicio.obtenerPorUsuario(username);
 
-	    // Separar las citas en dos listas
-	    List<Cita> citasPorRepresentante = citaServicio.obtenerCitasPorRepresentante(representante.getIdRepresentante())
-	        .stream().filter(cita -> cita.getEstudiante() == null).collect(Collectors.toList());
+		// Separar las citas en dos listas
+		List<Cita> citasPorRepresentante = citaServicio.obtenerCitasPorRepresentante(representante.getIdRepresentante())
+				.stream().filter(cita -> cita.getEstudiante() == null).collect(Collectors.toList());
 
-	    List<Cita> citasPorDocente = citaServicio.obtenerCitasPorRepresentante(representante.getIdRepresentante())
-	        .stream().filter(cita -> cita.getEstudiante() != null).collect(Collectors.toList());
+		List<Cita> citasPorDocente = citaServicio.obtenerCitasPorRepresentante(representante.getIdRepresentante())
+				.stream().filter(cita -> cita.getEstudiante() != null).collect(Collectors.toList());
 
-	    // Pasar las citas al modelo
-	    model.addAttribute("citasPorRepresentante", citasPorRepresentante);
-	    model.addAttribute("citasPorDocente", citasPorDocente);
+		// Pasar las citas al modelo
+		model.addAttribute("citasPorRepresentante", citasPorRepresentante);
+		model.addAttribute("citasPorDocente", citasPorDocente);
 
-	    return "CitasAgendadasRepresentante";
+		return "CitasAgendadasRepresentante";
 	}
 
 	@PostMapping("/cancelar-cita")
 	@ResponseBody
 	public String cancelarCita(@RequestParam("idCita") Integer idCita) {
-	    try {
-	        citaServicio.cancelarCita(idCita);
-	        return "Cita cancelada exitosamente.";
-	    } catch (Exception e) {
-	        return "Error al cancelar la cita: " + e.getMessage();
-	    }
+		try {
+			// Cambiar el estado de la cita
+			citaServicio.cancelarCita(idCita);
+
+			// Obtener la cita para enviar el correo
+			Cita cita = citaServicio.obtenerCitaPorId(idCita);
+
+			// Validar que existan docentes asociados
+			if (cita.getDocentes() != null && !cita.getDocentes().isEmpty()) {
+				String destinatario = cita.getDocentes().get(0).getEmail(); // Correo del docente
+				String asunto = "Cancelación de cita CEIAF";
+				String mensaje = "Estimado/a liceniado/a " + cita.getDocentes().get(0).getNombre() + " "
+						+ cita.getDocentes().get(0).getApellido() + ",\n\n" + "El representante "
+						+ cita.getRepresentante().getNombre() + " " + cita.getRepresentante().getApellido()
+						+ " ha cancelado la cita programada para:\n" + "Fecha: " + cita.getFechaCita() + "\n" + "Hora: "
+						+ cita.getHoraCita() + "\n\n" + "Atentamente,\n" + "Colegio Antonio Flores";
+
+				// Enviar el correo
+				emailServicio.enviarCorreo(destinatario, asunto, mensaje);
+			}
+
+			return "Cita cancelada y correo enviado correctamente.";
+		} catch (Exception e) {
+			return "Error al cancelar la cita: " + e.getMessage();
+		}
 	}
-	
+
 	@PostMapping("/confirmar-cita")
 	@ResponseBody
 	public String confirmarCita(@RequestParam("idCita") Integer idCita) {
-	    try {
-	        citaServicio.confirmarCita(idCita);
-	        return "Cita confirmada exitosamente.";
-	    } catch (Exception e) {
-	        return "Error al confirmar la cita: " + e.getMessage();
-	    }
+		try {
+			// Cambiar el estado de la cita
+			citaServicio.confirmarCita(idCita);
+
+			// Obtener la cita para enviar el correo
+			Cita cita = citaServicio.obtenerCitaPorId(idCita);
+
+			// Validar que existan docentes asociados
+			if (cita.getDocentes() != null && !cita.getDocentes().isEmpty()) {
+				String destinatario = cita.getDocentes().get(0).getEmail(); // Correo del docente
+				String asunto = "Confirmación de cita CEIAF";
+				String mensaje = "Estimado/a liceniado/a " + cita.getDocentes().get(0).getNombre() + " "
+						+ cita.getDocentes().get(0).getApellido() + ",\n\n" + "El representante "
+						+ cita.getRepresentante().getNombre() + " " + cita.getRepresentante().getApellido()
+						+ " ha confirmado la cita programada para:\n" + "Fecha: " + cita.getFechaCita() + "\n"
+						+ "Hora: " + cita.getHoraCita() + "\n\n" + "Atentamente,\n" + "Colegio Antonio Flores";
+
+				// Enviar el correo
+				emailServicio.enviarCorreo(destinatario, asunto, mensaje);
+			}
+
+			return "Cita confirmada y correo enviado correctamente.";
+		} catch (Exception e) {
+			return "Error al confirmar la cita: " + e.getMessage();
+		}
 	}
 
 }
