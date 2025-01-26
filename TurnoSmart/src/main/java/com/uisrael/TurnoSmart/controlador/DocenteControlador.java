@@ -49,9 +49,23 @@ public class DocenteControlador {
 	}
 
 	@GetMapping("/Perfil")
-	public String mostrarPerfilDocente() {
-		return "PerfilDocente";
+	public String mostrarPerfilDocente(Principal principal, Model model) {
+	    // Obtener el usuario autenticado
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    // Obtener el docente asociado al usuario
+	    Docente docente = usuario.getDocente();
+	    if (docente == null) {
+	        throw new RuntimeException("El usuario no tiene un docente asociado.");
+	    }
+
+	    // Pasar los datos del docente al modelo
+	    model.addAttribute("docente", docente);
+	    return "PerfilDocente"; 
 	}
+
 
 	@GetMapping("/citas")
 	public String mostrarPaginaCitas(Model model, Principal principal) {

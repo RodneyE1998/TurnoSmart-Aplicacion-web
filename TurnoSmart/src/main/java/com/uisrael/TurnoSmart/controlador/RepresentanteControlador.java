@@ -17,9 +17,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.uisrael.TurnoSmart.modelo.Cita;
 import com.uisrael.TurnoSmart.modelo.Docente;
+import com.uisrael.TurnoSmart.modelo.Estudiante;
 import com.uisrael.TurnoSmart.modelo.HorarioDisponible;
 import com.uisrael.TurnoSmart.modelo.Representante;
+import com.uisrael.TurnoSmart.modelo.Usuario;
 import com.uisrael.TurnoSmart.repositorio.DocenteRepositorio;
+import com.uisrael.TurnoSmart.repositorio.UsuarioRepositorio;
 import com.uisrael.TurnoSmart.servicio.CitaServicio;
 import com.uisrael.TurnoSmart.servicio.DocenteServicio;
 import com.uisrael.TurnoSmart.servicio.EmailServicio;
@@ -36,16 +39,18 @@ public class RepresentanteControlador {
 	private final RepresentanteServicio representanteServicio;
 	private final EmailServicio emailServicio;
 	private final DocenteRepositorio docenteRepositorio;
+	private final UsuarioRepositorio usuarioRepositorio;
 
 	public RepresentanteControlador(HorarioDisponibleServicio horarioServicio, DocenteServicio docenteServicio,
 			CitaServicio citaServicio, RepresentanteServicio representanteServicio, EmailServicio emailServicio,
-			DocenteRepositorio docenteRepositorio) {
+			DocenteRepositorio docenteRepositorio, UsuarioRepositorio usuarioRepositorio) {
 		this.horarioServicio = horarioServicio;
 		this.docenteServicio = docenteServicio;
 		this.citaServicio = citaServicio;
 		this.representanteServicio = representanteServicio;
 		this.emailServicio = emailServicio;
 		this.docenteRepositorio = docenteRepositorio;
+		this.usuarioRepositorio = usuarioRepositorio;
 	}
 
 	@GetMapping("/PrincipalRepresentante")
@@ -64,8 +69,26 @@ public class RepresentanteControlador {
 	}
 
 	@GetMapping("/Perfil-Representante")
-	public String mostrarPerfilRepresentante() {
-		return "PerfilRepresentante";
+	public String mostrarPerfilRepresentante(Principal principal, Model model) {
+	    // Obtener el usuario autenticado
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    // Obtener el representante asociado al usuario
+	    Representante representante = usuario.getRepresentante();
+	    if (representante == null) {
+	        throw new RuntimeException("El usuario no tiene un representante asociado.");
+	    }
+
+	    // Obtener los estudiantes asociados al representante
+	    List<Estudiante> estudiantes = representante.getEstudiantes();
+
+	    // Pasar los datos al modelo
+	    model.addAttribute("representante", representante);
+	    model.addAttribute("estudiantes", estudiantes);
+
+	    return "PerfilRepresentante";
 	}
 
 	@GetMapping("/Citas")
