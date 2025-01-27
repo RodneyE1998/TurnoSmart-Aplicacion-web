@@ -3,6 +3,8 @@ package com.uisrael.TurnoSmart.modelo;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -31,21 +33,26 @@ public class Docente implements Serializable {
 	private String telefono;
 	private String numeroIdentificacion;
 
-	@OneToMany(mappedBy = "docente", fetch = FetchType.EAGER)
-	private List<HorarioDisponible> horariosDisponibles;
+	 @OneToMany(mappedBy = "docente", fetch = FetchType.LAZY)
+	    @JsonIgnore
+	    @ToString.Exclude
+	    private List<HorarioDisponible> horariosDisponibles;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "citas_docentes", joinColumns = @JoinColumn(name = "id_docente"), inverseJoinColumns = @JoinColumn(name = "id_cita"))
-	@ToString.Exclude
+	@JsonIgnore
+    @ToString.Exclude
 	private List<Cita> citas;
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "rendimientos_docentes", joinColumns = @JoinColumn(name = "id_docente"), inverseJoinColumns = @JoinColumn(name = "id_rendimiento"))
-	@ToString.Exclude
+	@JsonIgnore
+    @ToString.Exclude
 	private List<Rendimiento> rendimientos;
 
 	@ManyToMany(mappedBy = "docentes")
-	@ToString.Exclude
+	@JsonIgnore
+    @ToString.Exclude
 	private List<Estudiante> estudiantes;
 
 }

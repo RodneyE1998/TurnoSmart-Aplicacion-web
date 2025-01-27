@@ -12,5 +12,10 @@ public interface RepresentanteRepositorio extends JpaRepository<Representante, I
 	Optional<Representante> findByIdRepresentante(Integer idRepresentante);
     
     void deleteByIdRepresentante(Integer idRepresentante);
+    
+    Optional<Representante> findByUsuarioUsername(String username);
+
+    
+ 
 
 }

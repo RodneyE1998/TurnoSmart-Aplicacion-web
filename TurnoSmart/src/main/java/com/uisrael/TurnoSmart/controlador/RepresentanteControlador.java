@@ -3,7 +3,6 @@ package com.uisrael.TurnoSmart.controlador;
 import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,25 +69,25 @@ public class RepresentanteControlador {
 
 	@GetMapping("/Perfil-Representante")
 	public String mostrarPerfilRepresentante(Principal principal, Model model) {
-	    // Obtener el usuario autenticado
-	    String username = principal.getName();
-	    Usuario usuario = usuarioRepositorio.findByUsername(username)
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		// Obtener el usuario autenticado
+		String username = principal.getName();
+		Usuario usuario = usuarioRepositorio.findByUsername(username)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	    // Obtener el representante asociado al usuario
-	    Representante representante = usuario.getRepresentante();
-	    if (representante == null) {
-	        throw new RuntimeException("El usuario no tiene un representante asociado.");
-	    }
+		// Obtener el representante asociado al usuario
+		Representante representante = usuario.getRepresentante();
+		if (representante == null) {
+			throw new RuntimeException("El usuario no tiene un representante asociado.");
+		}
 
-	    // Obtener los estudiantes asociados al representante
-	    List<Estudiante> estudiantes = representante.getEstudiantes();
+		// Obtener los estudiantes asociados al representante
+		List<Estudiante> estudiantes = representante.getEstudiantes();
 
-	    // Pasar los datos al modelo
-	    model.addAttribute("representante", representante);
-	    model.addAttribute("estudiantes", estudiantes);
+		// Pasar los datos al modelo
+		model.addAttribute("representante", representante);
+		model.addAttribute("estudiantes", estudiantes);
 
-	    return "PerfilRepresentante";
+		return "PerfilRepresentante";
 	}
 
 	@GetMapping("/Citas")
@@ -138,8 +137,9 @@ public class RepresentanteControlador {
 			String mensaje = "Estimado/a liceniado/a " + docente.getNombre() + " " + docente.getApellido() + ",\n\n"
 					+ "El representante " + representante.getNombre() + " " + representante.getApellido()
 					+ " ha agendado una nueva cita para la fecha:\n" + "Fecha: " + fecha + "\n" + "Hora: "
-					+ horario.getHoraInicio() + "\n\n" + "Por favor, revise el sistema para más detalles y espera su confirmación.\n\n"
-					+ "Atentamente,\n" + "Colegio Antonio Flores";
+					+ horario.getHoraInicio() + "\n\n"
+					+ "Por favor, revise el sistema para más detalles y espera su confirmación.\n\n" + "Atentamente,\n"
+					+ "Colegio Antonio Flores";
 
 			// Enviar el correo
 			emailServicio.enviarCorreo(destinatario, asunto, mensaje);
@@ -275,6 +275,13 @@ public class RepresentanteControlador {
 		} catch (Exception e) {
 			return "Error al confirmar la cita: " + e.getMessage();
 		}
+	}
+
+	@GetMapping("/docentes-por-estudiante")
+	@ResponseBody
+	public List<Docente> obtenerDocentesPorEstudiante(Principal principal) {
+		String username = principal.getName();
+		return representanteServicio.obtenerDocentesAsociados(username);
 	}
 
 }

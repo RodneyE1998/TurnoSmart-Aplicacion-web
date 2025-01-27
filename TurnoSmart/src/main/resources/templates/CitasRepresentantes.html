@@ -225,11 +225,6 @@
 							class="form-control" required>
 							<option value="" disabled selected>-- Seleccionar
 								Docente --</option>
-							<th:block th:each="docente : ${docentes}">
-								<option th:value="${docente.idDocente}"
-									th:text="${docente.nombre + ' ' + docente.apellido}">
-								</option>
-							</th:block>
 						</select>
 					</div>
 
@@ -311,6 +306,24 @@
                 console.error("Error al cargar los horarios:", error);
                 alert("Ocurrió un error al cargar los horarios. Inténtalo nuevamente.");
             });
+    });
+</script>
+
+		<script>
+    // Cargar docentes asociados al representante al cargar la página
+    document.addEventListener("DOMContentLoaded", function() {
+        fetch('/representante/docentes-por-estudiante')
+            .then(response => response.json())
+            .then(docentes => {
+                const selectDocente = document.getElementById('idDocente');
+                docentes.forEach(docente => {
+                    const option = document.createElement('option');
+                    option.value = docente.idDocente;
+                    option.textContent = docente.nombre + ' ' + docente.apellido;
+                    selectDocente.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Error al cargar los docentes:', error));
     });
 </script>
 </body>

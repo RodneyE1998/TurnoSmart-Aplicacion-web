@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -35,11 +38,13 @@ public class Usuario implements UserDetails, Serializable{/**
     
     @ManyToOne
     @JoinColumn(name = "id_docente")
+    @JsonIgnore
     @ToString.Exclude
     private Docente docente;
 
     @ManyToOne
     @JoinColumn(name = "id_representante")
+    @JsonBackReference
     @ToString.Exclude
     private Representante representante;
     

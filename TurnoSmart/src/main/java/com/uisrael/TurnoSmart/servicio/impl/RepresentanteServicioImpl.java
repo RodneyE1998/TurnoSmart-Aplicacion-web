@@ -2,11 +2,13 @@ package com.uisrael.TurnoSmart.servicio.impl;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.uisrael.TurnoSmart.modelo.Docente;
 import com.uisrael.TurnoSmart.modelo.Representante;
 import com.uisrael.TurnoSmart.modelo.Usuario;
 import com.uisrael.TurnoSmart.repositorio.RepresentanteRepositorio;
@@ -61,6 +63,18 @@ public class RepresentanteServicioImpl implements RepresentanteServicio {
         Usuario usuario = usuarioRepositorio.findByUsername(username)
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         return usuario.getRepresentante();
+    }
+
+	@Override
+    public List<Docente> obtenerDocentesAsociados(String username) {
+        Representante representante = representanteRepository.findByUsuarioUsername(username)
+                .orElseThrow(() -> new RuntimeException("Representante no encontrado"));
+        
+        return representante.getEstudiantes()
+                .stream()
+                .flatMap(estudiante -> estudiante.getDocentes().stream())
+                .distinct()
+                .collect(Collectors.toList());
     }
 
 }
