@@ -26,6 +26,8 @@ public interface CitaServicio {
     Cita obtenerCitaPorId(Integer idCita);
     
     void marcarComoRealizada(Integer idCita);
+    
+    Cita obtenerCitaPorRepresentanteYFecha(Integer idRepresentante, LocalDate fecha, LocalTime hora);
 
 
 }

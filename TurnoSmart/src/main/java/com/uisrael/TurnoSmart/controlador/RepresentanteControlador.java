@@ -111,54 +111,57 @@ public class RepresentanteControlador {
 
 	@PostMapping("/agendar-cita")
 	public String agendarCita(@RequestParam("idDocente") Integer idDocente,
-			@RequestParam("idHorario") Integer idHorario, @RequestParam("fecha") LocalDate fecha, Principal principal,
-			Model model) {
-		try {
-			// Validar que la fecha seleccionada coincida con el día del horario
-			HorarioDisponible horario = horarioServicio.obtenerPorId(idHorario);
-			if (!validarFechaHorario(fecha, horario)) {
-				throw new IllegalArgumentException("La fecha seleccionada no coincide con el día del horario.");
-			}
+	        @RequestParam("idHorario") Integer idHorario, @RequestParam("fecha") LocalDate fecha, Principal principal,
+	        Model model) {
+	    try {
+	        // Validar que la fecha seleccionada coincida con el día del horario
+	        HorarioDisponible horario = horarioServicio.obtenerPorId(idHorario);
+	        if (!validarFechaHorario(fecha, horario)) {
+	            throw new IllegalArgumentException("La fecha seleccionada no coincide con el día del horario.");
+	        }
 
-			// Obtener el representante autenticado
-			String username = principal.getName();
-			Representante representante = representanteServicio.obtenerPorUsuario(username);
+	        // Obtener el representante autenticado
+	        String username = principal.getName();
+	        Representante representante = representanteServicio.obtenerPorUsuario(username);
 
-			// Llamar al servicio para agendar la cita
-			citaServicio.agendarCitaPorRepresentante(idDocente, idHorario, representante, fecha);
+	        // Agendar la cita
+	        citaServicio.agendarCitaPorRepresentante(idDocente, idHorario, representante, fecha);
 
-			// Obtener el docente para enviar el correo
-			Docente docente = docenteRepositorio.findById(idDocente)
-					.orElseThrow(() -> new RuntimeException("Docente no encontrado con ID: " + idDocente));
+	        // Obtener la cita recién creada (buscando por representante y fecha)
+	        Cita cita = citaServicio.obtenerCitaPorRepresentanteYFecha(representante.getIdRepresentante(), fecha, horario.getHoraInicio());
 
-			// Crear los datos del correo
-			String destinatario = docente.getEmail(); // Correo del docente
-			String asunto = "Nueva cita agendada CEIAF";
-			String mensaje = "Estimado/a liceniado/a " + docente.getNombre() + " " + docente.getApellido() + ",\n\n"
-					+ "El representante " + representante.getNombre() + " " + representante.getApellido()
-					+ " ha agendado una nueva cita para la fecha:\n" + "Fecha: " + fecha + "\n" + "Hora: "
-					+ horario.getHoraInicio() + "\n\n"
-					+ "Por favor, revise el sistema para más detalles y espera su confirmación.\n\n" + "Atentamente,\n"
-					+ "Colegio Antonio Flores";
+	        if (cita == null) {
+	            throw new RuntimeException("Error al recuperar la cita agendada.");
+	        }
 
-			// Enviar el correo
-			emailServicio.enviarCorreo(destinatario, asunto, mensaje);
+	        // Obtener el docente para enviar el correo
+	        Docente docente = docenteRepositorio.findById(idDocente)
+	                .orElseThrow(() -> new RuntimeException("Docente no encontrado con ID: " + idDocente));
 
-			// Mensaje de éxito al modelo
-			model.addAttribute("success", "La cita fue agendada correctamente y se notificó al docente por correo.");
+	        // Obtener datos para el correo
+	        String destinatario = docente.getEmail();
+	        String nombreRepresentante = representante.getNombre();
+	        String nombreDocente = docente.getNombre() + " " + docente.getApellido();
+	        String hora = horario.getHoraInicio().toString();
+	        Integer idCita = cita.getIdCita();
 
-			// Retornar directamente a la vista
-			return "CitasRepresentantes";
-		} catch (IllegalArgumentException e) {
-			// Agregar mensaje de error al modelo y redirigir al formulario
-			model.addAttribute("error", e.getMessage());
-			return "CitasRepresentantes";
-		} catch (Exception e) {
-			// Manejar cualquier otro error
-			model.addAttribute("error", "Error al agendar la cita: " + e.getMessage());
-			return "CitasRepresentantes";
-		}
+	        // Enviar correo con botón de confirmación
+	        emailServicio.enviarCorreoConfirmacionCitaDocente(destinatario, nombreDocente, nombreRepresentante, fecha.toString(), hora, idCita);
+
+	        // Mensaje de éxito al modelo
+	        model.addAttribute("success", "La cita fue agendada correctamente y se notificó al docente por correo.");
+
+	        return "CitasRepresentantes";
+
+	    } catch (IllegalArgumentException e) {
+	        model.addAttribute("error", e.getMessage());
+	        return "CitasRepresentantes";
+	    } catch (Exception e) {
+	        model.addAttribute("error", "Error al agendar la cita: " + e.getMessage());
+	        return "CitasRepresentantes";
+	    }
 	}
+
 
 	@GetMapping("/horarios/por-docente")
 	@ResponseBody
@@ -283,5 +286,27 @@ public class RepresentanteControlador {
 		String username = principal.getName();
 		return representanteServicio.obtenerDocentesAsociados(username);
 	}
+	
+	@GetMapping("/docentes/disponibles")
+	@ResponseBody
+	public List<Docente> obtenerDocentesDisponibles(Principal principal) {
+	    // Obtener el usuario autenticado
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    // Obtener el representante asociado al usuario
+	    Representante representante = usuario.getRepresentante();
+	    if (representante == null) {
+	        throw new RuntimeException("El usuario no tiene un representante asociado.");
+	    }
+
+	    // Retornar la lista de docentes en JSON
+	    return docenteServicio.obtenerDocentesPorRepresentante(representante.getIdRepresentante());
+	}
+	
+	
+
+
 
 }

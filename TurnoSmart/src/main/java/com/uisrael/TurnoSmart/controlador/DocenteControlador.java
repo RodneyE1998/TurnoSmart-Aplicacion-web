@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import com.uisrael.TurnoSmart.modelo.Representante;
 import com.uisrael.TurnoSmart.modelo.Usuario;
 import com.uisrael.TurnoSmart.repositorio.UsuarioRepositorio;
 import com.uisrael.TurnoSmart.servicio.CitaServicio;
+import com.uisrael.TurnoSmart.servicio.DocenteServicio;
 import com.uisrael.TurnoSmart.servicio.EmailServicio;
 import com.uisrael.TurnoSmart.servicio.EstudianteServicio;
 
@@ -34,13 +36,15 @@ public class DocenteControlador {
 	private final CitaServicio citaServicio;
 	private final EstudianteServicio estudianteServicio;
 	private final EmailServicio emailServicio;
+	private final DocenteServicio docenteServicio;
 
 	public DocenteControlador(UsuarioRepositorio usuarioRepositorio, CitaServicio citaServicio,
-			EstudianteServicio estudianteServicio, EmailServicio emailServicio) {
+			EstudianteServicio estudianteServicio, EmailServicio emailServicio, DocenteServicio docenteServicio) {
 		this.usuarioRepositorio = usuarioRepositorio;
 		this.citaServicio = citaServicio;
 		this.estudianteServicio = estudianteServicio;
 		this.emailServicio = emailServicio;
+		this.docenteServicio = docenteServicio;
 	}
 
 	@GetMapping("/PrincipalDocente")
@@ -88,44 +92,41 @@ public class DocenteControlador {
 	}
 
 	@PostMapping("/citas/agendar")
-	public String agendarCitaPorDocente(@ModelAttribute Cita cita, @RequestParam("idEstudiante") Integer idEstudiante,
-			Principal principal) {
-		try {
-			// Obtener el ID del docente basado en el usuario autenticado
-			String username = principal.getName();
-			Usuario usuario = usuarioRepositorio.findByUsername(username)
-					.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+	public String agendarCitaPorDocente(@ModelAttribute Cita cita, @RequestParam("idEstudiante") Integer idEstudiante, Principal principal) {
+	    try {
+	        // Obtener usuario autenticado
+	        String username = principal.getName();
+	        Usuario usuario = usuarioRepositorio.findByUsername(username)
+	                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-			Docente docente = usuario.getDocente();
-			if (docente == null) {
-				throw new RuntimeException("El usuario no tiene un docente asociado");
-			}
+	        Docente docente = usuario.getDocente();
+	        if (docente == null) {
+	            throw new RuntimeException("El usuario no tiene un docente asociado");
+	        }
 
-			// Llamar al servicio para agendar la cita
-			citaServicio.agendarCitaPorDocente(cita, idEstudiante, docente.getIdDocente());
+	        // Agendar la cita
+	        citaServicio.agendarCitaPorDocente(cita, idEstudiante, docente.getIdDocente());
 
-			// Obtener los datos necesarios para enviar el correo
-			Estudiante estudiante = cita.getEstudiante();
-			Representante representante = estudiante.getRepresentante();
+	        // Obtener datos para enviar el correo
+	        Representante representante = cita.getRepresentante();
+	        String destinatario = representante.getEmail();
+	        String nombreRepresentante = representante.getNombre();
+	        String nombreDocente = docente.getNombre() + " " + docente.getApellido();
+	        String fecha = cita.getFechaCita().toString();
+	        String hora = cita.getHoraCita().toString();
+	        Integer idCita = cita.getIdCita();
 
-			String destinatario = representante.getEmail();
-			String asunto = "Nueva Cita Agendada CEIAF";
-			String mensaje = "Se ha agendado una nueva cita con el docente " + docente.getNombre() + " "
-					+ docente.getApellido() + " para la fecha " + cita.getFechaCita() + " a las " + cita.getHoraCita()
-					+ ".";
+	        // Enviar correo con botón de confirmación
+	        emailServicio.enviarCorreoConfirmacionCita(destinatario, nombreRepresentante, nombreDocente, fecha, hora, idCita);
 
-			// Enviar el correo al representante
-			emailServicio.enviarCorreo(destinatario, asunto, mensaje);
+	        return "redirect:/docente/citas/agendadas";
 
-			// Redirigir a la página de éxito o listado
-			return "redirect:/docente/citas/agendadas";
-
-		} catch (Exception e) {
-			// Manejar errores y redirigir a una página de error si es necesario
-			e.printStackTrace();
-			return "redirect:/docente/citas/agendadas?error";
-		}
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return "redirect:/docente/citas/agendadas?error";
+	    }
 	}
+
 
 	@GetMapping("/citas/agendadas")
 	public String mostrarCitasAgendadas(Model model, Principal principal) {
@@ -204,7 +205,7 @@ public class DocenteControlador {
 	                " ha cambiado la fecha y hora de su cita.\n\n" +
 	                "Nueva fecha: " + nuevaFecha + "\n" +
 	                "Nueva hora: " + nuevaHora + "\n\n" +
-	                "Por favor, confirme la nueva cita desde el sistema.\n\n" +
+	                "Por favor, revise su disponibilidad caso contrario ingrese al sisteme y cancele la cita.\n\n" +
 	                "Atentamente,\n" +
 	                "Colegio Antonio Flores";
 
@@ -304,6 +305,13 @@ public class DocenteControlador {
 	        return "Error al marcar la cita como realizada: " + e.getMessage();
 	    }
 	}
+	
+	/*@GetMapping("/disponibles/{idRepresentante}")
+	@ResponseBody
+	public List<Docente> obtenerDocentesDisponibles(@PathVariable Integer idRepresentante) {
+	    return docenteServicio.obtenerDocentesPorRepresentante(idRepresentante);
+	}*/
+
 
 
 

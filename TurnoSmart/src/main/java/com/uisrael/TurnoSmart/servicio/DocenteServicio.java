@@ -20,6 +20,7 @@ public interface DocenteServicio {
     
     List<Docente> obtenerTodosLosDocentes();
     
+    List<Docente> obtenerDocentesPorRepresentante(Integer idRepresentante);
     
 
 }

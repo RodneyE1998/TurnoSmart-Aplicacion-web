@@ -14,6 +14,8 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 import com.uisrael.TurnoSmart.servicio.impl.UserDetailsServicioImpl;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -40,28 +42,48 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	    http
-	        .csrf().disable() // Desactiva temporalmente CSRF
-	        .authorizeHttpRequests(authorize -> authorize 
-	            .requestMatchers("/docente/**").hasAuthority("DOCENTE")  // Acceso para docentes
-	            .requestMatchers("/representante/**").hasAuthority("REPRESENTANTE")  // Acceso para representantes
-	            .requestMatchers("/login").permitAll()  // Rutas públicas
-	            .requestMatchers("/assets/**", "/dist/**", "/src/**", "/webjars/**").permitAll() // Rutas públicas para recursos estáticos
-	            .anyRequest().authenticated()  // Cualquier otra ruta requiere autenticación
+	        .csrf().disable()
+	        .authorizeHttpRequests(authorize -> authorize
+	            .requestMatchers("/docente/**").hasAuthority("DOCENTE")
+	            .requestMatchers("/representante/**").hasAuthority("REPRESENTANTE")
+	            .requestMatchers("/login").permitAll() // Permitimos acceso al login
+	            .requestMatchers("/assets/**", "/dist/**", "/src/**", "/webjars/**").permitAll()
+	            .anyRequest().authenticated()
 	        )
 	        .formLogin(form -> form
-	            .loginPage("/login")  // Página de inicio de sesión personalizada
-	            .failureUrl("/login?error=true") // Redirige con un parámetro si hay error
-	            .defaultSuccessUrl("/default", true)  // Redirección a "/default" después del login
+	            .loginPage("/login") // Página de inicio de sesión para la web
+	            .successHandler((request, response, authentication) -> {
+	                // Devuelve SIEMPRE JSON si la solicitud viene desde Postman o la app móvil
+	                String requestedWith = request.getHeader("X-Requested-With");
+	                if ("XMLHttpRequest".equals(requestedWith) || request.getHeader("User-Agent").contains("Postman")) {
+	                    response.setContentType("application/json");
+	                    response.setCharacterEncoding("UTF-8");
+	                    response.getWriter().write("{\"message\": \"Login exitoso\", \"role\": \"" 
+	                        + authentication.getAuthorities().iterator().next().getAuthority() + "\"}");
+	                } else {
+	                    // Redirigir a la página correspondiente si es una solicitud desde navegador
+	                    response.sendRedirect("/default");
+	                }
+	            })
+	            .failureHandler((request, response, exception) -> {
+	                response.setContentType("application/json");
+	                response.setCharacterEncoding("UTF-8");
+	                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	                response.getWriter().write("{\"error\": \"Login fallido\"}");
+	            })
 	            .permitAll()
 	        )
 	        .logout(logout -> logout
 	            .logoutUrl("/logout")
-	            .logoutSuccessUrl("/login?logout")  // Redirige al login después del logout
+	            .logoutSuccessUrl("/login?logout")
 	            .permitAll()
 	        );
 
 	    return http.build();
 	}
+
+
+
 	
 	@Bean
     public WebSecurityCustomizer webSecurityCustomizer() {

@@ -60,6 +60,15 @@ public class DocenteServicioImpl implements DocenteServicio{
         return docenteRepository.findAll();
     }
 
+	@Override
+	public List<Docente> obtenerDocentesPorRepresentante(Integer idRepresentante) {
+		// TODO Auto-generated method stub
+		return docenteRepository.findDocentesByRepresentante(idRepresentante);
+
+	}
+
+	
+
 	
 
 }

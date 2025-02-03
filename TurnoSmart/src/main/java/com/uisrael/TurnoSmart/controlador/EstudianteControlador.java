@@ -14,7 +14,7 @@ import com.uisrael.TurnoSmart.modelo.Estudiante;
 import com.uisrael.TurnoSmart.servicio.EstudianteServicio;
 
 @RestController
-@RequestMapping("/api/estudiantes")
+@RequestMapping("/estudiantes")
 public class EstudianteControlador {
 
 	@Autowired

@@ -19,6 +19,10 @@ import com.uisrael.TurnoSmart.repositorio.EstudianteRepositorio;
 import com.uisrael.TurnoSmart.repositorio.HorarioDisponibleRepositorio;
 import com.uisrael.TurnoSmart.servicio.CitaServicio;
 
+/**
+ * Implementación de la interfaz CitaServicio. Proporciona métodos para
+ * gestionar la programación y actualización de citas.
+ */
 @Service
 @Transactional
 public class CitaServicioImpl implements CitaServicio {
@@ -35,6 +39,13 @@ public class CitaServicioImpl implements CitaServicio {
 	@Autowired
 	private HorarioDisponibleRepositorio horarioRepositorio;
 
+	/**
+	 * Agenda una cita entre un docente y un estudiante.
+	 * 
+	 * @param cita         Objeto Cita con la información de la cita.
+	 * @param idEstudiante ID del estudiante con el que se agenda la cita.
+	 * @param idDocente    ID del docente asignado a la cita.
+	 */
 	@Override
 	@Transactional
 	public void agendarCitaPorDocente(Cita cita, Integer idEstudiante, Integer idDocente) {
@@ -152,6 +163,11 @@ public class CitaServicioImpl implements CitaServicio {
 
 		// Guardar el cambio
 		citaRepositorio.save(cita);
+	}
+
+	@Override
+	public Cita obtenerCitaPorRepresentanteYFecha(Integer idRepresentante, LocalDate fecha, LocalTime hora) {
+		return citaRepositorio.findByRepresentanteAndFechaCitaAndHoraCita(idRepresentante, fecha, hora).orElse(null);
 	}
 
 }
