@@ -5,6 +5,7 @@ import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,9 +26,9 @@ public class HorarioDisponible implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idHorario;
     private String dia;
-    /*@Temporal(TemporalType.TIME)*/
+    @Column(name = "hora_inicio") 
     private LocalTime horaInicio;
-    /*@Temporal(TemporalType.TIME)*/
+    @Column(name = "hora_fin")
     private LocalTime horaFin;
     
     @ManyToOne

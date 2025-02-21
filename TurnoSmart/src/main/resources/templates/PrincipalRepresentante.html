@@ -114,9 +114,22 @@
 								class="mdi mdi-menu font-24"></i>
 						</a></li>
 					</ul>
-					<span class="perfil-docente text-white"
-						style="font-family: 'Arial', sans-serif; font-size: 20px; margin-left: auto; margin-right: 20px;">
-						UNIDAD EDUCATIVA PARTICULAR "ANTONIO FLORES" </span>
+					<div
+						class="navbar-collapse collapse d-flex justify-content-between"
+						id="navbarSupportedContent" data-navbarbg="skin5">
+
+						<!-- Texto centrado "Colegio Antonio Flores" -->
+						<span class="text-white mx-auto"
+							style="font-family: 'Arial', sans-serif; font-size: 20px; text-align: center;">
+							Colegio "Antonio Flores" </span>
+
+						<!-- Nombre del representante alineado a la derecha -->
+						<span class="perfil-representante text-white"
+							style="font-family: 'Arial', sans-serif; font-size: 18px; margin-right: 20px;"
+							th:text="'Representante: ' + ${nombreRepresentante} + ' ' + ${apellidoRepresentante}">
+						</span>
+					</div>
+
 				</div>
 			</nav>
 		</header>
@@ -160,16 +173,16 @@
 								class="mdi mdi-account-key"></i><span class="hide-menu">CITAS
 							</span></a>
 							<ul aria-expanded="false" class="collapse first-level">
-								<li class="sidebar-item"><a
-									href="/representante/Citas" class="sidebar-link"><i
-										class="mdi mdi-all-inclusive"></i><span class="hide-menu">
-											Agendar Cita </span></a></li>
+								<li class="sidebar-item"><a href="/representante/Citas"
+									class="sidebar-link"><i class="mdi mdi-all-inclusive"></i><span
+										class="hide-menu"> Agendar Cita </span></a></li>
 								<li class="sidebar-item"><a
 									href="/representante/citas-agendadas" class="sidebar-link"><i
 										class="mdi mdi-all-inclusive"></i><span class="hide-menu">
 											Citas Agendadas </span></a></li>
 							</ul></li>
 						<!-- Agregar elementos <li> vacíos para espacio adicional -->
+						<li class="sidebar-item" style="height: 250px;"></li>
 						<li class="sidebar-item" style="height: 250px;"></li>
 						<li class="sidebar-item" style="height: 250px;"></li>
 						<li class="sidebar-item" style="height: 250px;"></li>
@@ -200,9 +213,12 @@
 
 			<!-- Contenido Principal -->
 			<div class="page-content">
-				<h1>Bienvenido(a) al Perfil Representante</h1>
+				<h1
+					th:text="'Bienvenido(a) ' + ${nombreRepresentante} + ' ' + ${apellidoRepresentante}"></h1>
+				<h2>Perfil Representante</h2>
 				<p>Estamos felices de tenerlo(a) aquí.</p>
 			</div>
+
 
 			<!-- ============================================================== -->
 			<!-- Tableros o tarjetas con enlaces -->

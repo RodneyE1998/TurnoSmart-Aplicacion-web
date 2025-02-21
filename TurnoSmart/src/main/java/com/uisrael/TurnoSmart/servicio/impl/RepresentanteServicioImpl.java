@@ -14,6 +14,8 @@ import com.uisrael.TurnoSmart.modelo.Usuario;
 import com.uisrael.TurnoSmart.repositorio.RepresentanteRepositorio;
 import com.uisrael.TurnoSmart.repositorio.UsuarioRepositorio;
 import com.uisrael.TurnoSmart.servicio.RepresentanteServicio;
+import com.uisrael.TurnoSmart.dto.DocenteDTO;
+
 
 @Service
 @Transactional
@@ -76,5 +78,28 @@ public class RepresentanteServicioImpl implements RepresentanteServicio {
                 .distinct()
                 .collect(Collectors.toList());
     }
+
+	@Override
+	public Representante obtenerPorId(Integer idRepresentante) {
+		 return representanteRepository.findById(idRepresentante)
+		            .orElseThrow(() -> new RuntimeException("No se encontró un representante con ID: " + idRepresentante));
+	}
+
+	@Override
+	public List<DocenteDTO> obtenerDocentesPorRepresentante(Integer idRepresentante) {
+	    List<Object[]> resultados = representanteRepository.obtenerDocentesRaw(idRepresentante);
+	    return resultados.stream().map(obj -> {
+	        return new DocenteDTO(
+	            ((Number) obj[0]).intValue(),  // Convierte a Integer
+	            (String) obj[1],  
+	            (String) obj[2],  
+	            (String) obj[3],  
+	            (String) obj[4],  
+	            (String) obj[5]  
+	        );
+	    }).collect(Collectors.toList());
+	}
+
+
 
 }

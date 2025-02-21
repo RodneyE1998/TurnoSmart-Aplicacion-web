@@ -76,6 +76,12 @@ public class Usuario implements UserDetails, Serializable{/**
         this.representante = representante;
     }
     
+ // 🔹 Nuevo método para obtener el id_representante
+    public Integer getIdRepresentante() {
+        return (representante != null) ? representante.getIdRepresentante() : null;
+    }
+
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()

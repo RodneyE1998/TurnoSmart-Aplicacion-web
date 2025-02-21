@@ -176,6 +176,7 @@
 						<li class="sidebar-item" style="height: 250px;"></li>
 						<li class="sidebar-item" style="height: 250px;"></li>
 						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
 						<!-- Espacio en blanco para empujar el botón de Logout hacia abajo -->
 						<li class="sidebar-item mt-auto"><a
 							class="sidebar-link waves-effect waves-dark sidebar-link text-danger"
@@ -237,10 +238,12 @@
 										th:text="${representante.email}">representante@gmail.com</p>
 								</div>
 							</div>
+							<!--/* 
 							<div class="card-footer text-center">
 								<button class="btn btn-outline-primary" onclick="editarCorreo()">Actualizar
 									Correo</button>
 							</div>
+							*/-->
 						</div>
 					</div>
 				</div>
@@ -257,9 +260,9 @@
 							</thead>
 							<tbody>
 								<tr th:each="estudiante : ${estudiantes}" class="text-center">
-									<td th:text="${estudiante.nombre + ' ' + estudiante.apellido}">Juan
-										Pérez</td>
-									<td th:text="${estudiante.curso}">10mo Grado</td>
+									<td th:text="${estudiante.nombre + ' ' + estudiante.apellido}">
+										</td>
+									<td th:text="${estudiante.curso}"></td>
 								</tr>
 							</tbody>
 						</table>

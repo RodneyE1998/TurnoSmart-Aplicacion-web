@@ -2,6 +2,7 @@ package com.uisrael.TurnoSmart.servicio;
 
 import java.util.List;
 
+import com.uisrael.TurnoSmart.dto.DocenteDTO;
 import com.uisrael.TurnoSmart.modelo.Docente;
 import com.uisrael.TurnoSmart.modelo.Representante;
 
@@ -20,5 +21,10 @@ public interface RepresentanteServicio {
     Representante obtenerPorUsuario(String username);
     
     List<Docente> obtenerDocentesAsociados(String username);
+    
+    Representante obtenerPorId(Integer idRepresentante);
+    
+    List<DocenteDTO> obtenerDocentesPorRepresentante(Integer idRepresentante);
+
 
 }

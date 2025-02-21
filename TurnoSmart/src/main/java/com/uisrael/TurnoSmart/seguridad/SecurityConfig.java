@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.firewall.StrictHttpFirewall;
@@ -53,15 +54,29 @@ public class SecurityConfig {
 	        .formLogin(form -> form
 	            .loginPage("/login") // Página de inicio de sesión para la web
 	            .successHandler((request, response, authentication) -> {
-	                // Devuelve SIEMPRE JSON si la solicitud viene desde Postman o la app móvil
+	                // Obtener detalles del usuario autenticado
+	                UserDetailsServicioImpl.UserDetailsImpl userDetails = 
+	                    (UserDetailsServicioImpl.UserDetailsImpl) authentication.getPrincipal();
+
+	                int idRepresentante = userDetails.getIdRepresentante(); // 🔹 Obtener id_representante
+
+	                // 🔹 Imprimir roles en la consola
+	                System.out.println("🔹 Roles del usuario autenticado: " + authentication.getAuthorities());
+
+	                // Obtener los roles correctamente
+	                String role = authentication.getAuthorities().stream()
+	                    .map(GrantedAuthority::getAuthority)
+	                    .findFirst()
+	                    .orElse("UNKNOWN"); // Si no hay roles, devuelve "UNKNOWN"
+
+	                // Devuelve JSON si la solicitud viene desde Postman o la app móvil
 	                String requestedWith = request.getHeader("X-Requested-With");
 	                if ("XMLHttpRequest".equals(requestedWith) || request.getHeader("User-Agent").contains("Postman")) {
 	                    response.setContentType("application/json");
 	                    response.setCharacterEncoding("UTF-8");
-	                    response.getWriter().write("{\"message\": \"Login exitoso\", \"role\": \"" 
-	                        + authentication.getAuthorities().iterator().next().getAuthority() + "\"}");
+	                    response.getWriter().write("{\"id_representante\": " + idRepresentante + 
+	                        ", \"message\": \"Login exitoso\", \"role\": \"" + role + "\"}");
 	                } else {
-	                    // Redirigir a la página correspondiente si es una solicitud desde navegador
 	                    response.sendRedirect("/default");
 	                }
 	            })

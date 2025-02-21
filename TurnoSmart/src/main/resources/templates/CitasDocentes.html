@@ -194,6 +194,7 @@
 					style="max-width: 200px; border-radius: 10px;">
 			</div>
 
+			<!--/* 
 			<!-- Imágenes de los Horarios -->
 			<div
 				style="display: flex; justify-content: space-around; align-items: center; margin-top: 30px;">
@@ -207,6 +208,7 @@
 					alt="Horario Bachillerato"
 					style="max-width: 45%; border: 1px solid #ccc; border-radius: 10px;">
 			</div>
+			*/-->
 
 			<div class="page-content">
 				<h1>AGENDA TU CITA CON EL REPRESENTANTE</h1>
@@ -274,44 +276,87 @@
 
 	<!-- Inicialización de Select2 y Flatpickr -->
 	<script>
-		document.addEventListener("DOMContentLoaded", function() {
-			// Inicializar Select2 para el selector de estudiantes
-			$('#idEstudiante').select2({
-				placeholder : "-- Seleccionar Estudiante --",
-				allowClear : true
-			});
+    document.addEventListener("DOMContentLoaded", function () {
+        // Inicializar Select2 para el selector de estudiantes
+        $('#idEstudiante').select2({
+            placeholder: "-- Seleccionar Estudiante --",
+            allowClear: true
+        });
 
-			// Inicializar Flatpickr para fecha
-			flatpickr("#fecha", {
-				dateFormat : "Y-m-d",
-				minDate : "today",
-				locale : {
-					firstDayOfWeek : 1,
-					weekdays : {
-						shorthand : [ "Dom", "Lun", "Mar", "Mié", "Jue", "Vie",
-								"Sáb" ],
-						longhand : [ "Domingo", "Lunes", "Martes", "Miércoles",
-								"Jueves", "Viernes", "Sábado" ]
-					},
-					months : {
-						shorthand : [ "Ene", "Feb", "Mar", "Abr", "May", "Jun",
-								"Jul", "Ago", "Sep", "Oct", "Nov", "Dic" ],
-						longhand : [ "Enero", "Febrero", "Marzo", "Abril",
-								"Mayo", "Junio", "Julio", "Agosto",
-								"Septiembre", "Octubre", "Noviembre",
-								"Diciembre" ]
-					}
-				}
-			});
+        // Obtener referencias a los inputs
+        let fechaInput = document.getElementById("fecha");
+        let horaInput = document.getElementById("hora");
 
-			// Inicializar Flatpickr para hora
-			flatpickr("#hora", {
-				enableTime : true,
-				noCalendar : true,
-				dateFormat : "H:i",
-				time_24hr : true
-			});
-		});
-	</script>
+        // Inicializar Flatpickr para la fecha con restricción de mínimo hoy
+        let fechaFlatpickr = flatpickr(fechaInput, {
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            locale: {
+                firstDayOfWeek: 1,
+                weekdays: {
+                    shorthand: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+                    longhand: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+                },
+                months: {
+                    shorthand: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+                    longhand: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+                }
+            },
+            onChange: function () {
+                actualizarHorasDisponibles(); // Llamar cuando se cambie la fecha
+            }
+        });
+
+        // Inicializar Flatpickr para la hora
+        let horaFlatpickr = flatpickr(horaInput, {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true
+        });
+
+        // Función para actualizar las horas disponibles
+        function actualizarHorasDisponibles() {
+            let fechaSeleccionada = new Date(fechaInput.value);
+            let hoy = new Date();
+            hoy.setHours(0, 0, 0, 0); // Eliminar la parte de la hora para comparación
+
+            if (fechaSeleccionada.getTime() === hoy.getTime()) {
+                let horaActual = new Date();
+                let minHora = horaActual.getHours().toString().padStart(2, '0') + ":" + 
+                              horaActual.getMinutes().toString().padStart(2, '0');
+
+                // Destruir y reinicializar Flatpickr con la nueva restricción de minTime
+                horaFlatpickr.destroy();
+                horaFlatpickr = flatpickr(horaInput, {
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    minTime: minHora // Restringir a partir de la hora actual
+                });
+
+                // Validar si el usuario ya ha seleccionado una hora inválida
+                setTimeout(() => {
+                    if (horaInput.value && horaInput.value < minHora) {
+                        alert("No puedes seleccionar una hora anterior a la actual.");
+                        horaFlatpickr.setDate(minHora, true);
+                    }
+                }, 100);
+            } else {
+                // Si la fecha es futura, permitir cualquier hora
+                horaFlatpickr.destroy();
+                horaFlatpickr = flatpickr(horaInput, {
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    minTime: "00:00" // Sin restricción
+                });
+            }
+        }
+    });
+</script>
+
 </body>
 </html>

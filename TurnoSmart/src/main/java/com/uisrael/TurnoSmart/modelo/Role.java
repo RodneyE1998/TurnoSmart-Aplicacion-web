@@ -27,5 +27,9 @@ public class Role implements Serializable {/**
     @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER) 
     @ToString.Exclude
     private List<Usuario> usuarios;
+    
+    public String getNombre() {
+        return nombre;
+    }
 
 }

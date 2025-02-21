@@ -6,14 +6,18 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.uisrael.TurnoSmart.dto.CitaDTO;
+import com.uisrael.TurnoSmart.dto.DocenteDTO;
 import com.uisrael.TurnoSmart.modelo.Cita;
 import com.uisrael.TurnoSmart.modelo.Docente;
 import com.uisrael.TurnoSmart.modelo.Estudiante;
@@ -53,9 +57,25 @@ public class RepresentanteControlador {
 	}
 
 	@GetMapping("/PrincipalRepresentante")
-	public String mostrarPaginaRepresentante() {
-		return "PrincipalRepresentante";
+	public String mostrarPaginaRepresentante(Model model, Principal principal) {
+	    // Obtener el usuario autenticado
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    // Obtener el representante asociado al usuario
+	    Representante representante = usuario.getRepresentante();
+	    if (representante == null) {
+	        throw new RuntimeException("El usuario no tiene un representante asociado.");
+	    }
+
+	    // Pasar los datos del representante al modelo
+	    model.addAttribute("nombreRepresentante", representante.getNombre());
+	    model.addAttribute("apellidoRepresentante", representante.getApellido());
+
+	    return "PrincipalRepresentante"; // Retorna la vista
 	}
+
 
 	@GetMapping("/DocentesBasica")
 	public String mostrarDocentesBasica() {
@@ -90,6 +110,7 @@ public class RepresentanteControlador {
 		return "PerfilRepresentante";
 	}
 
+	
 	@GetMapping("/Citas")
 	public String mostrarFormularioAgendarCita(Model model) {
 		// Cargar la lista de docentes
@@ -108,61 +129,107 @@ public class RepresentanteControlador {
 
 		return "CitasRepresentantes";
 	}
-
-	@PostMapping("/agendar-cita")
-	public String agendarCita(@RequestParam("idDocente") Integer idDocente,
-	        @RequestParam("idHorario") Integer idHorario, @RequestParam("fecha") LocalDate fecha, Principal principal,
-	        Model model) {
+	
+	private ResponseEntity<String> procesarAgendamiento(Integer idDocente, Integer idHorario, LocalDate fecha, Integer representanteId) {
 	    try {
-	        // Validar que la fecha seleccionada coincida con el día del horario
+	        // Obtener el horario seleccionado
 	        HorarioDisponible horario = horarioServicio.obtenerPorId(idHorario);
 	        if (!validarFechaHorario(fecha, horario)) {
 	            throw new IllegalArgumentException("La fecha seleccionada no coincide con el día del horario.");
 	        }
 
-	        // Obtener el representante autenticado
-	        String username = principal.getName();
-	        Representante representante = representanteServicio.obtenerPorUsuario(username);
+	        // Obtener el representante
+	        Representante representante = representanteServicio.obtenerPorId(representanteId);
 
 	        // Agendar la cita
 	        citaServicio.agendarCitaPorRepresentante(idDocente, idHorario, representante, fecha);
 
-	        // Obtener la cita recién creada (buscando por representante y fecha)
+	        // Buscar la cita recién creada
 	        Cita cita = citaServicio.obtenerCitaPorRepresentanteYFecha(representante.getIdRepresentante(), fecha, horario.getHoraInicio());
-
 	        if (cita == null) {
 	            throw new RuntimeException("Error al recuperar la cita agendada.");
 	        }
 
-	        // Obtener el docente para enviar el correo
+	        // Obtener el docente y su correo
 	        Docente docente = docenteRepositorio.findById(idDocente)
 	                .orElseThrow(() -> new RuntimeException("Docente no encontrado con ID: " + idDocente));
 
-	        // Obtener datos para el correo
-	        String destinatario = docente.getEmail();
-	        String nombreRepresentante = representante.getNombre();
-	        String nombreDocente = docente.getNombre() + " " + docente.getApellido();
-	        String hora = horario.getHoraInicio().toString();
-	        Integer idCita = cita.getIdCita();
+	        // Enviar correo al docente
+	        emailServicio.enviarCorreoConfirmacionCitaDocente(
+	            docente.getEmail(),
+	            docente.getNombre() + " " + docente.getApellido(),
+	            representante.getNombre(),
+	            fecha.toString(),
+	            horario.getHoraInicio().toString(),
+	            cita.getIdCita()
+	        );
 
-	        // Enviar correo con botón de confirmación
-	        emailServicio.enviarCorreoConfirmacionCitaDocente(destinatario, nombreDocente, nombreRepresentante, fecha.toString(), hora, idCita);
-
-	        // Mensaje de éxito al modelo
-	        model.addAttribute("success", "La cita fue agendada correctamente y se notificó al docente por correo.");
-
-	        return "CitasRepresentantes";
+	        return ResponseEntity.ok("Cita agendada correctamente y notificada al docente por correo.");
 
 	    } catch (IllegalArgumentException e) {
-	        model.addAttribute("error", e.getMessage());
-	        return "CitasRepresentantes";
+	        return ResponseEntity.badRequest().body("Error: " + e.getMessage());
 	    } catch (Exception e) {
-	        model.addAttribute("error", "Error al agendar la cita: " + e.getMessage());
-	        return "CitasRepresentantes";
+	        return ResponseEntity.internalServerError().body("Error al agendar la cita: " + e.getMessage());
 	    }
 	}
 
 
+	// Método de AGENDAR CITA para la WEB 
+	@PostMapping("/agendar-cita")
+	public String agendarCitaWeb(@RequestParam("idDocente") Integer idDocente,
+	                             @RequestParam("idHorario") Integer idHorario,
+	                             @RequestParam("fecha") LocalDate fecha,
+	                             Principal principal, Model model) {
+	    // Obtener el representante autenticado
+	    String username = principal.getName();
+	    Representante representante = representanteServicio.obtenerPorUsuario(username);
+
+	    // Llamar al método común de procesamiento
+	    ResponseEntity<String> resultado = procesarAgendamiento(idDocente, idHorario, fecha, representante.getIdRepresentante());
+
+	    // Manejar la respuesta y devolver la vista correcta
+	    if (resultado.getStatusCode().is2xxSuccessful()) {
+	        model.addAttribute("success", resultado.getBody());
+	    } else {
+	        model.addAttribute("error", resultado.getBody());
+	    }
+
+	    return "CitasRepresentantes";
+	}
+	
+	@PostMapping("/api/agendar-cita")
+	@ResponseBody
+	public ResponseEntity<String> agendarCita(@RequestBody CitaRequest citaRequest) {
+	    return procesarAgendamiento(
+	        citaRequest.getIdDocente(),
+	        citaRequest.getIdHorario(),
+	        citaRequest.getFecha(),
+	        citaRequest.getRepresentanteId()
+	    );
+	}
+	
+	public static class CitaRequest {
+	    private Integer idDocente;
+	    private Integer idHorario;
+	    private LocalDate fecha;
+	    private Integer representanteId;
+
+	    // Getters y Setters
+	    public Integer getIdDocente() { return idDocente; }
+	    public void setIdDocente(Integer idDocente) { this.idDocente = idDocente; }
+	    public Integer getIdHorario() { return idHorario; }
+	    public void setIdHorario(Integer idHorario) { this.idHorario = idHorario; }
+	    public LocalDate getFecha() { return fecha; }
+	    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+	    public Integer getRepresentanteId() { return representanteId; }
+	    public void setRepresentanteId(Integer representanteId) { this.representanteId = representanteId; }
+	}
+
+
+
+
+	
+	/*Obtener los horarios por Docentes*/
 	@GetMapping("/horarios/por-docente")
 	@ResponseBody
 	public List<HorarioDisponible> obtenerHorariosPorDocente(@RequestParam("idDocente") Integer idDocente) {
@@ -200,6 +267,7 @@ public class RepresentanteControlador {
 		}
 	}
 
+	//Citas Agendadas WEB 
 	@GetMapping("/citas-agendadas")
 	public String listarCitasRepresentante(Principal principal, Model model) {
 		// Obtener el representante autenticado
@@ -219,7 +287,31 @@ public class RepresentanteControlador {
 
 		return "CitasAgendadasRepresentante";
 	}
+	
+	//CitasAgendadasMovil 
+	@GetMapping("/api/citas-agendadas")
+	@ResponseBody
+	public List<CitaDTO> obtenerCitasAgendadas(Principal principal) {
+	    // Obtener el representante autenticado
+	    String username = principal.getName();
+	    Representante representante = representanteServicio.obtenerPorUsuario(username);
 
+	    // Obtener citas
+	    List<Cita> citas = citaServicio.obtenerCitasPorRepresentante(representante.getIdRepresentante());
+
+	    // Convertir Cita a CitaDTO para solo enviar los datos necesarios
+	    return citas.stream().map(cita -> new CitaDTO(
+	            cita.getIdCita(),
+	            cita.getFechaCita().toString(),
+	            cita.getHoraCita().toString(),
+	            cita.getDocentes().stream().findFirst().map(Docente::getNombre).orElse("Desconocido"),
+	            cita.getEstadoCita() 
+	    )).collect(Collectors.toList());
+	}
+
+
+
+	
 	@PostMapping("/cancelar-cita")
 	@ResponseBody
 	public String cancelarCita(@RequestParam("idCita") Integer idCita) {
@@ -250,6 +342,7 @@ public class RepresentanteControlador {
 		}
 	}
 
+	
 	@PostMapping("/confirmar-cita")
 	@ResponseBody
 	public String confirmarCita(@RequestParam("idCita") Integer idCita) {
@@ -280,6 +373,7 @@ public class RepresentanteControlador {
 		}
 	}
 
+	
 	@GetMapping("/docentes-por-estudiante")
 	@ResponseBody
 	public List<Docente> obtenerDocentesPorEstudiante(Principal principal) {
@@ -289,23 +383,9 @@ public class RepresentanteControlador {
 	
 	@GetMapping("/docentes/disponibles")
 	@ResponseBody
-	public List<Docente> obtenerDocentesDisponibles(Principal principal) {
-	    // Obtener el usuario autenticado
-	    String username = principal.getName();
-	    Usuario usuario = usuarioRepositorio.findByUsername(username)
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
-	    // Obtener el representante asociado al usuario
-	    Representante representante = usuario.getRepresentante();
-	    if (representante == null) {
-	        throw new RuntimeException("El usuario no tiene un representante asociado.");
-	    }
-
-	    // Retornar la lista de docentes en JSON
-	    return docenteServicio.obtenerDocentesPorRepresentante(representante.getIdRepresentante());
+	public List<DocenteDTO> obtenerDocentesDisponibles(@RequestParam("id_representante") Integer idRepresentante) {
+	    return representanteServicio.obtenerDocentesPorRepresentante(idRepresentante);
 	}
-	
-	
 
 
 

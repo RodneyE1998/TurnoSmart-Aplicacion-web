@@ -48,9 +48,25 @@ public class DocenteControlador {
 	}
 
 	@GetMapping("/PrincipalDocente")
-	public String mostrarPaginaDocente() {
-		return "PrincipalDocente";
+	public String mostrarPaginaDocente(Model model, Principal principal) {
+	    // Obtener el usuario autenticado
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    // Obtener el docente asociado al usuario
+	    Docente docente = usuario.getDocente();
+	    if (docente == null) {
+	        throw new RuntimeException("El usuario no tiene un docente asociado.");
+	    }
+
+	    // Pasar los datos del docente al modelo
+	    model.addAttribute("nombreDocente", docente.getNombre());
+	    model.addAttribute("apellidoDocente", docente.getApellido());
+
+	    return "PrincipalDocente"; 
 	}
+
 
 	@GetMapping("/Perfil")
 	public String mostrarPerfilDocente(Principal principal, Model model) {
@@ -306,13 +322,5 @@ public class DocenteControlador {
 	    }
 	}
 	
-	/*@GetMapping("/disponibles/{idRepresentante}")
-	@ResponseBody
-	public List<Docente> obtenerDocentesDisponibles(@PathVariable Integer idRepresentante) {
-	    return docenteServicio.obtenerDocentesPorRepresentante(idRepresentante);
-	}*/
-
-
-
 
 }
