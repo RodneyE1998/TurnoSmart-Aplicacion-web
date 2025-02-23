@@ -44,12 +44,6 @@ public class Docente implements Serializable {
     @ToString.Exclude
 	private List<Cita> citas;
 
-	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "rendimientos_docentes", joinColumns = @JoinColumn(name = "id_docente"), inverseJoinColumns = @JoinColumn(name = "id_rendimiento"))
-	@JsonIgnore
-    @ToString.Exclude
-	private List<Rendimiento> rendimientos;
-
 	@ManyToMany(mappedBy = "docentes")
 	@JsonIgnore
     @ToString.Exclude

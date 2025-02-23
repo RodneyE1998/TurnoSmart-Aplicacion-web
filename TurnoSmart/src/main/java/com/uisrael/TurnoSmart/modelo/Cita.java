@@ -5,7 +5,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,6 +37,10 @@ public class Cita implements Serializable {
 	//@Temporal(TemporalType.TIME) 
     private LocalTime  horaCita;
     private String estadoCita;
+    @Column(length = 500) 
+    private String motivoCita;
+    @Enumerated(EnumType.STRING)
+    private TipoCita tipoCita;
 
     @ManyToOne
     @JoinColumn(name = "id_representante")
@@ -48,18 +55,6 @@ public class Cita implements Serializable {
     )
     @ToString.Exclude
     private List<Docente> docentes;
-    
-    @ManyToMany
-    @JoinTable(
-        name = "citas_representantes",
-        joinColumns = @JoinColumn(name = "id_cita"),
-        inverseJoinColumns = @JoinColumn(name = "id_representante")
-    )
-    private List<Representante> representantes;
-    
-    @OneToMany(mappedBy = "cita")
-    @ToString.Exclude
-    private List<HistorialCita> historialCitas;
     
     @ManyToOne
     @JoinColumn(name = "id_estudiante")
@@ -80,6 +75,12 @@ public class Cita implements Serializable {
 
     public void setDocentesConcatenados(String docentesConcatenados) {
         this.docentesConcatenados = docentesConcatenados;
+    }
+    
+    //Enum para definir los tipos de citas
+    public enum TipoCita {
+        ACADEMICO,
+        DISCIPLINARIO
     }
 
 }

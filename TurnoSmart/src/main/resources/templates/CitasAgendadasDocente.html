@@ -267,7 +267,7 @@
 								<tr>
 									<th>#</th>
 									<th>Estudiante</th>
-									<th>Representante</th>
+									<th>Detalles</th>
 									<th>Fecha</th>
 									<th>Hora</th>
 									<th>Estado</th>
@@ -279,14 +279,20 @@
 									<th scope="row" th:text="${iterStat.index + 1}"></th>
 									<td
 										th:text="${cita.estudiante.nombre + ' ' + cita.estudiante.apellido}"></td>
-									<td
-										th:text="${cita.representante.nombre + ' ' + cita.representante.apellido}"></td>
+
+									<!-- Botón para abrir el modal de detalles -->
+									<td>
+										<button class="btn btn-info btn-sm"
+											th:data-bs-target="'#detalleCitaModal' + ${cita.idCita}"
+											data-bs-toggle="modal">Ver Detalle</button>
+									</td>
+
 									<td><input type="date" class="form-control"
 										th:value="${#temporals.format(cita.fechaCita, 'yyyy-MM-dd')}"
-										th:id="'fechaCita' + ${cita.idCita}" disabled /></td>
+										disabled /></td>
 									<td><input type="time" class="form-control"
 										th:value="${#temporals.format(cita.horaCita, 'HH:mm')}"
-										th:id="'horaCita' + ${cita.idCita}" disabled /></td>
+										disabled /></td>
 									<td th:text="${cita.estadoCita}"></td>
 									<td>
 										<!-- Botón Modificar -->
@@ -297,14 +303,14 @@
 										<button class="btn btn-success btn-sm d-none"
 											th:id="'guardarBtn' + ${cita.idCita}"
 											th:onclick="'guardarCita(' + ${cita.idCita} + ')'"
-											type="button">Guardar</button> <!-- Botón Cancelar -->
+											type="button">Guardar</button> <!-- Botón Cancelar Edición -->
 										<button class="btn btn-secondary btn-sm d-none"
 											th:id="'cancelarBtn' + ${cita.idCita}"
 											th:onclick="'cancelarEdicion(' + ${cita.idCita} + ')'"
-											type="button">Cancelar</button> <!-- Botón Cancelar -->
+											type="button">Cancelar</button> <!-- Botón Cancelar Cita -->
 										<button class="btn btn-danger btn-sm"
 											th:onclick="'cancelarCita(' + ${cita.idCita} + ')'"
-											type="button">Cancelar</button> <!-- Botón Realizar -->
+											type="button">Cancelar</button> <!-- Botón Realizar Cita -->
 										<button class="btn btn-primary btn-sm"
 											th:if="${cita.estadoCita == 'CONFIRMADA'}"
 											th:onclick="'realizarCita(' + ${cita.idCita} + ')'"
@@ -317,6 +323,51 @@
 				</div>
 			</div>
 
+			<!-- Modales de Detalles para cada Cita -->
+			<div th:each="cita : ${citasConEstudiante}">
+				<div class="modal fade" th:id="'detalleCitaModal' + ${cita.idCita}"
+					tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Detalles de la Cita</h5>
+								<button type="button" class="close" data-bs-dismiss="modal"
+									aria-label="Cerrar">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<p>
+									<strong>Estudiante:</strong> <span
+										th:text="${cita.estudiante.nombre + ' ' + cita.estudiante.apellido}"></span>
+								</p>
+								<p>
+									<strong>Representante:</strong> <span
+										th:text="${cita.representante.nombre + ' ' + cita.representante.apellido}"></span>
+								</p>
+								<p>
+									<strong>Fecha:</strong> <span th:text="${cita.fechaCita}"></span>
+								</p>
+								<p>
+									<strong>Hora:</strong> <span th:text="${cita.horaCita}"></span>
+								</p>
+								<p>
+									<strong>Tipo de Cita:</strong> <span th:text="${cita.tipoCita}"></span>
+								</p>
+								<p>
+									<strong>Motivo:</strong> <span th:text="${cita.motivoCita}"></span>
+								</p>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary"
+									data-bs-dismiss="modal">Cerrar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
 			<!-- Tabla: Citas Solicitadas por el Representante -->
 			<div class="card">
 				<div class="card-body">
@@ -328,7 +379,7 @@
 								<tr>
 									<th>#</th>
 									<th>Representante</th>
-									<th>Estudiantes</th>
+									<th>Detalles</th>
 									<th>Fecha</th>
 									<th>Hora</th>
 									<th>Estado</th>
@@ -340,12 +391,14 @@
 									<th scope="row" th:text="${iterStat.index + 1}"></th>
 									<td
 										th:text="${cita.representante.nombre + ' ' + cita.representante.apellido}"></td>
+
+									<!-- Botón para abrir el modal de detalles -->
 									<td>
-										<ul>
-											<li th:each="estudiante : ${cita.representante.estudiantes}"
-												th:text="${estudiante.nombre + ' ' + estudiante.apellido}"></li>
-										</ul>
+										<button class="btn btn-info btn-sm"
+											th:data-bs-target="'#detalleCitaModal' + ${cita.idCita}"
+											data-bs-toggle="modal">Ver Detalle</button>
 									</td>
+
 									<td
 										th:text="${#temporals.format(cita.fechaCita, 'yyyy-MM-dd')}"></td>
 									<td th:text="${#temporals.format(cita.horaCita, 'HH:mm')}"></td>
@@ -361,16 +414,66 @@
 											Cancelar</button> <!-- Botón Realizar -->
 										<button class="btn btn-primary btn-sm"
 											th:if="${cita.estadoCita == 'CONFIRMADA'}"
-											th:onclick="'realizarCita(' + ${cita.idCita} + ')'"
-											type="button">Realizado</button>
+											th:onclick="'realizarCita(' + ${cita.idCita} + ')'">
+											Realizado</button>
 									</td>
-
 								</tr>
 							</tbody>
 						</table>
 					</div>
 				</div>
 			</div>
+
+			<!-- Modales de Detalles para cada Cita -->
+			<div th:each="cita : ${citasSinEstudiante}">
+				<div class="modal fade" th:id="'detalleCitaModal' + ${cita.idCita}"
+					tabindex="-1" role="dialog">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title">Detalles de la Cita</h5>
+								<button type="button" class="close" data-bs-dismiss="modal"
+									aria-label="Cerrar">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+								<p>
+									<strong>Representante:</strong> <span
+										th:text="${cita.representante.nombre + ' ' + cita.representante.apellido}"></span>
+								</p>
+
+								<!-- Mostrar estudiantes (hijos del representante) -->
+								<p>
+									<strong>Estudiantes:</strong>
+								</p>
+								<ul>
+									<li th:each="estudiante : ${cita.representante.estudiantes}"
+										th:text="${estudiante.nombre + ' ' + estudiante.apellido}"></li>
+								</ul>
+
+								<p>
+									<strong>Fecha:</strong> <span th:text="${cita.fechaCita}"></span>
+								</p>
+								<p>
+									<strong>Hora:</strong> <span th:text="${cita.horaCita}"></span>
+								</p>
+								<p>
+									<strong>Tipo de Cita:</strong> <span th:text="${cita.tipoCita}"></span>
+								</p>
+								<p>
+									<strong>Motivo:</strong> <span th:text="${cita.motivoCita}"></span>
+								</p>
+							</div>
+							<div class="modal-footer text-center">
+								<button type="button" class="btn btn-secondary"
+									data-bs-dismiss="modal">Cerrar</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 
 
 
@@ -402,6 +505,7 @@
 			th:src="@{/assets/extra-libs/multicheck/datatable-checkbox-init.js}"></script>
 		<script th:src="@{/assets/extra-libs/multicheck/jquery.multicheck.js}"></script>
 		<script th:src="@{/assets/extra-libs/DataTables/datatables.min.js}"></script>
+
 
 
 		<!-- Inicialización de DataTables -->
@@ -578,7 +682,7 @@ function confirmarCita(idCita) {
 }
 </script>
 
-<script>
+		<script>
     function realizarCita(idCita) {
         if (confirm("¿Está seguro de marcar esta cita como realizada?")) {
             fetch('/docente/citas/realizar', {
@@ -601,6 +705,5 @@ function confirmarCita(idCita) {
         }
     }
 </script>
-
 </body>
 </html>

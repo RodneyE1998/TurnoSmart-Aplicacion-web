@@ -284,11 +284,12 @@
 							<table id="zero_config"
 								class="table table-striped table-bordered">
 								<thead>
-									<tr>
+									<tr class="text-center">
 										<th>#</th>
+										<th>Docente</th>
+										<th>Detalles</th>
 										<th>Fecha</th>
 										<th>Hora</th>
-										<th>Docente</th>
 										<th>Estado</th>
 										<th>Acciones</th>
 									</tr>
@@ -296,19 +297,39 @@
 								<tbody>
 									<tr th:each="cita, iterStat : ${citasPorRepresentante}">
 										<th scope="row" th:text="${iterStat.index + 1}"></th>
-										<td><input type="date" class="form-control"
-											th:value="${#temporals.format(cita.fechaCita, 'yyyy-MM-dd')}"
-											th:id="'fechaCita' + ${cita.idCita}" disabled /></td>
-										<td><input type="time" class="form-control"
-											th:value="${#temporals.format(cita.horaCita, 'HH:mm')}"
-											th:id="'horaCita' + ${cita.idCita}" disabled /></td>
+
+										<!-- Columna: Docente -->
 										<td
-											th:text="${cita.docentes[0].nombre + ' ' + cita.docentes[0].apellido}"></td>
-										<td th:text="${cita.estadoCita}"></td>
-										<td>	
+											th:text="${cita.docentes[0].nombre + ' ' + cita.docentes[0].apellido}"
+											class="text-center"></td>
+
+										<!-- Columna: Botón Ver Detalle -->
+										<td class="text-center">
+											<button class="btn btn-info btn-sm"
+												th:data-bs-target="'#detalleCitaModal' + ${cita.idCita}"
+												data-bs-toggle="modal">Ver Detalle</button>
+										</td>
+
+										<!-- Columna: Fecha -->
+										<td class="text-center"><input type="date"
+											class="form-control"
+											th:value="${#temporals.format(cita.fechaCita, 'yyyy-MM-dd')}"
+											disabled /></td>
+
+										<!-- Columna: Hora -->
+										<td class="text-center"><input type="time"
+											class="form-control"
+											th:value="${#temporals.format(cita.horaCita, 'HH:mm')}"
+											disabled /></td>
+
+										<!-- Columna: Estado -->
+										<td th:text="${cita.estadoCita}" class="text-center"></td>
+
+										<!-- Columna: Acciones -->
+										<td class="text-center">
 											<button class="btn btn-danger btn-sm"
-												th:onclick="'cancelarCita(' + ${cita.idCita} + ')'"
-												type="button">Cancelar</button>
+												th:onclick="'cancelarCita(' + ${cita.idCita} + ')'">
+												Cancelar Cita</button>
 										</td>
 									</tr>
 								</tbody>
@@ -316,6 +337,48 @@
 						</div>
 					</div>
 				</div>
+
+				<!-- Modales de Detalles para cada Cita -->
+				<div th:each="cita : ${citasPorRepresentante}">
+					<div class="modal fade" th:id="'detalleCitaModal' + ${cita.idCita}"
+						tabindex="-1" role="dialog">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">Detalles de la Cita</h5>
+									<button type="button" class="close" data-bs-dismiss="modal"
+										aria-label="Cerrar">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<p>
+										<strong>Docente:</strong> <span
+											th:text="${cita.docentes[0].nombre + ' ' + cita.docentes[0].apellido}"></span>
+									</p>
+									<p>
+										<strong>Fecha:</strong> <span th:text="${cita.fechaCita}"></span>
+									</p>
+									<p>
+										<strong>Hora:</strong> <span th:text="${cita.horaCita}"></span>
+									</p>
+									<p>
+										<strong>Tipo de Cita:</strong> <span
+											th:text="${cita.tipoCita}"></span>
+									</p>
+									<p>
+										<strong>Motivo:</strong> <span th:text="${cita.motivoCita}"></span>
+									</p>
+								</div>
+								<div class="modal-footer text-center">
+									<button type="button" class="btn btn-secondary"
+										data-bs-dismiss="modal">Cerrar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 
 
 				<!-- Tabla: Citas Solicitadas por los Docentes -->
@@ -326,12 +389,13 @@
 							<table id="zero_config1"
 								class="table table-striped table-bordered">
 								<thead>
-									<tr>
+									<tr class="text-center">
 										<th>#</th>
+										<th>Docente</th>
+										<th>Detalles</th>
 										<th>Fecha</th>
 										<th>Hora</th>
 										<th>Estudiante</th>
-										<th>Docente</th>
 										<th>Estado</th>
 										<th>Acciones</th>
 									</tr>
@@ -339,31 +403,102 @@
 								<tbody>
 									<tr th:each="cita, iterStat : ${citasPorDocente}">
 										<th scope="row" th:text="${iterStat.index + 1}"></th>
+
+										<!-- Columna: Docente -->
 										<td
-											th:text="${#temporals.format(cita.fechaCita, 'yyyy-MM-dd')}"></td>
-										<td th:text="${#temporals.format(cita.horaCita, 'HH:mm')}"></td>
+											th:text="${cita.docentes[0].nombre + ' ' + cita.docentes[0].apellido}"
+											class="text-center"></td>
+
+										<!-- Columna: Botón Ver Detalle -->
+										<td class="text-center">
+											<button class="btn btn-info btn-sm"
+												th:data-bs-target="'#detalleCitaModal' + ${cita.idCita}"
+												data-bs-toggle="modal">Ver Detalle</button>
+										</td>
+
+										<!-- Columna: Fecha -->
+										<td class="text-center"><input type="date"
+											class="form-control"
+											th:value="${#temporals.format(cita.fechaCita, 'yyyy-MM-dd')}"
+											disabled /></td>
+
+										<!-- Columna: Hora -->
+										<td class="text-center"><input type="time"
+											class="form-control"
+											th:value="${#temporals.format(cita.horaCita, 'HH:mm')}"
+											disabled /></td>
+
+										<!-- Columna: Estudiante -->
 										<td
-											th:text="${cita.estudiante.nombre + ' ' + cita.estudiante.apellido}"></td>
-										<td
-											th:text="${cita.docentes[0].nombre + ' ' + cita.docentes[0].apellido}"></td>
-										<td th:text="${cita.estadoCita}"></td>
-										<td>
+											th:text="${cita.estudiante.nombre + ' ' + cita.estudiante.apellido}"
+											class="text-center"></td>
+
+										<!-- Columna: Estado -->
+										<td th:text="${cita.estadoCita}" class="text-center"></td>
+
+										<!-- Columna: Acciones -->
+										<td class="text-center">
 											<!-- Botón Confirmar -->
 											<button class="btn btn-success btn-sm"
 												th:if="${cita.estadoCita == 'PENDIENTE'}"
-												th:onclick="'confirmarCita(' + ${cita.idCita} + ')'"
-												type="button">Confirmar</button> <!-- Botón Cancelar -->
+												th:onclick="'confirmarCita(' + ${cita.idCita} + ')'">
+												Confirmar</button> <!-- Botón Cancelar -->
 											<button class="btn btn-danger btn-sm"
-												th:onclick="'cancelarCita(' + ${cita.idCita} + ')'"
-												type="button">Cancelar</button>
+												th:onclick="'cancelarCita(' + ${cita.idCita} + ')'">
+												Cancelar</button>
 										</td>
-
 									</tr>
 								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
+
+				<!-- Modales de Detalles para cada Cita -->
+				<div th:each="cita : ${citasPorDocente}">
+					<div class="modal fade" th:id="'detalleCitaModal' + ${cita.idCita}"
+						tabindex="-1" role="dialog">
+						<div class="modal-dialog" role="document">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">Detalles de la Cita</h5>
+									<button type="button" class="close" data-bs-dismiss="modal"
+										aria-label="Cerrar">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<p>
+										<strong>Docente:</strong> <span
+											th:text="${cita.docentes[0].nombre + ' ' + cita.docentes[0].apellido}"></span>
+									</p>
+									<p>
+										<strong>Fecha:</strong> <span th:text="${cita.fechaCita}"></span>
+									</p>
+									<p>
+										<strong>Hora:</strong> <span th:text="${cita.horaCita}"></span>
+									</p>
+									<p>
+										<strong>Estudiante:</strong> <span
+											th:text="${cita.estudiante.nombre + ' ' + cita.estudiante.apellido}"></span>
+									</p>
+									<p>
+										<strong>Tipo de Cita:</strong> <span
+											th:text="${cita.tipoCita}"></span>
+									</p>
+									<p>
+										<strong>Motivo:</strong> <span th:text="${cita.motivoCita}"></span>
+									</p>
+								</div>
+								<div class="modal-footer text-center">
+									<button type="button" class="btn btn-secondary"
+										data-bs-dismiss="modal">Cerrar</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
 
 
 
@@ -455,7 +590,7 @@
 													});
 								});
 			</script>
-			
+
 			<script>
 		//Cancelar cita de docente a representante y de representante a docente. 
 		function cancelarCita(idCita) {

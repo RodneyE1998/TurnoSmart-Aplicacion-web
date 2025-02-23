@@ -41,24 +41,6 @@ public class Representante implements Serializable{
     @ToString.Exclude
     private List<Cita> citas;
     
-    /*@ManyToMany
-    @JoinTable(
-        name = "citas_representantes",
-        joinColumns = @JoinColumn(name = "id_representante"),
-        inverseJoinColumns = @JoinColumn(name = "id_cita")
-    )
-    private List<Cita> citasRepresentantes;*/
-    
-    @ManyToMany
-    @JoinTable(
-        name = "rendimientos_representantes",
-        joinColumns = @JoinColumn(name = "id_representante"),
-        inverseJoinColumns = @JoinColumn(name = "id_rendimiento")
-    )
-    @JsonIgnore
-    @ToString.Exclude
-    private List<Rendimiento> rendimientos;
-    
     @OneToMany(mappedBy = "representante")
     @JsonManagedReference
     @ToString.Exclude

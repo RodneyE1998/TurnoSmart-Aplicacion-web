@@ -233,6 +233,39 @@
 				</div>
 			</div>
 
+			<!-- Actualizar Credenciales -->
+			<div class="container mt-5">
+				<div class="card shadow-lg">
+					<div class="card-header text-center bg-primary text-white">
+						<h3>Actualizar Credenciales</h3>
+					</div>
+					<div class="card-body">
+						<form th:action="@{/docente/actualizar-credenciales}"
+							method="post">
+							<div class="row mb-3">
+								<div class="col-md-12">
+									<label for="nuevoUsername"><strong>Nuevo
+											Usuario</strong></label> <input type="text" id="nuevoUsername"
+										name="nuevoUsername" class="form-control" required>
+								</div>
+							</div>
+
+							<div class="row mb-3">
+								<div class="col-md-12">
+									<label for="nuevaPassword"><strong>Nueva
+											Contraseña</strong></label> <input type="password" id="nuevaPassword"
+										name="nuevaPassword" class="form-control" required>
+								</div>
+							</div>
+
+							<div class="text-center">
+								<button type="submit" class="btn btn-primary mt-3">Actualizar
+									Credenciales</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
 
 
 			<!-- ============================================================== -->

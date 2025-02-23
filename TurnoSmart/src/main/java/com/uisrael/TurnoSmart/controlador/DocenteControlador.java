@@ -6,6 +6,13 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+//import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.uisrael.TurnoSmart.modelo.Cita;
 import com.uisrael.TurnoSmart.modelo.Docente;
@@ -27,6 +35,10 @@ import com.uisrael.TurnoSmart.servicio.CitaServicio;
 import com.uisrael.TurnoSmart.servicio.DocenteServicio;
 import com.uisrael.TurnoSmart.servicio.EmailServicio;
 import com.uisrael.TurnoSmart.servicio.EstudianteServicio;
+import com.uisrael.TurnoSmart.servicio.UserDetailsServicio;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
 @RequestMapping("/docente")
@@ -37,55 +49,58 @@ public class DocenteControlador {
 	private final EstudianteServicio estudianteServicio;
 	private final EmailServicio emailServicio;
 	private final DocenteServicio docenteServicio;
+	private final BCryptPasswordEncoder passwordEncoder;
+	private final UserDetailsServicio userDetailsServicio;
 
 	public DocenteControlador(UsuarioRepositorio usuarioRepositorio, CitaServicio citaServicio,
-			EstudianteServicio estudianteServicio, EmailServicio emailServicio, DocenteServicio docenteServicio) {
+			EstudianteServicio estudianteServicio, EmailServicio emailServicio, DocenteServicio docenteServicio,
+			BCryptPasswordEncoder passwordEncoder, UserDetailsServicio userDetailsServicio) {
 		this.usuarioRepositorio = usuarioRepositorio;
 		this.citaServicio = citaServicio;
 		this.estudianteServicio = estudianteServicio;
 		this.emailServicio = emailServicio;
 		this.docenteServicio = docenteServicio;
+		this.passwordEncoder = passwordEncoder;
+		this.userDetailsServicio = userDetailsServicio;
 	}
 
 	@GetMapping("/PrincipalDocente")
 	public String mostrarPaginaDocente(Model model, Principal principal) {
-	    // Obtener el usuario autenticado
-	    String username = principal.getName();
-	    Usuario usuario = usuarioRepositorio.findByUsername(username)
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		// Obtener el usuario autenticado
+		String username = principal.getName();
+		Usuario usuario = usuarioRepositorio.findByUsername(username)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	    // Obtener el docente asociado al usuario
-	    Docente docente = usuario.getDocente();
-	    if (docente == null) {
-	        throw new RuntimeException("El usuario no tiene un docente asociado.");
-	    }
+		// Obtener el docente asociado al usuario
+		Docente docente = usuario.getDocente();
+		if (docente == null) {
+			throw new RuntimeException("El usuario no tiene un docente asociado.");
+		}
 
-	    // Pasar los datos del docente al modelo
-	    model.addAttribute("nombreDocente", docente.getNombre());
-	    model.addAttribute("apellidoDocente", docente.getApellido());
+		// Pasar los datos del docente al modelo
+		model.addAttribute("nombreDocente", docente.getNombre());
+		model.addAttribute("apellidoDocente", docente.getApellido());
 
-	    return "PrincipalDocente"; 
+		return "PrincipalDocente";
 	}
-
 
 	@GetMapping("/Perfil")
 	public String mostrarPerfilDocente(Principal principal, Model model) {
-	    // Obtener el usuario autenticado
-	    String username = principal.getName();
-	    Usuario usuario = usuarioRepositorio.findByUsername(username)
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		// Obtener el usuario autenticado
+		String username = principal.getName();
+		Usuario usuario = usuarioRepositorio.findByUsername(username)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	    // Obtener el docente asociado al usuario
-	    Docente docente = usuario.getDocente();
-	    if (docente == null) {
-	        throw new RuntimeException("El usuario no tiene un docente asociado.");
-	    }
+		// Obtener el docente asociado al usuario
+		Docente docente = usuario.getDocente();
+		if (docente == null) {
+			throw new RuntimeException("El usuario no tiene un docente asociado.");
+		}
 
-	    // Pasar los datos del docente al modelo
-	    model.addAttribute("docente", docente);
-	    return "PerfilDocente"; 
+		// Pasar los datos del docente al modelo
+		model.addAttribute("docente", docente);
+		return "PerfilDocente";
 	}
-
 
 	@GetMapping("/citas")
 	public String mostrarPaginaCitas(Model model, Principal principal) {
@@ -108,41 +123,60 @@ public class DocenteControlador {
 	}
 
 	@PostMapping("/citas/agendar")
-	public String agendarCitaPorDocente(@ModelAttribute Cita cita, @RequestParam("idEstudiante") Integer idEstudiante, Principal principal) {
-	    try {
-	        // Obtener usuario autenticado
-	        String username = principal.getName();
-	        Usuario usuario = usuarioRepositorio.findByUsername(username)
-	                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+	public String agendarCitaPorDocente(@ModelAttribute Cita cita, @RequestParam("idEstudiante") Integer idEstudiante,
+			@RequestParam("motivoCita") String motivoCita, @RequestParam("tipoCita") String tipoCitaStr,
+			Principal principal, Model model) {
+		try {
+			// Validar tipo de cita
+			if (tipoCitaStr == null || tipoCitaStr.isEmpty()) {
+				model.addAttribute("error", "El tipo de cita no puede estar vacío.");
+				return "CitasDocentes";
+			}
 
-	        Docente docente = usuario.getDocente();
-	        if (docente == null) {
-	            throw new RuntimeException("El usuario no tiene un docente asociado");
-	        }
+			// Convertir String a Enum
+			Cita.TipoCita tipoCita;
+			try {
+				tipoCita = Cita.TipoCita.valueOf(tipoCitaStr.trim().toUpperCase());
+			} catch (IllegalArgumentException e) {
+				model.addAttribute("error", "Error: Tipo de cita no válido. Debe ser 'ACADEMICO' o 'DISCIPLINARIO'.");
+				return "CitasDocentes";
+			}
 
-	        // Agendar la cita
-	        citaServicio.agendarCitaPorDocente(cita, idEstudiante, docente.getIdDocente());
+			// Obtener usuario autenticado
+			String username = principal.getName();
+			Usuario usuario = usuarioRepositorio.findByUsername(username)
+					.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	        // Obtener datos para enviar el correo
-	        Representante representante = cita.getRepresentante();
-	        String destinatario = representante.getEmail();
-	        String nombreRepresentante = representante.getNombre();
-	        String nombreDocente = docente.getNombre() + " " + docente.getApellido();
-	        String fecha = cita.getFechaCita().toString();
-	        String hora = cita.getHoraCita().toString();
-	        Integer idCita = cita.getIdCita();
+			Docente docente = usuario.getDocente();
+			if (docente == null) {
+				throw new RuntimeException("El usuario no tiene un docente asociado");
+			}
 
-	        // Enviar correo con botón de confirmación
-	        emailServicio.enviarCorreoConfirmacionCita(destinatario, nombreRepresentante, nombreDocente, fecha, hora, idCita);
+			// Agendar la cita con los nuevos campos
+			citaServicio.agendarCitaPorDocente(cita, idEstudiante, docente.getIdDocente(), motivoCita, tipoCita);
 
-	        return "redirect:/docente/citas/agendadas";
+			// Obtener datos para enviar el correo
+			Representante representante = cita.getRepresentante();
+			String destinatario = representante.getEmail();
+			String nombreRepresentante = representante.getNombre();
+			String nombreDocente = docente.getNombre() + " " + docente.getApellido();
+			String fecha = cita.getFechaCita().toString();
+			String hora = cita.getHoraCita().toString();
+			Integer idCita = cita.getIdCita();
+			String tipoCitaTexto = tipoCita.toString();
+			String motivoTexto = motivoCita;
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return "redirect:/docente/citas/agendadas?error";
-	    }
+			// Enviar correo con botón de confirmación incluyendo motivo y tipo de cita
+			emailServicio.enviarCorreoConfirmacionCita(destinatario, nombreRepresentante, nombreDocente,
+					fecha, hora, idCita, tipoCitaTexto, motivoTexto);
+
+			return "redirect:/docente/citas/agendadas";
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "redirect:/docente/citas/agendadas?error";
+		}
 	}
-
 
 	@GetMapping("/citas/agendadas")
 	public String mostrarCitasAgendadas(Model model, Principal principal) {
@@ -194,51 +228,48 @@ public class DocenteControlador {
 	@PostMapping("/guardar-cita")
 	@ResponseBody
 	public String guardarCita(@RequestBody Map<String, Object> datos) {
-	    try {
-	        // Obtener datos enviados desde el frontend
-	        System.out.println("Datos recibidos: " + datos);
-	        Integer idCita = (Integer) datos.get("idCita");
-	        String nuevaFecha = (String) datos.get("nuevaFecha");
-	        String nuevaHora = (String) datos.get("nuevaHora");
+		try {
+			// Obtener datos enviados desde el frontend
+			System.out.println("Datos recibidos: " + datos);
+			Integer idCita = (Integer) datos.get("idCita");
+			String nuevaFecha = (String) datos.get("nuevaFecha");
+			String nuevaHora = (String) datos.get("nuevaHora");
 
-	        // Actualizar la cita en la base de datos
-	        citaServicio.modificarCita(idCita, LocalDate.parse(nuevaFecha), LocalTime.parse(nuevaHora));
-	        System.out.println("Cita actualizada en la base de datos.");
+			// Actualizar la cita en la base de datos
+			citaServicio.modificarCita(idCita, LocalDate.parse(nuevaFecha), LocalTime.parse(nuevaHora));
+			System.out.println("Cita actualizada en la base de datos.");
 
-	        // Obtener la cita actualizada para enviar el correo
-	        Cita cita = citaServicio.obtenerCitaPorId(idCita);
+			// Obtener la cita actualizada para enviar el correo
+			Cita cita = citaServicio.obtenerCitaPorId(idCita);
 
-	        // Validar si tiene docentes asociados
-	        if (cita.getDocentes() == null || cita.getDocentes().isEmpty()) {
-	            throw new RuntimeException("La cita no tiene docentes asociados.");
-	        }
+			// Validar si tiene docentes asociados
+			if (cita.getDocentes() == null || cita.getDocentes().isEmpty()) {
+				throw new RuntimeException("La cita no tiene docentes asociados.");
+			}
 
-	        // Obtener datos necesarios para el correo
-	        String destinatario = cita.getRepresentante().getEmail(); // Correo del representante
-	        String asunto = "Cambio en la fecha de su cita";
-	        String mensaje = "Estimado/a " + cita.getRepresentante().getNombre() + ",\n\n" +
-	                "El/La docente " + cita.getDocentes().get(0).getNombre() + " " + cita.getDocentes().get(0).getApellido() +
-	                " ha cambiado la fecha y hora de su cita.\n\n" +
-	                "Nueva fecha: " + nuevaFecha + "\n" +
-	                "Nueva hora: " + nuevaHora + "\n\n" +
-	                "Por favor, revise su disponibilidad caso contrario ingrese al sisteme y cancele la cita.\n\n" +
-	                "Atentamente,\n" +
-	                "Colegio Antonio Flores";
+			// Obtener datos necesarios para el correo
+			String destinatario = cita.getRepresentante().getEmail(); // Correo del representante
+			String asunto = "Cambio en la fecha de su cita";
+			String mensaje = "Estimado/a " + cita.getRepresentante().getNombre() + ",\n\n" + "El/La docente "
+					+ cita.getDocentes().get(0).getNombre() + " " + cita.getDocentes().get(0).getApellido()
+					+ " ha cambiado la fecha y hora de su cita.\n\n" + "Nueva fecha: " + nuevaFecha + "\n"
+					+ "Nueva hora: " + nuevaHora + "\n\n"
+					+ "Por favor, revise su disponibilidad caso contrario ingrese al sisteme y cancele la cita.\n\n"
+					+ "Atentamente,\n" + "Colegio Antonio Flores";
 
-	        // Enviar correo
-	        System.out.println("Preparando envío de correo...");
-	        emailServicio.enviarCorreo(destinatario, asunto, mensaje);
-	        System.out.println("Correo enviado exitosamente.");
+			// Enviar correo
+			System.out.println("Preparando envío de correo...");
+			emailServicio.enviarCorreo(destinatario, asunto, mensaje);
+			System.out.println("Correo enviado exitosamente.");
 
-	        // Responder al cliente con mensaje de éxito
-	        return "Cita actualizada y correo enviado correctamente.";
-	    } catch (Exception e) {
-	        // Manejar errores y responder al cliente
-	        System.err.println("Error al actualizar la cita: " + e.getMessage());
-	        return "Error al actualizar la cita: " + e.getMessage();
-	    }
+			// Responder al cliente con mensaje de éxito
+			return "Cita actualizada y correo enviado correctamente.";
+		} catch (Exception e) {
+			// Manejar errores y responder al cliente
+			System.err.println("Error al actualizar la cita: " + e.getMessage());
+			return "Error al actualizar la cita: " + e.getMessage();
+		}
 	}
-
 
 	@PostMapping("/cancelar-cita")
 	@ResponseBody
@@ -285,42 +316,94 @@ public class DocenteControlador {
 			return "Error al confirmar la cita: " + e.getMessage();
 		}
 	}
-	
+
+	// CAMBIAR LA CITA DE CONFIRMADA A REALIZADA
 	@PostMapping("/citas/realizar")
 	@ResponseBody
 	public String marcarComoRealizada(@RequestParam("idCita") Integer idCita) {
-	    try {
-	        // Cambiar el estado de la cita a "REALIZADA"
-	        citaServicio.marcarComoRealizada(idCita);
+		try {
+			// Cambiar el estado de la cita a "REALIZADA"
+			citaServicio.marcarComoRealizada(idCita);
 
-	        // Obtener la cita actualizada para enviar el correo
-	        Cita cita = citaServicio.obtenerCitaPorId(idCita);
+			// Obtener la cita actualizada para enviar el correo
+			Cita cita = citaServicio.obtenerCitaPorId(idCita);
 
-	        // Validar que la cita tenga un representante asociado
-	        if (cita.getRepresentante() == null) {
-	            throw new RuntimeException("No se encontró un representante asociado a esta cita.");
-	        }
+			// Validar que la cita tenga un representante asociado
+			if (cita.getRepresentante() == null) {
+				throw new RuntimeException("No se encontró un representante asociado a esta cita.");
+			}
 
-	        // Preparar los datos del correo
-	        String destinatario = cita.getRepresentante().getEmail(); // Correo del representante
-	        String asunto = "Confirmación de cita realizada";
-	        String mensaje = "Estimado/a " + cita.getRepresentante().getNombre() + ",\n\n" +
-	                "Le informamos que la cita realizada el " +
-	                cita.getFechaCita() + " a las " + cita.getHoraCita() + " ha sido completada con éxito.\n\n" +
-	                "Gracias por utilizar nuestra aplicación para agendar y gestionar sus citas.\n" +
-	                "No olvide seguir utilizando nuestro sistema para programar futuras reuniones.\n\n" +
-	                "Atentamente,\n" +
-	                "Colegio Antonio Flores";
+			// Preparar los datos del correo
+			String destinatario = cita.getRepresentante().getEmail(); // Correo del representante
+			String asunto = "Confirmación de cita realizada";
+			String mensaje = "Estimado/a " + cita.getRepresentante().getNombre() + ",\n\n"
+					+ "Le informamos que la cita realizada el " + cita.getFechaCita() + " a las " + cita.getHoraCita()
+					+ " ha sido completada con éxito.\n\n"
+					+ "Gracias por utilizar nuestra aplicación para agendar y gestionar sus citas.\n"
+					+ "No olvide seguir utilizando nuestro sistema para programar futuras reuniones.\n\n"
+					+ "Atentamente,\n" + "Colegio Antonio Flores";
 
-	        // Enviar correo electrónico
-	        emailServicio.enviarCorreo(destinatario, asunto, mensaje);
+			// Enviar correo electrónico
+			emailServicio.enviarCorreo(destinatario, asunto, mensaje);
 
-	        // Retornar mensaje de éxito
-	        return "Cita marcada como realizada y correo enviado correctamente.";
-	    } catch (Exception e) {
-	        return "Error al marcar la cita como realizada: " + e.getMessage();
-	    }
+			// Retornar mensaje de éxito
+			return "Cita marcada como realizada y correo enviado correctamente.";
+		} catch (Exception e) {
+			return "Error al marcar la cita como realizada: " + e.getMessage();
+		}
 	}
-	
+
+	@PostMapping("/actualizar-credenciales")
+	public String actualizarCredenciales(@RequestParam String nuevoUsername, @RequestParam String nuevaPassword,
+			Principal principal, HttpServletRequest request, HttpServletResponse response,
+			RedirectAttributes redirectAttributes) {
+		try {
+			// Obtener el usuario autenticado
+			String usernameActual = principal.getName();
+			Usuario usuario = usuarioRepositorio.findByUsername(usernameActual)
+					.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+			// Verificar si el nuevo username ya está en uso
+			if (usuarioRepositorio.findByUsername(nuevoUsername).isPresent()
+					&& !usuario.getUsername().equals(nuevoUsername)) {
+				redirectAttributes.addFlashAttribute("error", "El nombre de usuario ya está en uso.");
+				return "redirect:/docente/Perfil";
+			}
+
+			// Encriptar la nueva contraseña
+			String passwordEncriptada = passwordEncoder.encode(nuevaPassword);
+
+			// Actualizar los datos en la base de datos
+			usuario.setUsername(nuevoUsername);
+			usuario.setPassword(passwordEncriptada);
+			usuarioRepositorio.save(usuario);
+
+			// 🔹 FORZAR CIERRE DE SESIÓN MANUALMENTE
+			request.getSession().invalidate(); // Cierra la sesión HTTP
+
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			if (auth != null) {
+				new SecurityContextLogoutHandler().logout(request, response, auth);
+			}
+
+			// ESPERAR UN MOMENTO PARA QUE LA BASE DE DATOS SE REFRESQUE
+			Thread.sleep(1000); // Pausa de 1 segundo para asegurar sincronización
+
+			// FORZAR CARGA DEL NUEVO USUARIO EN SPRING SECURITY
+			UserDetails userDetails = userDetailsServicio.loadUserByUsername(nuevoUsername);
+			Authentication newAuth = new UsernamePasswordAuthenticationToken(userDetails, null,
+					userDetails.getAuthorities());
+			SecurityContextHolder.getContext().setAuthentication(newAuth);
+
+			// Redirigir al login con mensaje de éxito
+			redirectAttributes.addFlashAttribute("success",
+					"Credenciales actualizadas correctamente. Inicia sesión nuevamente con tus nuevas credenciales.");
+			return "redirect:/login";
+
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Ocurrió un error al actualizar las credenciales.");
+			return "redirect:/docente/Perfil";
+		}
+	}
 
 }

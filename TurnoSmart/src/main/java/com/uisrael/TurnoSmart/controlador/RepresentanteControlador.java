@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.uisrael.TurnoSmart.dto.CitaDTO;
 import com.uisrael.TurnoSmart.dto.DocenteDTO;
 import com.uisrael.TurnoSmart.modelo.Cita;
+import com.uisrael.TurnoSmart.modelo.Cita.TipoCita;
 import com.uisrael.TurnoSmart.modelo.Docente;
 import com.uisrael.TurnoSmart.modelo.Estudiante;
 import com.uisrael.TurnoSmart.modelo.HorarioDisponible;
@@ -110,7 +111,7 @@ public class RepresentanteControlador {
 		return "PerfilRepresentante";
 	}
 
-	
+	// AGENDAR CITAS CON LOS DOCENTES 
 	@GetMapping("/Citas")
 	public String mostrarFormularioAgendarCita(Model model) {
 		// Cargar la lista de docentes
@@ -126,11 +127,15 @@ public class RepresentanteControlador {
 			System.out.println("No se encontraron horarios.");
 		}
 		model.addAttribute("horarios", horarios);
+		
+		 // Agregar los tipos de citas al modelo (Enum)
+		model.addAttribute("tiposCita", Cita.TipoCita.values());
+
 
 		return "CitasRepresentantes";
 	}
 	
-	private ResponseEntity<String> procesarAgendamiento(Integer idDocente, Integer idHorario, LocalDate fecha, Integer representanteId) {
+	private ResponseEntity<String> procesarAgendamiento(Integer idDocente, Integer idHorario, LocalDate fecha, Integer representanteId, String motivoCita, TipoCita tipoCita) {
 	    try {
 	        // Obtener el horario seleccionado
 	        HorarioDisponible horario = horarioServicio.obtenerPorId(idHorario);
@@ -142,7 +147,7 @@ public class RepresentanteControlador {
 	        Representante representante = representanteServicio.obtenerPorId(representanteId);
 
 	        // Agendar la cita
-	        citaServicio.agendarCitaPorRepresentante(idDocente, idHorario, representante, fecha);
+	        citaServicio.agendarCitaPorRepresentante(idDocente, idHorario, representante, fecha, motivoCita, tipoCita);
 
 	        // Buscar la cita recién creada
 	        Cita cita = citaServicio.obtenerCitaPorRepresentanteYFecha(representante.getIdRepresentante(), fecha, horario.getHoraInicio());
@@ -161,7 +166,9 @@ public class RepresentanteControlador {
 	            representante.getNombre(),
 	            fecha.toString(),
 	            horario.getHoraInicio().toString(),
-	            cita.getIdCita()
+	            cita.getIdCita(), 
+	            cita.getTipoCita().toString(), 
+	            cita.getMotivoCita() 
 	        );
 
 	        return ResponseEntity.ok("Cita agendada correctamente y notificada al docente por correo.");
@@ -174,28 +181,53 @@ public class RepresentanteControlador {
 	}
 
 
-	// Método de AGENDAR CITA para la WEB 
 	@PostMapping("/agendar-cita")
 	public String agendarCitaWeb(@RequestParam("idDocente") Integer idDocente,
 	                             @RequestParam("idHorario") Integer idHorario,
 	                             @RequestParam("fecha") LocalDate fecha,
+	                             @RequestParam("motivoCita") String motivoCita,
+	                             @RequestParam("tipoCita") String tipoCitaStr, // Recibimos como String
 	                             Principal principal, Model model) {
-	    // Obtener el representante autenticado
-	    String username = principal.getName();
-	    Representante representante = representanteServicio.obtenerPorUsuario(username);
 
-	    // Llamar al método común de procesamiento
-	    ResponseEntity<String> resultado = procesarAgendamiento(idDocente, idHorario, fecha, representante.getIdRepresentante());
+	    try {
+	        // Validar que tipoCitaStr no sea nulo o vacío
+	        if (tipoCitaStr == null || tipoCitaStr.isEmpty()) {
+	            model.addAttribute("error", "El tipo de cita no puede estar vacío.");
+	            return "CitasRepresentantes";
+	        }
 
-	    // Manejar la respuesta y devolver la vista correcta
-	    if (resultado.getStatusCode().is2xxSuccessful()) {
-	        model.addAttribute("success", resultado.getBody());
-	    } else {
-	        model.addAttribute("error", resultado.getBody());
+	        // Convertir String a Enum (haciendo referencia a Cita.TipoCita)
+	        Cita.TipoCita tipoCita;
+	        try {
+	            tipoCita = Cita.TipoCita.valueOf(tipoCitaStr.trim().toUpperCase());
+	        } catch (IllegalArgumentException e) {
+	            model.addAttribute("error", "Error: Tipo de cita no válido. Debe ser 'ACADEMICO' o 'DISCIPLINARIO'.");
+	            return "CitasRepresentantes";
+	        }
+
+	        // Obtener el representante autenticado
+	        String username = principal.getName();
+	        Representante representante = representanteServicio.obtenerPorUsuario(username);
+
+	        // Llamar al método común de procesamiento con los nuevos datos
+	        ResponseEntity<String> resultado = procesarAgendamiento(
+	                idDocente, idHorario, fecha, representante.getIdRepresentante(), motivoCita, tipoCita);
+
+	        // Manejar la respuesta y devolver la vista correcta
+	        if (resultado.getStatusCode().is2xxSuccessful()) {
+	            model.addAttribute("success", resultado.getBody());
+	        } else {
+	            model.addAttribute("error", resultado.getBody());
+	        }
+
+	    } catch (Exception e) {
+	        model.addAttribute("error", "Error al procesar la cita: " + e.getMessage());
 	    }
 
 	    return "CitasRepresentantes";
 	}
+
+
 	
 	@PostMapping("/api/agendar-cita")
 	@ResponseBody
@@ -204,7 +236,9 @@ public class RepresentanteControlador {
 	        citaRequest.getIdDocente(),
 	        citaRequest.getIdHorario(),
 	        citaRequest.getFecha(),
-	        citaRequest.getRepresentanteId()
+	        citaRequest.getRepresentanteId(), 
+	        citaRequest.getMotivoCita(), 
+	        citaRequest.getTipoCita() 
 	    );
 	}
 	
@@ -213,6 +247,8 @@ public class RepresentanteControlador {
 	    private Integer idHorario;
 	    private LocalDate fecha;
 	    private Integer representanteId;
+	    private String motivoCita;  
+	    private TipoCita tipoCita;  
 
 	    // Getters y Setters
 	    public Integer getIdDocente() { return idDocente; }
@@ -223,10 +259,11 @@ public class RepresentanteControlador {
 	    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
 	    public Integer getRepresentanteId() { return representanteId; }
 	    public void setRepresentanteId(Integer representanteId) { this.representanteId = representanteId; }
+	    public String getMotivoCita() { return motivoCita; }
+	    public void setMotivoCita(String motivoCita) { this.motivoCita = motivoCita; }
+	    public TipoCita getTipoCita() { return tipoCita; }
+	    public void setTipoCita(TipoCita tipoCita) { this.tipoCita = tipoCita; }
 	}
-
-
-
 
 	
 	/*Obtener los horarios por Docentes*/
