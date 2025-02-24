@@ -24,4 +24,18 @@ public interface CitaRepositorio extends JpaRepository<Cita, Integer> {
 	Optional<Cita> findByRepresentanteAndFechaCitaAndHoraCita(@Param("idRepresentante") Integer idRepresentante,
 			@Param("fecha") LocalDate fecha, @Param("hora") LocalTime hora);
 
+	//Metodos para la impresion 
+	List<Cita> findByEstudianteIdEstudiante(Integer idEstudiante);
+
+	@Query("SELECT COUNT(c) FROM Cita c JOIN c.docentes d WHERE c.estadoCita = :estado AND d.idDocente = :idDocente")
+	int contarCitasPorEstadoYDocente(@Param("estado") String estado, @Param("idDocente") Integer idDocente);
+	
+	@Query("SELECT c FROM Cita c JOIN c.docentes d WHERE c.estudiante.idEstudiante = :idEstudiante AND d.idDocente = :idDocente")
+	List<Cita> findByEstudianteIdEstudianteAndDocente(@Param("idEstudiante") Integer idEstudiante, @Param("idDocente") Integer idDocente);
+	
+	@Query("SELECT COUNT(c) FROM Cita c JOIN c.docentes d WHERE c.tipoCita = :tipo AND d.idDocente = :idDocente")
+	long countByTipoCitaAndDocente(@Param("tipo") Cita.TipoCita tipo, @Param("idDocente") Integer idDocente);
+
+
+
 }

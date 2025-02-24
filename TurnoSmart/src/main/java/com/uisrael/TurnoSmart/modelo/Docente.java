@@ -3,6 +3,7 @@ package com.uisrael.TurnoSmart.modelo;
 import java.io.Serializable;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Entity;
@@ -40,12 +41,12 @@ public class Docente implements Serializable {
 
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "citas_docentes", joinColumns = @JoinColumn(name = "id_docente"), inverseJoinColumns = @JoinColumn(name = "id_cita"))
-	@JsonIgnore
+	@JsonBackReference
     @ToString.Exclude
 	private List<Cita> citas;
 
 	@ManyToMany(mappedBy = "docentes")
-	@JsonIgnore
+	@JsonBackReference
     @ToString.Exclude
 	private List<Estudiante> estudiantes;
 

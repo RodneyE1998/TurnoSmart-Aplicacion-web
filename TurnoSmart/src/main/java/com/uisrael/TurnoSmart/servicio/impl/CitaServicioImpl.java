@@ -3,11 +3,15 @@ package com.uisrael.TurnoSmart.servicio.impl;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.uisrael.TurnoSmart.dto.CitaDTO;
 import com.uisrael.TurnoSmart.modelo.Cita;
 import com.uisrael.TurnoSmart.modelo.Cita.TipoCita;
 import com.uisrael.TurnoSmart.modelo.Docente;
@@ -19,7 +23,6 @@ import com.uisrael.TurnoSmart.repositorio.DocenteRepositorio;
 import com.uisrael.TurnoSmart.repositorio.EstudianteRepositorio;
 import com.uisrael.TurnoSmart.repositorio.HorarioDisponibleRepositorio;
 import com.uisrael.TurnoSmart.servicio.CitaServicio;
-
 
 @Service
 @Transactional
@@ -46,31 +49,31 @@ public class CitaServicioImpl implements CitaServicio {
 	 */
 	@Override
 	@Transactional
-	public void agendarCitaPorDocente(Cita cita, Integer idEstudiante, Integer idDocente, String motivoCita, Cita.TipoCita tipoCita) {
+	public void agendarCitaPorDocente(Cita cita, Integer idEstudiante, Integer idDocente, String motivoCita,
+			Cita.TipoCita tipoCita) {
 
-	    // Obtener el estudiante
-	    Estudiante estudiante = estudianteRepositorio.findById(idEstudiante)
-	            .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
+		// Obtener el estudiante
+		Estudiante estudiante = estudianteRepositorio.findById(idEstudiante)
+				.orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
 
-	    // Obtener el representante del estudiante
-	    Representante representante = estudiante.getRepresentante();
+		// Obtener el representante del estudiante
+		Representante representante = estudiante.getRepresentante();
 
-	    // Obtener el docente
-	    Docente docente = docenteRepositorio.findById(idDocente)
-	            .orElseThrow(() -> new RuntimeException("Docente no encontrado"));
+		// Obtener el docente
+		Docente docente = docenteRepositorio.findById(idDocente)
+				.orElseThrow(() -> new RuntimeException("Docente no encontrado"));
 
-	    // Configurar la cita con los nuevos campos
-	    cita.setEstudiante(estudiante);
-	    cita.setRepresentante(representante);
-	    cita.setDocentes(List.of(docente));
-	    cita.setEstadoCita("PENDIENTE");
-	    cita.setMotivoCita(motivoCita);
-	    cita.setTipoCita(tipoCita);
+		// Configurar la cita con los nuevos campos
+		cita.setEstudiante(estudiante);
+		cita.setRepresentante(representante);
+		cita.setDocentes(List.of(docente));
+		cita.setEstadoCita("PENDIENTE");
+		cita.setMotivoCita(motivoCita);
+		cita.setTipoCita(tipoCita);
 
-	    // Guardar la cita
-	    citaRepositorio.save(cita);
+		// Guardar la cita
+		citaRepositorio.save(cita);
 	}
-
 
 	@Override
 	public List<Cita> obtenerCitasPorDocente(Integer idDocente) {
@@ -79,36 +82,36 @@ public class CitaServicioImpl implements CitaServicio {
 
 	@Override
 	@Transactional
-	public void agendarCitaPorRepresentante(Integer idDocente, Integer idHorario, Representante representante, 
-            LocalDate fecha, String motivoCita, TipoCita tipoCita) {
-	    // Buscar el docente
-	    Docente docente = docenteRepositorio.findById(idDocente)
-	            .orElseThrow(() -> new RuntimeException("Docente no encontrado con el ID: " + idDocente));
+	public void agendarCitaPorRepresentante(Integer idDocente, Integer idHorario, Representante representante,
+			LocalDate fecha, String motivoCita, TipoCita tipoCita) {
+		// Buscar el docente
+		Docente docente = docenteRepositorio.findById(idDocente)
+				.orElseThrow(() -> new RuntimeException("Docente no encontrado con el ID: " + idDocente));
 
-	    // Buscar el horario
-	    HorarioDisponible horario = horarioRepositorio.findById(idHorario)
-	            .orElseThrow(() -> new RuntimeException("Horario no encontrado con el ID: " + idHorario));
+		// Buscar el horario
+		HorarioDisponible horario = horarioRepositorio.findById(idHorario)
+				.orElseThrow(() -> new RuntimeException("Horario no encontrado con el ID: " + idHorario));
 
-	    // Validar si ya existe una cita para el horario seleccionado
-	    boolean citaExistente = citaRepositorio.existsByFechaCitaAndHoraCitaAndDocentes(fecha, horario.getHoraInicio(), docente);
-	    if (citaExistente) {
-	        throw new RuntimeException("El horario seleccionado ya está reservado para este docente.");
-	    }
+		// Validar si ya existe una cita para el horario seleccionado
+		boolean citaExistente = citaRepositorio.existsByFechaCitaAndHoraCitaAndDocentes(fecha, horario.getHoraInicio(),
+				docente);
+		if (citaExistente) {
+			throw new RuntimeException("El horario seleccionado ya está reservado para este docente.");
+		}
 
-	    // Crear la nueva cita con los datos
-	    Cita nuevaCita = new Cita();
-	    nuevaCita.setDocentes(List.of(docente));
-	    nuevaCita.setEstadoCita("PENDIENTE");
-	    nuevaCita.setFechaCita(fecha);
-	    nuevaCita.setHoraCita(horario.getHoraInicio());
-	    nuevaCita.setRepresentante(representante);
-	    nuevaCita.setMotivoCita(motivoCita);
-	    nuevaCita.setTipoCita(tipoCita);
+		// Crear la nueva cita con los datos
+		Cita nuevaCita = new Cita();
+		nuevaCita.setDocentes(List.of(docente));
+		nuevaCita.setEstadoCita("PENDIENTE");
+		nuevaCita.setFechaCita(fecha);
+		nuevaCita.setHoraCita(horario.getHoraInicio());
+		nuevaCita.setRepresentante(representante);
+		nuevaCita.setMotivoCita(motivoCita);
+		nuevaCita.setTipoCita(tipoCita);
 
-	    // Guardar la cita en el repositorio
-	    citaRepositorio.save(nuevaCita);
+		// Guardar la cita en el repositorio
+		citaRepositorio.save(nuevaCita);
 	}
-
 
 	@Override
 	public List<Cita> obtenerCitasPorRepresentante(Integer idRepresentante) {
@@ -172,5 +175,47 @@ public class CitaServicioImpl implements CitaServicio {
 		return citaRepositorio.findByRepresentanteAndFechaCitaAndHoraCita(idRepresentante, fecha, hora).orElse(null);
 	}
 
+	@Override
+	public List<CitaDTO> obtenerCitasPorEstudiante(Integer idEstudiante, Integer idDocente) {
+	    List<Cita> citas = citaRepositorio.findByEstudianteIdEstudianteAndDocente(idEstudiante, idDocente);
+	    return citas.stream().map(cita -> new CitaDTO(
+	        cita.getIdCita(),
+	        cita.getFechaCita().toString(),  // Convertimos a String para compatibilidad
+	        cita.getHoraCita().toString(),
+	        cita.getDocentes() != null && !cita.getDocentes().isEmpty() ? 
+	            cita.getDocentes().stream()
+	                .map(d -> d.getNombre() + " " + d.getApellido())
+	                .collect(Collectors.joining(", ")) 
+	            : "Sin asignar",
+	        cita.getEstadoCita(),
+	        cita.getMotivoCita() // Agregar el motivoCita
+	    )).toList();
+	}
+
+
+	//Gráfico de Barras
+	@Override
+	public Map<String, Integer> obtenerEstadisticasPorDocente(Integer idDocente) {
+		Map<String, Integer> estadisticas = new HashMap<>();
+
+		estadisticas.put("pendientes", citaRepositorio.contarCitasPorEstadoYDocente("PENDIENTE", idDocente));
+		estadisticas.put("confirmadas", citaRepositorio.contarCitasPorEstadoYDocente("CONFIRMADA", idDocente));
+		estadisticas.put("realizadas", citaRepositorio.contarCitasPorEstadoYDocente("REALIZADA", idDocente));
+		estadisticas.put("canceladas", citaRepositorio.contarCitasPorEstadoYDocente("CANCELADA", idDocente));
+
+		return estadisticas;
+	}
+
+	
+	//Grafico de Pastel 
+	@Override
+	public Map<String, Integer> obtenerEstadisticasPorTipoCita(Integer idDocente) {
+		Map<String, Integer> estadisticas = new HashMap<>();
+
+	    estadisticas.put("Académico", (int) citaRepositorio.countByTipoCitaAndDocente(TipoCita.ACADEMICO, idDocente));
+	    estadisticas.put("Disciplinario", (int) citaRepositorio.countByTipoCitaAndDocente(TipoCita.DISCIPLINARIO, idDocente));
+
+	    return estadisticas;
+	}
 
 }

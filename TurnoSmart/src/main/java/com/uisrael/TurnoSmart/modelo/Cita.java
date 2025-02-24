@@ -5,6 +5,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -44,6 +46,7 @@ public class Cita implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "id_representante")
+    @JsonBackReference
     @ToString.Exclude
     private Representante representante;
     
@@ -58,6 +61,8 @@ public class Cita implements Serializable {
     
     @ManyToOne
     @JoinColumn(name = "id_estudiante")
+    @JsonBackReference
+    @ToString.Exclude
     private Estudiante estudiante;
     
  // Relación con HorarioDisponible

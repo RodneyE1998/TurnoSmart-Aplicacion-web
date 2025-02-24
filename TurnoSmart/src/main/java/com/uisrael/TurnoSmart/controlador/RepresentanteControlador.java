@@ -342,7 +342,8 @@ public class RepresentanteControlador {
 	            cita.getFechaCita().toString(),
 	            cita.getHoraCita().toString(),
 	            cita.getDocentes().stream().findFirst().map(Docente::getNombre).orElse("Desconocido"),
-	            cita.getEstadoCita() 
+	            cita.getEstadoCita(), 
+	            cita.getMotivoCita()
 	    )).collect(Collectors.toList());
 	}
 

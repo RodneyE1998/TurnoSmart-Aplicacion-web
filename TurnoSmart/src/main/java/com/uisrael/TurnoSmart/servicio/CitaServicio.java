@@ -3,9 +3,11 @@ package com.uisrael.TurnoSmart.servicio;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 import com.uisrael.TurnoSmart.modelo.Cita;
 import com.uisrael.TurnoSmart.modelo.Cita.TipoCita;
+import com.uisrael.TurnoSmart.dto.CitaDTO;
 import com.uisrael.TurnoSmart.modelo.Representante;
 
 public interface CitaServicio {
@@ -17,7 +19,6 @@ public interface CitaServicio {
 	void agendarCitaPorRepresentante(Integer idDocente, Integer idHorario, Representante representante, 
             LocalDate fecha, String motivoCita, TipoCita tipoCita);
 
-	
 	List<Cita> obtenerCitasPorRepresentante(Integer idRepresentante);
 	
     void modificarCita(Integer idCita, LocalDate nuevaFecha, LocalTime nuevaHora);
@@ -31,6 +32,12 @@ public interface CitaServicio {
     void marcarComoRealizada(Integer idCita);
     
     Cita obtenerCitaPorRepresentanteYFecha(Integer idRepresentante, LocalDate fecha, LocalTime hora);
+    
+    List<CitaDTO> obtenerCitasPorEstudiante(Integer idEstudiante, Integer idDocente);
+    
+    Map<String, Integer> obtenerEstadisticasPorDocente(Integer idDocente);
+    
+    Map<String, Integer> obtenerEstadisticasPorTipoCita(Integer idDocente);
 
 
 }

@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.uisrael.TurnoSmart.modelo.Cita;
+import com.uisrael.TurnoSmart.dto.CitaDTO;
 import com.uisrael.TurnoSmart.modelo.Docente;
 import com.uisrael.TurnoSmart.modelo.Estudiante;
 import com.uisrael.TurnoSmart.modelo.Representante;
@@ -405,5 +406,113 @@ public class DocenteControlador {
 			return "redirect:/docente/Perfil";
 		}
 	}
+	
+	
+	//
+	//METODO PARA CARGAR LA VISA REPORTES.HTML 
+	//
+	@GetMapping("/reportes")
+	public String mostrarReportes(Model model, Principal principal) {
+	    // Obtener el usuario autenticado
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    // Obtener el docente asociado al usuario
+	    Docente docente = usuario.getDocente();
+	    if (docente == null) {
+	        throw new RuntimeException("El usuario no tiene un docente asociado.");
+	    }
+
+	    // Pasar los datos del docente al modelo
+	    model.addAttribute("nombreDocente", docente.getNombre());
+	    model.addAttribute("apellidoDocente", docente.getApellido());
+
+	    // Pasar la lista de estudiantes para el selector
+	    List<Estudiante> estudiantes = estudianteServicio.obtenerEstudiantesPorDocente(docente.getIdDocente());
+	    model.addAttribute("estudiantes", estudiantes);
+
+	    return "Reportes"; // Ahora carga la vista Reportes.html
+	}
+	
+	
+	//Devuelve la lista de estudiantes asociados al docente en formato JSON.
+	//
+	@GetMapping("/api/estudiantes")
+	@ResponseBody
+	public List<Estudiante> obtenerEstudiantes(Principal principal) {
+	    // Obtener el usuario autenticado
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    // Obtener el docente asociado al usuario
+	    Docente docente = usuario.getDocente();
+	    if (docente == null) {
+	        throw new RuntimeException("El usuario no tiene un docente asociado.");
+	    }
+
+	    // Devolver los estudiantes en formato JSON
+	    return estudianteServicio.obtenerEstudiantesPorDocente(docente.getIdDocente());
+	}
+	
+	
+	//  Recibe el ID del estudiante y devuelve la lista de citas en formato JSON.
+	//
+	@GetMapping("/api/citas/{idEstudiante}")
+	@ResponseBody
+	public List<CitaDTO> obtenerCitasPorEstudiante(@PathVariable Integer idEstudiante, Principal principal) {
+	    // Obtener el usuario autenticado
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    // Obtener el docente asociado al usuario
+	    Docente docente = usuario.getDocente();
+	    if (docente == null) {
+	        throw new RuntimeException("El usuario no tiene un docente asociado.");
+	    }
+
+	    // Filtrar solo las citas en las que ha participado el docente autenticado
+	    return citaServicio.obtenerCitasPorEstudiante(idEstudiante, docente.getIdDocente());
+	}
+
+	
+	// Obtiene estadísticas de citas del docente en formato JSON.
+	// Se usa en Chart.js para los gráficos en Reportes.html.
+	@GetMapping("/api/citas/estadisticas")
+	@ResponseBody
+	public Map<String, Integer> obtenerEstadisticasCitas(Principal principal) {
+	    // Obtener el usuario autenticado
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    // Obtener el docente asociado al usuario
+	    Docente docente = usuario.getDocente();
+	    if (docente == null) {
+	        throw new RuntimeException("El usuario no tiene un docente asociado.");
+	    }
+
+	    // Obtener las estadísticas de citas
+	    return citaServicio.obtenerEstadisticasPorDocente(docente.getIdDocente());
+	}
+	
+	//Gráfico de Pastel 
+	@GetMapping("/api/citas/estadisticas-tipo")
+	@ResponseBody
+	public Map<String, Integer> obtenerEstadisticasTipoCita(Principal principal) {
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    Docente docente = usuario.getDocente();
+	    if (docente == null) {
+	        throw new RuntimeException("El usuario no tiene un docente asociado.");
+	    }
+
+	    return citaServicio.obtenerEstadisticasPorTipoCita(docente.getIdDocente());
+	}
+
 
 }
