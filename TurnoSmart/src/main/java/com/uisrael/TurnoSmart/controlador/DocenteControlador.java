@@ -168,8 +168,8 @@ public class DocenteControlador {
 			String motivoTexto = motivoCita;
 
 			// Enviar correo con botón de confirmación incluyendo motivo y tipo de cita
-			emailServicio.enviarCorreoConfirmacionCita(destinatario, nombreRepresentante, nombreDocente,
-					fecha, hora, idCita, tipoCitaTexto, motivoTexto);
+			emailServicio.enviarCorreoConfirmacionCita(destinatario, nombreRepresentante, nombreDocente, fecha, hora,
+					idCita, tipoCitaTexto, motivoTexto);
 
 			return "redirect:/docente/citas/agendadas";
 
@@ -364,6 +364,10 @@ public class DocenteControlador {
 			Usuario usuario = usuarioRepositorio.findByUsername(usernameActual)
 					.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+			// Normalizar el nuevo username (opcional, dependiendo de cómo se manejen las
+			// mayúsculas)
+			nuevoUsername = nuevoUsername.trim();
+
 			// Verificar si el nuevo username ya está en uso
 			if (usuarioRepositorio.findByUsername(nuevoUsername).isPresent()
 					&& !usuario.getUsername().equals(nuevoUsername)) {
@@ -377,142 +381,133 @@ public class DocenteControlador {
 			// Actualizar los datos en la base de datos
 			usuario.setUsername(nuevoUsername);
 			usuario.setPassword(passwordEncriptada);
-			usuarioRepositorio.save(usuario);
+			usuarioRepositorio.saveAndFlush(usuario); // Forzar escritura inmediata
 
-			// 🔹 FORZAR CIERRE DE SESIÓN MANUALMENTE
-			request.getSession().invalidate(); // Cierra la sesión HTTP
+			// Log para verificar que la actualización se refleje en la base de datos
+			Usuario updatedUser = usuarioRepositorio.findById(usuario.getIdUsuario())
+					.orElseThrow(() -> new RuntimeException("Usuario no encontrado después de la actualización"));
+			System.out.println("Username actualizado en DB: " + updatedUser.getUsername());
 
+			// Cerrar sesión de forma limpia
+			request.getSession().invalidate();
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			if (auth != null) {
 				new SecurityContextLogoutHandler().logout(request, response, auth);
 			}
 
-			// ESPERAR UN MOMENTO PARA QUE LA BASE DE DATOS SE REFRESQUE
-			Thread.sleep(1000); // Pausa de 1 segundo para asegurar sincronización
-
-			// FORZAR CARGA DEL NUEVO USUARIO EN SPRING SECURITY
-			UserDetails userDetails = userDetailsServicio.loadUserByUsername(nuevoUsername);
-			Authentication newAuth = new UsernamePasswordAuthenticationToken(userDetails, null,
-					userDetails.getAuthorities());
-			SecurityContextHolder.getContext().setAuthentication(newAuth);
-
-			// Redirigir al login con mensaje de éxito
+			// Redirigir al login
 			redirectAttributes.addFlashAttribute("success",
 					"Credenciales actualizadas correctamente. Inicia sesión nuevamente con tus nuevas credenciales.");
 			return "redirect:/login";
 
 		} catch (Exception e) {
+			e.printStackTrace(); // Imprimir error para debug
 			redirectAttributes.addFlashAttribute("error", "Ocurrió un error al actualizar las credenciales.");
 			return "redirect:/docente/Perfil";
 		}
 	}
-	
-	
+
 	//
-	//METODO PARA CARGAR LA VISA REPORTES.HTML 
+	// METODO PARA CARGAR LA VISA REPORTES.HTML
 	//
 	@GetMapping("/reportes")
 	public String mostrarReportes(Model model, Principal principal) {
-	    // Obtener el usuario autenticado
-	    String username = principal.getName();
-	    Usuario usuario = usuarioRepositorio.findByUsername(username)
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		// Obtener el usuario autenticado
+		String username = principal.getName();
+		Usuario usuario = usuarioRepositorio.findByUsername(username)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	    // Obtener el docente asociado al usuario
-	    Docente docente = usuario.getDocente();
-	    if (docente == null) {
-	        throw new RuntimeException("El usuario no tiene un docente asociado.");
-	    }
+		// Obtener el docente asociado al usuario
+		Docente docente = usuario.getDocente();
+		if (docente == null) {
+			throw new RuntimeException("El usuario no tiene un docente asociado.");
+		}
 
-	    // Pasar los datos del docente al modelo
-	    model.addAttribute("nombreDocente", docente.getNombre());
-	    model.addAttribute("apellidoDocente", docente.getApellido());
+		// Pasar los datos del docente al modelo
+		model.addAttribute("nombreDocente", docente.getNombre());
+		model.addAttribute("apellidoDocente", docente.getApellido());
 
-	    // Pasar la lista de estudiantes para el selector
-	    List<Estudiante> estudiantes = estudianteServicio.obtenerEstudiantesPorDocente(docente.getIdDocente());
-	    model.addAttribute("estudiantes", estudiantes);
+		// Pasar la lista de estudiantes para el selector
+		List<Estudiante> estudiantes = estudianteServicio.obtenerEstudiantesPorDocente(docente.getIdDocente());
+		model.addAttribute("estudiantes", estudiantes);
 
-	    return "Reportes"; // Ahora carga la vista Reportes.html
+		return "Reportes"; // Ahora carga la vista Reportes.html
 	}
-	
-	
-	//Devuelve la lista de estudiantes asociados al docente en formato JSON.
+
+	// Devuelve la lista de estudiantes asociados al docente en formato JSON.
 	//
 	@GetMapping("/api/estudiantes")
 	@ResponseBody
 	public List<Estudiante> obtenerEstudiantes(Principal principal) {
-	    // Obtener el usuario autenticado
-	    String username = principal.getName();
-	    Usuario usuario = usuarioRepositorio.findByUsername(username)
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		// Obtener el usuario autenticado
+		String username = principal.getName();
+		Usuario usuario = usuarioRepositorio.findByUsername(username)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	    // Obtener el docente asociado al usuario
-	    Docente docente = usuario.getDocente();
-	    if (docente == null) {
-	        throw new RuntimeException("El usuario no tiene un docente asociado.");
-	    }
+		// Obtener el docente asociado al usuario
+		Docente docente = usuario.getDocente();
+		if (docente == null) {
+			throw new RuntimeException("El usuario no tiene un docente asociado.");
+		}
 
-	    // Devolver los estudiantes en formato JSON
-	    return estudianteServicio.obtenerEstudiantesPorDocente(docente.getIdDocente());
+		// Devolver los estudiantes en formato JSON
+		return estudianteServicio.obtenerEstudiantesPorDocente(docente.getIdDocente());
 	}
-	
-	
-	//  Recibe el ID del estudiante y devuelve la lista de citas en formato JSON.
+
+	// Recibe el ID del estudiante y devuelve la lista de citas en formato JSON.
 	//
 	@GetMapping("/api/citas/{idEstudiante}")
 	@ResponseBody
 	public List<CitaDTO> obtenerCitasPorEstudiante(@PathVariable Integer idEstudiante, Principal principal) {
-	    // Obtener el usuario autenticado
-	    String username = principal.getName();
-	    Usuario usuario = usuarioRepositorio.findByUsername(username)
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		// Obtener el usuario autenticado
+		String username = principal.getName();
+		Usuario usuario = usuarioRepositorio.findByUsername(username)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	    // Obtener el docente asociado al usuario
-	    Docente docente = usuario.getDocente();
-	    if (docente == null) {
-	        throw new RuntimeException("El usuario no tiene un docente asociado.");
-	    }
+		// Obtener el docente asociado al usuario
+		Docente docente = usuario.getDocente();
+		if (docente == null) {
+			throw new RuntimeException("El usuario no tiene un docente asociado.");
+		}
 
-	    // Filtrar solo las citas en las que ha participado el docente autenticado
-	    return citaServicio.obtenerCitasPorEstudiante(idEstudiante, docente.getIdDocente());
+		// Filtrar solo las citas en las que ha participado el docente autenticado
+		return citaServicio.obtenerCitasPorEstudiante(idEstudiante, docente.getIdDocente());
 	}
 
-	
 	// Obtiene estadísticas de citas del docente en formato JSON.
 	// Se usa en Chart.js para los gráficos en Reportes.html.
 	@GetMapping("/api/citas/estadisticas")
 	@ResponseBody
 	public Map<String, Integer> obtenerEstadisticasCitas(Principal principal) {
-	    // Obtener el usuario autenticado
-	    String username = principal.getName();
-	    Usuario usuario = usuarioRepositorio.findByUsername(username)
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		// Obtener el usuario autenticado
+		String username = principal.getName();
+		Usuario usuario = usuarioRepositorio.findByUsername(username)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	    // Obtener el docente asociado al usuario
-	    Docente docente = usuario.getDocente();
-	    if (docente == null) {
-	        throw new RuntimeException("El usuario no tiene un docente asociado.");
-	    }
+		// Obtener el docente asociado al usuario
+		Docente docente = usuario.getDocente();
+		if (docente == null) {
+			throw new RuntimeException("El usuario no tiene un docente asociado.");
+		}
 
-	    // Obtener las estadísticas de citas
-	    return citaServicio.obtenerEstadisticasPorDocente(docente.getIdDocente());
+		// Obtener las estadísticas de citas
+		return citaServicio.obtenerEstadisticasPorDocente(docente.getIdDocente());
 	}
-	
-	//Gráfico de Pastel 
+
+	// Gráfico de Pastel
 	@GetMapping("/api/citas/estadisticas-tipo")
 	@ResponseBody
 	public Map<String, Integer> obtenerEstadisticasTipoCita(Principal principal) {
-	    String username = principal.getName();
-	    Usuario usuario = usuarioRepositorio.findByUsername(username)
-	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+		String username = principal.getName();
+		Usuario usuario = usuarioRepositorio.findByUsername(username)
+				.orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-	    Docente docente = usuario.getDocente();
-	    if (docente == null) {
-	        throw new RuntimeException("El usuario no tiene un docente asociado.");
-	    }
+		Docente docente = usuario.getDocente();
+		if (docente == null) {
+			throw new RuntimeException("El usuario no tiene un docente asociado.");
+		}
 
-	    return citaServicio.obtenerEstadisticasPorTipoCita(docente.getIdDocente());
+		return citaServicio.obtenerEstadisticasPorTipoCita(docente.getIdDocente());
 	}
-
 
 }
