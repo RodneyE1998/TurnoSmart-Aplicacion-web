@@ -28,6 +28,10 @@
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 
+<!-- Flatpickr CSS -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
 <style>
 /* Estilos del Sidebar */
 .sidebar-nav {
@@ -243,8 +247,8 @@
 					<!-- Selector de Fecha -->
 					<div class="form-group">
 						<label for="fecha" style="font-size: 18px;">Seleccionar
-							Fecha:</label> <input type="date" id="fecha" name="fecha"
-							class="form-control" required>
+							Fecha:</label> <input type="text" id="fecha" name="fecha"
+							class="form-control" placeholder="Selecciona la fecha" required>
 					</div>
 
 					<!-- Tipo de Cita -->
@@ -303,6 +307,7 @@
 		<script th:src="@{/dist/js/custom.min.js}"></script>
 		<script
 			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
 		<!-- Cargar horarios dinámicamente -->
 		<script>
@@ -347,6 +352,35 @@
                 });
             })
             .catch(error => console.error('Error al cargar los docentes:', error));
+     
+        // VALIDACIÓN DE FECHA: Impedir que se seleccionen fechas pasadas
+        let today = new Date();
+        let formattedDate = today.toISOString().split('T')[0];
+
+        let fechaInput = document.getElementById("fecha");
+        fechaInput.setAttribute("min", formattedDate);
+    });
+</script>
+
+		// Script para horarios dinámicos
+		<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Inicializar Flatpickr en el campo de fecha con restricción de mínimo hoy
+        flatpickr("#fecha", {
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            locale: {
+                firstDayOfWeek: 1,
+                weekdays: {
+                    shorthand: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+                    longhand: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+                },
+                months: {
+                    shorthand: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+                    longhand: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+                }
+            }
+        });
     });
 </script>
 </body>
