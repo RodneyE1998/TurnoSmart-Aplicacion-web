@@ -35,6 +35,10 @@ public interface CitaRepositorio extends JpaRepository<Cita, Integer> {
 	
 	@Query("SELECT COUNT(c) FROM Cita c JOIN c.docentes d WHERE c.tipoCita = :tipo AND d.idDocente = :idDocente")
 	long countByTipoCitaAndDocente(@Param("tipo") Cita.TipoCita tipo, @Param("idDocente") Integer idDocente);
+	
+	List<Cita> findByRepresentanteIdRepresentanteOrderByIdCitaDesc(Integer idRepresentante);
+	
+	List<Cita> findByDocentesIdDocenteOrderByIdCitaDesc(Integer idDocente);
 
 
 

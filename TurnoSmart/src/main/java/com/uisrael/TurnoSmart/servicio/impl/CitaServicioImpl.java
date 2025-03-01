@@ -77,7 +77,7 @@ public class CitaServicioImpl implements CitaServicio {
 
 	@Override
 	public List<Cita> obtenerCitasPorDocente(Integer idDocente) {
-		return citaRepositorio.findByDocentesIdDocente(idDocente);
+		return citaRepositorio.findByDocentesIdDocenteOrderByIdCitaDesc(idDocente);
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class CitaServicioImpl implements CitaServicio {
 	@Override
 	public List<Cita> obtenerCitasPorRepresentante(Integer idRepresentante) {
 		// TODO Auto-generated method stub
-		return citaRepositorio.findByRepresentanteIdRepresentante(idRepresentante);
+		return citaRepositorio.findByRepresentanteIdRepresentanteOrderByIdCitaDesc(idRepresentante);
 	}
 
 	@Override
