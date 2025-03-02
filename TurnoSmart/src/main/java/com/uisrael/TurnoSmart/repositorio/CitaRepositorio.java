@@ -40,6 +40,15 @@ public interface CitaRepositorio extends JpaRepository<Cita, Integer> {
 	
 	List<Cita> findByDocentesIdDocenteOrderByIdCitaDesc(Integer idDocente);
 
+	//NUEVOS METODOS PARA LAS GRAFICAS FLITRAR POR ESTUDIANTE 
+	@Query("SELECT COUNT(c) FROM Cita c WHERE c.estadoCita = :estado AND c.estudiante.idEstudiante = :idEstudiante AND EXISTS "
+		    + "(SELECT d FROM c.docentes d WHERE d.idDocente = :idDocente)")
+		int contarCitasPorEstadoYEstudiante(@Param("estado") String estado, @Param("idEstudiante") Integer idEstudiante, @Param("idDocente") Integer idDocente);
+
+		@Query("SELECT COUNT(c) FROM Cita c WHERE c.tipoCita = :tipo AND c.estudiante.idEstudiante = :idEstudiante AND EXISTS "
+		    + "(SELECT d FROM c.docentes d WHERE d.idDocente = :idDocente)")
+		long countByTipoCitaAndEstudiante(@Param("tipo") Cita.TipoCita tipo, @Param("idEstudiante") Integer idEstudiante, @Param("idDocente") Integer idDocente);
+
 
 
 }

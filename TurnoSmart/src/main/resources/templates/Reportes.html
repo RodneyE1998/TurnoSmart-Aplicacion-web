@@ -93,25 +93,25 @@
 	display: block;
 	margin: auto;
 }
+
 .graficos-container {
-    display: flex;
-    justify-content: space-around; /* Espaciado entre gráficos */
-    align-items: center;
-    flex-wrap: wrap; /* Permite que se ajusten en pantallas pequeñas */
-    margin-top: 20px;
+	display: flex;
+	justify-content: space-around; /* Espaciado entre gráficos */
+	align-items: center;
+	flex-wrap: wrap; /* Permite que se ajusten en pantallas pequeñas */
+	margin-top: 20px;
 }
 
 .grafico {
-    width: 45%; /* Tamaño de cada gráfico */
-    text-align: center;
+	width: 45%; /* Tamaño de cada gráfico */
+	text-align: center;
 }
 
 .grafico canvas {
-    width: 100% !important;
-    height: auto !important;
-    max-width: 400px;
+	width: 100% !important;
+	height: auto !important;
+	max-width: 400px;
 }
-
 </style>
 
 
@@ -279,7 +279,7 @@
 				<!-- Contenedor para los gráficos -->
 				<div class="graficos-container">
 					<div class="grafico">
-						<h3 class="text-center">Estadísticas de Todas las Citas</h3>
+						<h3 class="text-center">Estadísticas de Citas del Estudiante</h3>
 						<canvas id="graficoCitas"></canvas>
 					</div>
 					<div class="grafico">
@@ -287,41 +287,40 @@
 						<canvas id="graficoTipoCita"></canvas>
 					</div>
 				</div>
-
 			</div>
 
-
-
-			<!-- Footer Dinámico -->
-			<footer class="footer text-center">
-				<p>
-					All Rights Reserved by TurnoSmart. Designed and Developed by <a
-						href="https://www.wrappixel.com">RodneyEscobar</a>.
-				</p>
-			</footer>
 		</div>
 
-		<!-- JavaScript Files -->
-		<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
-		<script
-			th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
-		<script
-			th:src="@{/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
-		<script
-			th:src="@{/assets/libs/datatables.net/js/jquery.dataTables.min.js}"></script>
-		<script
-			th:src="@{/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js}"></script>
-		<script th:src="@{/dist/js/waves.js}"></script>
-		<script th:src="@{/dist/js/sidebarmenu.js}"></script>
-		<script th:src="@{/dist/js/custom.min.js}"></script>
-		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-		<script
-			src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
 
-		<script> 
+
+		<!-- Footer Dinámico -->
+		<footer class="footer text-center">
+			<p>
+				All Rights Reserved by TurnoSmart. Designed and Developed by <a
+					href="https://www.wrappixel.com">RodneyEscobar</a>.
+			</p>
+		</footer>
+	</div>
+
+	<!-- JavaScript Files -->
+	<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
+	<script
+		th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+	<script
+		th:src="@{/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
+	<script
+		th:src="@{/assets/libs/datatables.net/js/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script th:src="@{/dist/js/waves.js}"></script>
+	<script th:src="@{/dist/js/sidebarmenu.js}"></script>
+	<script th:src="@{/dist/js/custom.min.js}"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script
+		src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+
+	<script>
     $(document).ready(function () {
-    	 cargarEstadisticas();
-    	    cargarGraficoTipoCita();
         // Cargar estudiantes en el selector
         $.get("/docente/api/estudiantes", function (data) {
             let select = $('#selectEstudiante');
@@ -333,37 +332,30 @@
         // Inicializar DataTable
         $('#tablaCitas').DataTable({
             dom: 'Bfrtip',
-            buttons: [
-                {
-                    extend: 'pdfHtml5',
-                    text: '📄 Exportar PDF',
-                    title: 'Reporte de Citas',
-                    className: 'btn btn-danger'
-                }
-            ]
+            buttons: [{
+                extend: 'pdfHtml5',
+                text: '📄 Exportar PDF',
+                title: 'Reporte de Citas',
+                className: 'btn btn-danger'
+            }]
         });
-
-        // Cargar estadísticas al inicio
-        cargarEstadisticas();
     });
 
-    function cargarCitas() {
-        let estudianteId = $('#selectEstudiante').val();
-        if (!estudianteId) return;
+    $('#selectEstudiante').change(function () {
+        let idEstudiante = $(this).val();
+        if (idEstudiante) {
+            cargarCitas(idEstudiante);
+            actualizarGraficos(idEstudiante);
+        }
+    });
 
-        $.get(`/docente/api/citas/${estudianteId}`, function (data) {
+    function cargarCitas(idEstudiante) {
+        $.get(`/docente/api/citas/${idEstudiante}`, function (data) {
             let table = $('#tablaCitas').DataTable();
             table.clear();
 
             if (data.length === 0) {
-                // Si no hay citas, mostrar un mensaje en la tabla
-                table.row.add([
-                    "No hay citas registradas",
-                    "-",
-                    "-",
-                    "-",
-                    "-"
-                ]).draw();
+                table.row.add(["No hay citas registradas", "-", "-", "-", "-"]).draw();
             } else {
                 data.forEach(cita => {
                     table.row.add([
@@ -378,61 +370,65 @@
         });
     }
 
+    function actualizarGraficos(idEstudiante) {
+        fetch(`/docente/api/citas/estadisticas/${idEstudiante}`)
+            .then(response => response.json())
+            .then(data => {
+                actualizarGraficoBarras(data);
+            })
+            .catch(error => console.error("Error al cargar estadísticas:", error));
+
+        fetch(`/docente/api/citas/estadisticas-tipo/${idEstudiante}`)
+            .then(response => response.json())
+            .then(data => {
+                actualizarGraficoPastel(data);
+            })
+            .catch(error => console.error("Error al cargar estadísticas de tipos de cita:", error));
+    }
+
+    function actualizarGraficoBarras(data) {
+        let ctx = document.getElementById("graficoCitas").getContext("2d");
+        if (window.barChart) {
+            window.barChart.destroy();
+        }
+        window.barChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: ["Pendientes", "Confirmadas", "Realizadas", "Canceladas"],
+                datasets: [{
+                    label: "Citas por Estado",
+                    data: [data.pendientes, data.confirmadas, data.realizadas, data.canceladas],
+                    backgroundColor: ["blue", "green", "orange", "red"]
+                }]
+            },
+            options: { responsive: true }
+        });
+    }
+
+    function actualizarGraficoPastel(data) {
+        let ctx = document.getElementById("graficoTipoCita").getContext("2d");
+        if (window.pieChart) {
+            window.pieChart.destroy();
+        }
+        window.pieChart = new Chart(ctx, {
+            type: "pie",
+            data: {
+                labels: ["Académico", "Disciplinario"],
+                datasets: [{
+                    label: "Distribución de Tipos de Citas",
+                    data: [data.Académico, data.Disciplinario],
+                    backgroundColor: ["blue", "red"]
+                }]
+            },
+            options: { responsive: true }
+        });
+    }
 
     function imprimirReporte() {
         window.print();
     }
-
-    function cargarEstadisticas() {
-        $.get("/docente/api/citas/estadisticas", function (data) {
-            new Chart(document.getElementById("graficoCitas"), {
-                type: 'bar',
-                data: {
-                    labels: ["Pendientes", "Confirmadas", "Realizadas", "Canceladas"],
-                    datasets: [{
-                        label: 'Citas por Estado',
-                        data: [data.pendientes, data.confirmadas, data.realizadas, data.canceladas],
-                        backgroundColor: ['blue', 'green', 'orange', 'red']
-                    }]
-                }
-            });
-        });
-    }
-    
-    function cargarGraficoTipoCita() {
-        $.get("/docente/api/citas/estadisticas-tipo", function (data) {
-            console.log("Datos del gráfico:", data); // <-- Verificar si los datos llegan bien
-
-            if (Object.keys(data).length === 0) {
-                console.warn("No hay datos para mostrar en el gráfico");
-                return;
-            }
-
-            let ctx = document.getElementById("graficoTipoCita").getContext("2d");
-
-            new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(data),
-                    datasets: [{
-                        label: 'Tipos de Citas',
-                        data: Object.values(data),
-                        backgroundColor: ['#007bff', '#dc3545']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        });
-    }
-
-
 </script>
+
+
 </body>
 </html>

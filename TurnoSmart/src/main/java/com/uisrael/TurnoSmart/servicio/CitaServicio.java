@@ -38,6 +38,12 @@ public interface CitaServicio {
     Map<String, Integer> obtenerEstadisticasPorDocente(Integer idDocente);
     
     Map<String, Integer> obtenerEstadisticasPorTipoCita(Integer idDocente);
+    
+    //NUEVOS METODOS PARA GRAFICOS DE FILTRADO POR ESTUDIANTE 
+    
+    public Map<String, Integer> obtenerEstadisticasPorTipoCitaEstudiante(Integer idEstudiante, Integer idDocente);
+    
+    public Map<String, Integer> obtenerEstadisticasPorEstudiante(Integer idEstudiante, Integer idDocente);
 
 
 }

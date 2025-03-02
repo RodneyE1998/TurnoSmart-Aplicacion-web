@@ -509,5 +509,39 @@ public class DocenteControlador {
 
 		return citaServicio.obtenerEstadisticasPorTipoCita(docente.getIdDocente());
 	}
+	
+	//NUEVOS METODOS PARA GRAFICOS POR FILTRADO DE ESTUDIANTE 
+	// Obtiene estadísticas de citas de un estudiante en formato JSON.
+	@GetMapping("/api/citas/estadisticas/{idEstudiante}")
+	@ResponseBody
+	public Map<String, Integer> obtenerEstadisticasPorEstudiante(@PathVariable Integer idEstudiante, Principal principal) {
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    Docente docente = usuario.getDocente();
+	    if (docente == null) {
+	        throw new RuntimeException("El usuario no tiene un docente asociado.");
+	    }
+
+	    return citaServicio.obtenerEstadisticasPorEstudiante(idEstudiante, docente.getIdDocente());
+	}
+
+	// Obtiene estadísticas de tipos de cita por estudiante en formato JSON.
+	@GetMapping("/api/citas/estadisticas-tipo/{idEstudiante}")
+	@ResponseBody
+	public Map<String, Integer> obtenerEstadisticasTipoCitaEstudiante(@PathVariable Integer idEstudiante, Principal principal) {
+	    String username = principal.getName();
+	    Usuario usuario = usuarioRepositorio.findByUsername(username)
+	            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+	    Docente docente = usuario.getDocente();
+	    if (docente == null) {
+	        throw new RuntimeException("El usuario no tiene un docente asociado.");
+	    }
+
+	    return citaServicio.obtenerEstadisticasPorTipoCitaEstudiante(idEstudiante, docente.getIdDocente());
+	}
+
 
 }

@@ -217,5 +217,31 @@ public class CitaServicioImpl implements CitaServicio {
 
 	    return estadisticas;
 	}
+	
+	// NUEVOS METODOS PARA LOS GRAFICOS FILTRAR SEGUN ESTUDIANTE 
+	// Obtener estadísticas de citas por estudiante
+	@Override
+	public Map<String, Integer> obtenerEstadisticasPorEstudiante(Integer idEstudiante, Integer idDocente) {
+	    Map<String, Integer> estadisticas = new HashMap<>();
+
+	    estadisticas.put("pendientes", citaRepositorio.contarCitasPorEstadoYEstudiante("PENDIENTE", idEstudiante, idDocente));
+	    estadisticas.put("confirmadas", citaRepositorio.contarCitasPorEstadoYEstudiante("CONFIRMADA", idEstudiante, idDocente));
+	    estadisticas.put("realizadas", citaRepositorio.contarCitasPorEstadoYEstudiante("REALIZADA", idEstudiante, idDocente));
+	    estadisticas.put("canceladas", citaRepositorio.contarCitasPorEstadoYEstudiante("CANCELADA", idEstudiante, idDocente));
+
+	    return estadisticas;
+	}
+
+	// Obtener estadísticas de tipos de cita por estudiante
+	@Override
+	public Map<String, Integer> obtenerEstadisticasPorTipoCitaEstudiante(Integer idEstudiante, Integer idDocente) {
+	    Map<String, Integer> estadisticas = new HashMap<>();
+
+	    estadisticas.put("Académico", (int) citaRepositorio.countByTipoCitaAndEstudiante(TipoCita.ACADEMICO, idEstudiante, idDocente));
+	    estadisticas.put("Disciplinario", (int) citaRepositorio.countByTipoCitaAndEstudiante(TipoCita.DISCIPLINARIO, idEstudiante, idDocente));
+
+	    return estadisticas;
+	}
+
 
 }
