@@ -63,11 +63,6 @@ public class Cita implements Serializable {
 	@ToString.Exclude
 	private Estudiante estudiante;
 
-	// Relación con HorarioDisponible
-	// @ManyToOne
-	// @JoinColumn(name = "id_horario")
-	// private HorarioDisponible horario;
-
 	// Campo transitorio para nombres concatenados de docentes
 	@Transient
 	private String docentesConcatenados;

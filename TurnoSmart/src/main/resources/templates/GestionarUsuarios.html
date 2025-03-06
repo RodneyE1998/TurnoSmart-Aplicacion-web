@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="keywords"
+	content="dashboard, web, bootstrap, thymeleaf, spring boot, matrix lite" />
+<meta name="description"
+	content="Dashboard template using Thymeleaf and Bootstrap in Spring Boot" />
+<meta name="robots" content="noindex,nofollow" />
+<title>TurnoSmart</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="16x16"
+	th:href="@{/assets/images/icono.png}" />
+
+<!-- Agrega el CSS de Material Design Icons -->
+<link
+	href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css"
+	rel="stylesheet">
+
+<!-- CSS Files -->
+<link th:href="@{/assets/libs/flot/css/float-chart.css}"
+	rel="stylesheet" />
+<link th:href="@{/dist/css/style.min.css}" rel="stylesheet" />
+
+<!-- Incluir Bootstrap 5 -->
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+<!-- Agregar CSS de Select2 -->
+<link
+	href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"
+	rel="stylesheet" />
+
+<style>
+/* Estilos del Sidebar */
+.sidebar-nav {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.sidebar-nav .menu-items {
+	flex-grow: 1;
+}
+
+/* Estilos para el contenedor de bienvenida */
+.page-content {
+	background-color: #f4f5f7;
+	border-radius: 10px;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 40px;
+	max-width: 800px;
+	margin: 40px auto;
+	text-align: center;
+}
+
+.page-content h1 {
+	font-size: 2em;
+	color: #333;
+	margin-bottom: 10px;
+}
+
+.page-content p {
+	color: #555;
+	font-size: 1.2em;
+}
+
+/* Animación de cambio de color en el texto del footer */
+.footer p {
+	transition: color 1s ease;
+	animation: colorChange 5s infinite;
+}
+</style>
+<style>
+/* Aumenta la altura cuando hay muchas selecciones */
+.select2-container .select2-selection--multiple {
+	min-height: 50px; /* Altura mínima */
+	max-height: 120px; /* Altura máxima */
+	overflow-y: auto; /* Agregar scroll si hay muchos docentes */
+	padding: 5px;
+	border-radius: 5px;
+	border: 1px solid #ced4da;
+}
+
+/* Ajustar tamaño de las etiquetas de docentes seleccionados */
+.select2-container--default .select2-selection--multiple .select2-selection__choice
+	{
+	background-color: #007bff !important; /* Fondo azul */
+	color: white !important; /* Letras blancas */
+	padding: 4px 10px;
+	font-size: 14px;
+	border-radius: 5px;
+	border: none;
+}
+
+/* Cambia el color del borde cuando está seleccionado */
+.select2-container--default .select2-selection--multiple:focus {
+	border-color: #80bdff !important;
+	outline: none !important;
+}
+</style>
+
+</head>
+<body>
+	<!-- Preloader -->
+	<div class="preloader">
+		<div class="lds-ripple">
+			<div class="lds-pos"></div>
+			<div class="lds-pos"></div>
+		</div>
+	</div>
+
+	<!-- Main Wrapper -->
+	<div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5"
+		data-sidebartype="full" data-sidebar-position="absolute"
+		data-header-position="absolute" data-boxed-layout="full">
+
+		<!-- Topbar Header -->
+		<header class="topbar" data-navbarbg="skin5">
+			<nav class="navbar top-navbar navbar-expand-md navbar-dark">
+				<div class="navbar-header" data-logobg="skin5">
+					<a class="navbar-brand" th:href="@{/admin/principal}"> <b
+						class="logo-icon ps-2"> <img
+							th:src="@{/assets/images/icono.png}" alt="TurnoSmart Logo"
+							class="light-logo" width="25" />
+					</b> <span class="logo-text ms-2"
+						style="color: orange; font-family: 'Arial', sans-serif; font-size: 24px;">
+							TurnoSmart </span>
+					</a> <a class="nav-toggler waves-effect waves-light d-block d-md-none"
+						href="javascript:void(0)"> <i class="ti-menu ti-close"></i>
+					</a>
+				</div>
+
+				<div class="navbar-collapse collapse" id="navbarSupportedContent"
+					data-navbarbg="skin5">
+					<ul class="navbar-nav float-start me-auto">
+						<li class="nav-item d-none d-lg-block"><a
+							class="nav-link sidebartoggler waves-effect waves-light"
+							href="javascript:void(0)" data-sidebartype="mini-sidebar"> <i
+								class="mdi mdi-menu font-24"></i>
+						</a></li>
+					</ul>
+					<div
+						class="navbar-collapse collapse d-flex justify-content-between"
+						id="navbarSupportedContent" data-navbarbg="skin5">
+
+						<!-- Texto centrado "Colegio Antonio Flores" -->
+						<span class="text-white mx-auto"
+							style="font-family: 'Arial', sans-serif; font-size: 20px; text-align: center;">
+							UNIDAD EDUCATVIA "ANTONIO FLORES" </span>
+
+
+					</div>
+				</div>
+			</nav>
+		</header>
+
+		<!-- ============================================================== -->
+		<!-- Left Sidebar BARRA LATERAL-->
+		<!-- ============================================================== -->
+		<aside class="left-sidebar" data-sidebarbg="skin5">
+			<div class="scroll-sidebar">
+				<nav class="sidebar-nav">
+					<ul id="sidebarnav" class="pt-4">
+						<li class="sidebar-item"><a
+							class="sidebar-link has-arrow waves-effect waves-dark"
+							href="javascript:void(0)" aria-expanded="false"><i
+								class="mdi mdi-face"></i><span class="hide-menu">Crear
+									Perfil </span></a>
+							<ul aria-expanded="false" class="collapse first-level">
+								<li class="sidebar-item"><a
+									href="/admin/gestionar-usuarios" class="sidebar-link"><i
+										class="mdi mdi-emoticon"></i><span class="hide-menu">
+											CREAR USUARIOS </span></a></li>
+							</ul></li>
+						<li class="sidebar-item"><a
+							class="sidebar-link has-arrow waves-effect waves-dark"
+							href="javascript:void(0)" aria-expanded="false"><i
+								class="mdi mdi-receipt"></i><span class="hide-menu">CITAS
+							</span></a>
+							<ul aria-expanded="false" class="collapse first-level">
+								<li class="sidebar-item"><a href="/docente/citas"
+									class="sidebar-link"><i class="mdi mdi-note-outline"></i><span
+										class="hide-menu"> AGENDAR CITAS </span></a></li>
+								<li class="sidebar-item"><a href="/docente/citas/agendadas"
+									class="sidebar-link"><i class="mdi mdi-note-plus"></i><span
+										class="hide-menu"> CITAS AGENDADAS </span></a></li>
+							</ul></li>
+						<li class="sidebar-item"><a
+							class="sidebar-link waves-effect waves-dark sidebar-link"
+							href="/docente/horarios" aria-expanded="false"> <i
+								class="mdi mdi-view-dashboard"></i><span class="hide-menu">Horarios</span>
+						</a></li>
+						<li class="sidebar-item"><a
+							class="sidebar-link waves-effect waves-dark sidebar-link"
+							href="/docente/reportes" aria-expanded="false"><i
+								class="mdi mdi-chart-bubble"></i><span class="hide-menu">Reportes
+									y Estadísticas</span></a></li>
+
+						<!-- Agregar elementos <li> vacíos para espacio adicional -->
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<!-- Espacio en blanco para empujar el botón de Logout hacia abajo -->
+						<li class="sidebar-item mt-auto"><a
+							class="sidebar-link waves-effect waves-dark sidebar-link text-danger"
+							th:href="@{/logout}" aria-expanded="false"> <i
+								class="mdi mdi-logout"></i><span class="hide-menu">Cerrar
+									Sesión</span>
+						</a></li>
+					</ul>
+				</nav>
+			</div>
+		</aside>
+
+		<!-- CONTENIDO PRINCIPAL  -->
+		<div class="page-wrapper">
+			<!-- Imagen del Colegio -->
+			<div style="text-align: center; margin-top: 20px;">
+				<img
+					src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu1b3tsol6AvxLvoFz9suaU05kfP5jusUw1w&s"
+					alt="Logo del Colegio"
+					style="max-width: 200px; border-radius: 10px;">
+			</div>
+
+			<!-- Contenido Principal -->
+			<div class="container mt-4">
+				<h1 class="text-center">Crear Usuarios</h1>
+				<div th:if="${param.success}"
+					class="alert alert-success text-center">¡Usuario creado
+					exitosamente!</div>
+
+				<!-- Navegación de Tabs -->
+				<ul class="nav nav-tabs mt-3" id="userTabs">
+					<li class="nav-item"><a class="nav-link active"
+						id="tabDocente" data-bs-toggle="tab" href="#crearDocente">Crear
+							Docente</a></li>
+					<li class="nav-item"><a class="nav-link" id="tabRepresentante"
+						data-bs-toggle="tab" href="#crearRepresentante">Crear
+							Representante</a></li>
+					<li class="nav-item"><a class="nav-link" id="tabEstudiante"
+						data-bs-toggle="tab" href="#crearEstudiante">Crear Estudiante</a>
+					</li>
+				</ul>
+
+				<!-- Contenido de los Tabs -->
+				<div class="tab-content mt-3">
+					<!-- Formulario Docente -->
+					<div id="crearDocente" class="tab-pane fade show active">
+						<div class="card shadow p-4">
+							<h3 class="text-center mb-3">Registrar Docente</h3>
+							<form action="/admin/crear-docente" method="post">
+								<div class="row">
+									<div class="col-md-6">
+										<label>Nombre</label> <input type="text" name="nombre"
+											class="form-control" placeholder="Nombre" required>
+									</div>
+									<div class="col-md-6">
+										<label>Apellido</label> <input type="text" name="apellido"
+											class="form-control" placeholder="Apellido" required>
+									</div>
+								</div>
+
+								<div class="row mt-3">
+									<div class="col-md-6">
+										<label>Correo</label> <input type="email" name="email"
+											class="form-control" placeholder="Correo" required>
+									</div>
+									<div class="col-md-6">
+										<label>Teléfono</label> <input type="text" name="telefono"
+											class="form-control" placeholder="Teléfono" required>
+									</div>
+								</div>
+								<div class="row mt-3">
+									<div class="col-md-6">
+										<label>Cédula</label> <input type="text"
+											name="numeroIdentificacion" class="form-control"
+											placeholder="Cédula" required>
+									</div>
+									<div class="col-md-6">
+										<label>Nombre de Usuario</label> <input type="text"
+											name="username" class="form-control" placeholder="Usuario"
+											required>
+									</div>
+								</div>
+								<div class="row mt-3">
+									<div class="col-md-6">
+										<label>Contraseña</label> <input type="password"
+											name="password" class="form-control" placeholder="Contraseña"
+											required>
+									</div>
+								</div>
+
+								<div class="text-center mt-4">
+									<button type="submit" class="btn btn-primary w-50">Crear
+										Docente</button>
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<!-- Formulario Representante -->
+					<div id="crearRepresentante" class="tab-pane fade ">
+						<div class="card shadow p-4">
+							<h3 class="text-center mb-3">Registrar Representante</h3>
+							<form action="/admin/crear-representante" method="post">
+								<div class="row">
+									<div class="col-md-6">
+										<label>Nombre</label> <input type="text" name="nombre"
+											class="form-control" placeholder="Nombre" required>
+									</div>
+									<div class="col-md-6">
+										<label>Apellido</label> <input type="text" name="apellido"
+											class="form-control" placeholder="Apellido" required>
+									</div>
+								</div>
+
+								<div class="row mt-3">
+									<div class="col-md-6">
+										<label>Correo</label> <input type="email" name="email"
+											class="form-control" placeholder="Correo" required>
+									</div>
+									<div class="col-md-6">
+										<label>Teléfono</label> <input type="text" name="telefono"
+											class="form-control" placeholder="Teléfono" required>
+									</div>
+								</div>
+
+								<div class="row mt-3">
+									<div class="col-md-6">
+										<label>Cédula</label> <input type="text" name="cedula"
+											class="form-control" placeholder="Cédula" required>
+									</div>
+									<div class="col-md-6">
+										<label>Nombre de Usuario</label> <input type="text"
+											name="username" class="form-control" placeholder="Usuario"
+											required>
+									</div>
+								</div>
+
+								<div class="row mt-3">
+									<div class="col-md-6">
+										<label>Contraseña</label> <input type="password"
+											name="password" class="form-control" placeholder="Contraseña"
+											required>
+									</div>
+								</div>
+
+								<div class="text-center mt-4">
+									<button type="submit" class="btn btn-success w-50">Crear
+										Representante</button>
+								</div>
+							</form>
+						</div>
+					</div>
+
+					<!-- Formulario Estudiante -->
+					<div id="crearEstudiante" class="tab-pane fade">
+						<div class="card shadow p-4">
+							<h3 class="text-center mb-3">Registrar Estudiante</h3>
+							<form action="/admin/crear-estudiante" method="post">
+								<div class="row">
+									<div class="col-md-6">
+										<label>Nombre</label> <input type="text" name="nombre"
+											class="form-control" placeholder="Nombre" required>
+									</div>
+									<div class="col-md-6">
+										<label>Apellido</label> <input type="text" name="apellido"
+											class="form-control" placeholder="Apellido" required>
+									</div>
+								</div>
+
+								<div class="row mt-3">
+									<div class="col-md-6">
+										<label>Cédula</label> <input type="text" name="cedula"
+											class="form-control" placeholder="Cédula" required>
+									</div>
+									<div class="col-md-6">
+										<label>Curso</label> <input type="text" name="curso"
+											class="form-control" placeholder="Curso" required>
+									</div>
+								</div>
+
+								<div class="row mt-3">
+									<div class="col-md-6">
+										<label>Representante</label> <select name="idRepresentante"
+											class="form-control" required>
+											<option th:each="representante : ${representantes}"
+												th:value="${representante.idRepresentante}"
+												th:text="${representante.nombre + ' ' + representante.apellido}">
+											</option>
+										</select>
+									</div>
+
+									<div class="col-md-6">
+										<label>Docentes</label> <select name="docentesSeleccionados"
+											id="selectDocentes" class="form-control" multiple
+											style="width: 100%; min-height: 50px;">
+											<option th:each="docente : ${docentes}"
+												th:value="${docente.idDocente}"
+												th:text="${docente.nombre + ' ' + docente.apellido}">
+											</option>
+										</select>
+									</div>
+								</div>
+
+								<div class="text-center mt-4">
+									<button type="submit" class="btn btn-info w-50">Crear
+										Estudiante</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<!-- Fin de tab-content -->
+			</div>
+			<!-- Fin de container -->
+		</div>
+		<!-- Fin de page-wrapper -->
+
+		<!-- Footer Dinámico -->
+		<footer class="footer text-center">
+			<p>
+				All Rights Reserved by TurnoSmart. Designed and Developed by <a
+					href="https://www.wrappixel.com">RodneyEscobar</a>.
+			</p>
+		</footer>
+	</div>
+
+	<!-- JavaScript Files -->
+	<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
+	<script
+		th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+	<script
+		th:src="@{/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
+	<script th:src="@{/dist/js/waves.js}"></script>
+	<script th:src="@{/dist/js/sidebarmenu.js}"></script>
+	<script th:src="@{/dist/js/custom.min.js}"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+	<script>
+		$(document).ready(function() {
+			$('#selectDocentes').select2({
+				placeholder : "Seleccione los docentes",
+				width : '100%',
+				allowClear : true
+			});
+		});
+	</script>
+
+</body>
+</html>

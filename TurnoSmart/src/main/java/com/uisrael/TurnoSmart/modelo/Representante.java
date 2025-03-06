@@ -51,7 +51,14 @@ public class Representante implements Serializable{
     @JsonManagedReference
     @ToString.Exclude
     private Usuario usuario;
+    
+    // Método para obtener el ID del usuario asociado
+    public Integer getIdUsuario() {
+        return usuario != null ? usuario.getIdUsuario() : null;
+    }
 
-
-
+    // Método para asignar un usuario al representante
+    public void setIdUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
 }

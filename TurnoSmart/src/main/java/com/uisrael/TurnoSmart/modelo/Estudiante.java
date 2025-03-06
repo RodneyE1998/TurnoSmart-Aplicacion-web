@@ -34,11 +34,12 @@ public class Estudiante implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "id_representante")
 	@JsonBackReference
-    @ToString.Exclude
+	@ToString.Exclude
 	private Representante representante;
 
 	@ManyToMany
-	@JoinTable(name = "estudiantes_docentes", joinColumns = @JoinColumn(name = "id_estudiante"), inverseJoinColumns = @JoinColumn(name = "id_docente"))
+	@JoinTable(name = "estudiantes_docentes", joinColumns = @JoinColumn(name = "id_estudiante"), 
+	inverseJoinColumns = @JoinColumn(name = "id_docente"))
 	@ToString.Exclude
 	private List<Docente> docentes;
 

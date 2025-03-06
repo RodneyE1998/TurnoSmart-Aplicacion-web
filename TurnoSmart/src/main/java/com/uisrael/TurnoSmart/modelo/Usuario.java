@@ -1,3 +1,4 @@
+
 package com.uisrael.TurnoSmart.modelo;
 
 import java.io.Serializable;

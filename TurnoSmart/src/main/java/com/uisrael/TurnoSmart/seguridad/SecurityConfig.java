@@ -47,6 +47,7 @@ public class SecurityConfig {
 	        .authorizeHttpRequests(authorize -> authorize
 	            .requestMatchers("/docente/**").hasAuthority("DOCENTE")
 	            .requestMatchers("/representante/**").hasAuthority("REPRESENTANTE")
+	            .requestMatchers("/admin/**").hasAuthority("ADMIN")
 	            .requestMatchers("/login").permitAll() // Permitimos acceso al login
 	            .requestMatchers("/assets/**", "/dist/**", "/src/**", "/webjars/**").permitAll()
 	            .anyRequest().authenticated()
@@ -58,9 +59,9 @@ public class SecurityConfig {
 	                UserDetailsServicioImpl.UserDetailsImpl userDetails = 
 	                    (UserDetailsServicioImpl.UserDetailsImpl) authentication.getPrincipal();
 
-	                int idRepresentante = userDetails.getIdRepresentante(); // 🔹 Obtener id_representante
+	                int idRepresentante = userDetails.getIdRepresentante(); // Obtener id_representante
 
-	                // 🔹 Imprimir roles en la consola
+	                // Imprimir roles en la consola
 	                System.out.println("🔹 Roles del usuario autenticado: " + authentication.getAuthorities());
 
 	                // Obtener los roles correctamente
@@ -68,6 +69,12 @@ public class SecurityConfig {
 	                    .map(GrantedAuthority::getAuthority)
 	                    .findFirst()
 	                    .orElse("UNKNOWN"); // Si no hay roles, devuelve "UNKNOWN"
+	                
+	                // Si el usuario es ADMIN, redirigirlo a la página de administración
+                    if ("ADMIN".equals(role)) {
+                        response.sendRedirect("/admin/principal");
+                        return;
+                    }
 
 	                // Devuelve JSON si la solicitud viene desde Postman o la app móvil
 	                String requestedWith = request.getHeader("X-Requested-With");
@@ -112,7 +119,7 @@ public class SecurityConfig {
         auth.authenticationProvider(authenticationProvider());
     }
     
-    //Permite usar doble // 
+    //Permite usar doble // en URLs
     @Bean
     public StrictHttpFirewall allowDoubleSlashFirewall() {
         StrictHttpFirewall firewall = new StrictHttpFirewall();
