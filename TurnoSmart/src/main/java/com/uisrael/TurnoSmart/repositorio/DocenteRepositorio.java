@@ -25,6 +25,7 @@ public interface DocenteRepositorio extends JpaRepository<Docente, Integer> {
             "WHERE r.idRepresentante = :idRepresentante")
      List<Docente> findDocentesByRepresentante(@Param("idRepresentante") Integer idRepresentante);
     
+    List<Docente> findByActivoTrue();
 
 
 }

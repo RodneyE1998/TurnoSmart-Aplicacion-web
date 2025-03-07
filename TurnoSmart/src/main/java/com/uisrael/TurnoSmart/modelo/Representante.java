@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,6 +37,10 @@ public class Representante implements Serializable{
     private String telefono;
     private String cedula;
     
+    @Column(nullable = false)
+    private Boolean activo = true;
+
+    
     @OneToMany(mappedBy = "representante")
     @JsonManagedReference
     @ToString.Exclude
@@ -60,5 +65,14 @@ public class Representante implements Serializable{
     // Método para asignar un usuario al representante
     public void setIdUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+    
+ // Getters y Setters
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 }

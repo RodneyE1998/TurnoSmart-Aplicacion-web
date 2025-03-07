@@ -29,12 +29,7 @@ public interface RepresentanteRepositorio extends JpaRepository<Representante, I
     	    WHERE e.id_representante = :idRepresentante
     	    """, nativeQuery = true)
     	List<Object[]> obtenerDocentesRaw(@Param("idRepresentante") Integer idRepresentante);
-
-
-
-
-
-
-
+    	
+    	 List<Representante> findByActivoTrue();
 
 }

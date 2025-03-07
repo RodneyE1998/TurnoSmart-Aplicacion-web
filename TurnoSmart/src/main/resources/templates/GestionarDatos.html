@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="keywords"
+	content="dashboard, web, bootstrap, thymeleaf, spring boot, matrix lite" />
+<meta name="description"
+	content="Dashboard template using Thymeleaf and Bootstrap in Spring Boot" />
+<meta name="robots" content="noindex,nofollow" />
+<title>TurnoSmart</title>
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="16x16"
+	th:href="@{/assets/images/icono.png}" />
+
+<!-- Agrega el CSS de Material Design Icons -->
+<link
+	href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css"
+	rel="stylesheet">
+
+<!-- CSS Files -->
+<link th:href="@{/assets/libs/flot/css/float-chart.css}"
+	rel="stylesheet" />
+<link th:href="@{/dist/css/style.min.css}" rel="stylesheet" />
+
+<link rel="stylesheet"
+	href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+<style>
+/* Estilos del Sidebar */
+.sidebar-nav {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.sidebar-nav .menu-items {
+	flex-grow: 1;
+}
+
+/* Estilos para el contenedor de bienvenida */
+.page-content {
+	background-color: #f4f5f7;
+	border-radius: 10px;
+	box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+	padding: 40px;
+	max-width: 800px;
+	margin: 40px auto;
+	text-align: center;
+}
+
+.page-content h1 {
+	font-size: 2em;
+	color: #333;
+	margin-bottom: 10px;
+}
+
+.page-content p {
+	color: #555;
+	font-size: 1.2em;
+}
+
+/* Animación de cambio de color en el texto del footer */
+.footer p {
+	transition: color 1s ease;
+	animation: colorChange 5s infinite;
+}
+</style>
+
+<style>
+.table th, .table td {
+	vertical-align: middle;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.table th {
+	font-weight: bold;
+}
+
+.btn-sm {
+	font-size: 14px;
+	padding: 5px 10px;
+}
+</style>
+</head>
+<body>
+	<!-- Preloader -->
+	<div class="preloader">
+		<div class="lds-ripple">
+			<div class="lds-pos"></div>
+			<div class="lds-pos"></div>
+		</div>
+	</div>
+
+	<!-- Main Wrapper -->
+	<div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5"
+		data-sidebartype="full" data-sidebar-position="absolute"
+		data-header-position="absolute" data-boxed-layout="full">
+
+		<!-- Topbar Header -->
+		<header class="topbar" data-navbarbg="skin5">
+			<nav class="navbar top-navbar navbar-expand-md navbar-dark">
+				<div class="navbar-header" data-logobg="skin5">
+					<a class="navbar-brand" th:href="@{/admin/principal}"> <b
+						class="logo-icon ps-2"> <img
+							th:src="@{/assets/images/icono.png}" alt="TurnoSmart Logo"
+							class="light-logo" width="25" />
+					</b> <span class="logo-text ms-2"
+						style="color: orange; font-family: 'Arial', sans-serif; font-size: 24px;">
+							TurnoSmart </span>
+					</a> <a class="nav-toggler waves-effect waves-light d-block d-md-none"
+						href="javascript:void(0)"> <i class="ti-menu ti-close"></i>
+					</a>
+				</div>
+
+				<div class="navbar-collapse collapse" id="navbarSupportedContent"
+					data-navbarbg="skin5">
+					<ul class="navbar-nav float-start me-auto">
+						<li class="nav-item d-none d-lg-block"><a
+							class="nav-link sidebartoggler waves-effect waves-light"
+							href="javascript:void(0)" data-sidebartype="mini-sidebar"> <i
+								class="mdi mdi-menu font-24"></i>
+						</a></li>
+					</ul>
+					<div
+						class="navbar-collapse collapse d-flex justify-content-between"
+						id="navbarSupportedContent" data-navbarbg="skin5">
+
+						<!-- Texto centrado "Colegio Antonio Flores" -->
+						<span class="text-white mx-auto"
+							style="font-family: 'Arial', sans-serif; font-size: 20px; text-align: center;">
+							UNIDAD EDUCATVIA "ANTONIO FLORES" </span>
+
+
+					</div>
+				</div>
+			</nav>
+		</header>
+
+		<!-- ============================================================== -->
+		<!-- Left Sidebar BARRA LATERAL-->
+		<!-- ============================================================== -->
+		<aside class="left-sidebar" data-sidebarbg="skin5">
+			<div class="scroll-sidebar">
+				<nav class="sidebar-nav">
+					<ul id="sidebarnav" class="pt-4">
+						<li class="sidebar-item"><a
+							class="sidebar-link has-arrow waves-effect waves-dark"
+							href="javascript:void(0)" aria-expanded="false"><i
+								class="mdi mdi-face"></i><span class="hide-menu">Crear
+									Perfil </span></a>
+							<ul aria-expanded="false" class="collapse first-level">
+								<li class="sidebar-item"><a
+									href="/admin/gestionar-usuarios" class="sidebar-link"><i
+										class="mdi mdi-emoticon"></i><span class="hide-menu">
+											CREAR USUARIOS </span></a></li>
+							</ul></li>
+						<li class="sidebar-item"><a
+							class="sidebar-link waves-effect waves-dark sidebar-link"
+							href="/admin/gestionar-datos" aria-expanded="false"> <i
+								class="mdi mdi-view-dashboard"></i><span class="hide-menu">Lista
+									de Usuarios</span>
+						</a></li>
+
+						<!-- Agregar elementos <li> vacíos para espacio adicional -->
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<li class="sidebar-item" style="height: 250px;"></li>
+						<!-- Espacio en blanco para empujar el botón de Logout hacia abajo -->
+						<li class="sidebar-item mt-auto"><a
+							class="sidebar-link waves-effect waves-dark sidebar-link text-danger"
+							th:href="@{/logout}" aria-expanded="false"> <i
+								class="mdi mdi-logout"></i><span class="hide-menu">Cerrar
+									Sesión</span>
+						</a></li>
+					</ul>
+				</nav>
+			</div>
+		</aside>
+
+		<div class="page-wrapper">
+			<!-- ============================================================== -->
+			<!-- Bread crumb and right sidebar toggle -->
+			<!-- ============================================================== -->
+
+			<!-- Imagen del Colegio -->
+			<div style="text-align: center; margin-top: 20px;">
+				<img
+					src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu1b3tsol6AvxLvoFz9suaU05kfP5jusUw1w&s"
+					alt="Logo del Colegio"
+					style="max-width: 200px; border-radius: 10px;">
+			</div>
+
+			<!-- Contenido Principal -->
+			<div class="page-content">
+				<h1 th:text="'Gestión de Usuarios'"></h1>
+
+			</div>
+			<!-- ============================================================== -->
+			<!-- Lista de USUARIOS   -->
+			<!-- ============================================================== -->
+			<div class="table-responsive">
+				<!-- Pestañas -->
+				<ul class="nav nav-tabs mt-3" id="gestionTabs">
+					<li class="nav-item"><a class="nav-link active"
+						data-bs-toggle="tab" href="#docentes">Docentes</a></li>
+					<li class="nav-item"><a class="nav-link" data-bs-toggle="tab"
+						href="#representantes">Representantes</a></li>
+					<li class="nav-item"><a class="nav-link" data-bs-toggle="tab"
+						href="#estudiantes">Estudiantes</a></li>
+				</ul>
+
+				<!-- Contenido de las pestañas -->
+				<div class="tab-content mt-3">
+					<!--                       -->
+					<!-- Docentes -->
+					<!--                         -->
+					<div id="docentes" class="tab-pane fade show active">
+						<h3>Lista de Docentes</h3>
+						<table id="tablaDocentes"
+							class="table table-striped table-bordered text-center align-middle">
+							<thead class="table-dark">
+								<tr>
+									<th style="white-space: nowrap;">ID</th>
+									<th style="white-space: nowrap;">Nombre</th>
+									<th style="white-space: nowrap;">Apellido</th>
+									<th style="white-space: nowrap;">Email</th>
+									<th style="white-space: nowrap;">Teléfono</th>
+									<th style="white-space: nowrap;">Acciones</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="docente : ${docentes}">
+									<td th:text="${docente.idDocente}"></td>
+									<td th:text="${docente.nombre}"></td>
+									<td th:text="${docente.apellido}"></td>
+									<td th:text="${docente.email}"></td>
+									<td th:text="${docente.telefono}"></td>
+									<td><button class="btn btn-warning btn-sm editar"
+											th:data-id="${docente.idDocente}"
+											th:data-nombre="${docente.nombre}"
+											th:data-apellido="${docente.apellido}"
+											th:data-email="${docente.email}"
+											th:data-telefono="${docente.telefono}">✏️ Editar</button>
+
+										<button class="btn btn-danger btn-sm eliminar"
+											th:data-id="${docente.idDocente}">❌ Eliminar</button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- 🔹 Modal para editar docente -->
+					<div class="modal fade" id="modalEditarDocente" tabindex="-1"
+						aria-labelledby="modalEditarDocenteLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalEditarDocenteLabel">Editar
+										Docente</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal"
+										aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<form id="formEditarDocente">
+										<input type="hidden" id="docenteId">
+										<div class="mb-3">
+											<label class="form-label">Nombre</label> <input type="text"
+												class="form-control" id="nombreDocente" required>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Apellido</label> <input type="text"
+												class="form-control" id="apellidoDocente" required>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Email</label> <input type="email"
+												class="form-control" id="emailDocente" required>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Teléfono</label> <input type="text"
+												class="form-control" id="telefonoDocente" required>
+										</div>
+										<button type="submit" class="btn btn-primary w-100">Guardar
+											Cambios</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!--                        -->
+					<!-- Representantes -->
+					<div id="representantes" class="tab-pane fade">
+						<h3>Lista de Representantes</h3>
+						<table id="tablaRepresentantes"
+							class="table table-striped table-bordered text-center align-middle">
+							<thead class="table-dark">
+								<tr>
+									<th style="white-space: nowrap;">ID</th>
+									<th style="white-space: nowrap;">Nombre</th>
+									<th style="white-space: nowrap;">Apellido</th>
+									<th style="white-space: nowrap;">Email</th>
+									<th style="white-space: nowrap;">Teléfono</th>
+									<th style="white-space: nowrap;">Acciones</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="representante : ${representantes}">
+									<td th:text="${representante.idRepresentante}"></td>
+									<td th:text="${representante.nombre}"></td>
+									<td th:text="${representante.apellido}"></td>
+									<td th:text="${representante.email}"></td>
+									<td th:text="${representante.telefono}"></td>
+									<td><button
+											class="btn btn-warning btn-sm editar-representante"
+											th:data-id="${representante.idRepresentante}"
+											th:data-nombre="${representante.nombre}"
+											th:data-apellido="${representante.apellido}"
+											th:data-email="${representante.email}"
+											th:data-telefono="${representante.telefono}">✏️
+											Editar</button>
+										<button class="btn btn-danger btn-sm eliminar-representante"
+											th:data-id="${representante.idRepresentante}">❌
+											Eliminar</button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- 🔹 Modal para editar representante -->
+					<div class="modal fade" id="modalEditarRepresentante" tabindex="-1"
+						aria-labelledby="modalEditarRepresentanteLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalEditarRepresentanteLabel">Editar
+										Representante</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal"
+										aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<form id="formEditarRepresentante">
+										<input type="hidden" id="representanteId">
+										<div class="mb-3">
+											<label class="form-label">Nombre</label> <input type="text"
+												class="form-control" id="nombreRepresentante" required>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Apellido</label> <input type="text"
+												class="form-control" id="apellidoRepresentante" required>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Email</label> <input type="email"
+												class="form-control" id="emailRepresentante" required>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Teléfono</label> <input type="text"
+												class="form-control" id="telefonoRepresentante" required>
+										</div>
+										<button type="submit" class="btn btn-primary w-100">Guardar
+											Cambios</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Estudiantes -->
+					<div id="estudiantes" class="tab-pane fade">
+						<h3>Lista de Estudiantes</h3>
+						<table id="tablaEstudiantes"
+							class="table table-striped table-bordered text-center align-middle">
+							<thead class="table-dark">
+								<tr>
+									<th style="white-space: nowrap;">ID</th>
+									<th style="white-space: nowrap;">Nombre</th>
+									<th style="white-space: nowrap;">Apellido</th>
+									<th style="white-space: nowrap;">Cédula</th>
+									<th style="white-space: nowrap;">Curso</th>
+									<th style="white-space: nowrap;">Acciones</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="estudiante : ${estudiantes}">
+									<td th:text="${estudiante.idEstudiante}"></td>
+									<td th:text="${estudiante.nombre}"></td>
+									<td th:text="${estudiante.apellido}"></td>
+									<td th:text="${estudiante.cedula}"></td>
+									<td th:text="${estudiante.curso}"></td>
+									<td><button
+											class="btn btn-warning btn-sm editar-estudiante"
+											th:data-id="${estudiante.idEstudiante}"
+											th:data-nombre="${estudiante.nombre}"
+											th:data-apellido="${estudiante.apellido}"
+											th:data-cedula="${estudiante.cedula}"
+											th:data-curso="${estudiante.curso}">✏️ Editar</button>
+										<button class="btn btn-danger btn-sm eliminar-estudiante"
+											th:data-id="${estudiante.idEstudiante}">❌ Eliminar</button></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<!-- Modal para editar estudiante -->
+					<div class="modal fade" id="modalEditarEstudiante" tabindex="-1"
+						aria-labelledby="modalEditarEstudianteLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title" id="modalEditarEstudianteLabel">Editar
+										Estudiante</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal"
+										aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<form id="formEditarEstudiante">
+										<input type="hidden" id="estudianteId">
+										<div class="mb-3">
+											<label class="form-label">Nombre</label> <input type="text"
+												class="form-control" id="nombreEstudiante" required>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Apellido</label> <input type="text"
+												class="form-control" id="apellidoEstudiante" required>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Cédula</label> <input type="text"
+												class="form-control" id="cedulaEstudiante" required>
+										</div>
+										<div class="mb-3">
+											<label class="form-label">Curso</label> <input type="text"
+												class="form-control" id="cursoEstudiante" required>
+										</div>
+										<button type="submit" class="btn btn-primary w-100">Guardar
+											Cambios</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+
+
+					<!-- Footer Dinámico -->
+					<footer class="footer text-center">
+						<p>
+							All Rights Reserved by TurnoSmart. Designed and Developed by <a
+								href="https://www.wrappixel.com">RodneyEscobar</a>.
+						</p>
+					</footer>
+				</div>
+
+				<!-- JavaScript Files -->
+				<script th:src="@{/assets/libs/jquery/dist/jquery.min.js}"></script>
+				<script
+					th:src="@{/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
+				<script
+					th:src="@{/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
+				<script th:src="@{/dist/js/waves.js}"></script>
+				<script th:src="@{/dist/js/sidebarmenu.js}"></script>
+				<script th:src="@{/dist/js/custom.min.js}"></script>
+				<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+				<script
+					src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+				<!-- SweetAlert2 -->
+				<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+				<script>
+			$(document).ready(function() {
+				$('table').DataTable();
+			});
+		</script>
+
+				<!-- FUNCIONES PARA ELIMINAR Y GUARDAR DOCENTES -->
+				<script>
+    document.addEventListener("DOMContentLoaded", function() {
+
+        // Abrir el modal de edición con los datos del docente
+        document.querySelectorAll(".editar").forEach(button => {
+            button.addEventListener("click", function() {
+                let id = this.getAttribute("data-id");
+                let nombre = this.getAttribute("data-nombre");
+                let apellido = this.getAttribute("data-apellido");
+                let email = this.getAttribute("data-email");
+                let telefono = this.getAttribute("data-telefono");
+
+                document.getElementById("docenteId").value = id;
+                document.getElementById("nombreDocente").value = nombre;
+                document.getElementById("apellidoDocente").value = apellido;
+                document.getElementById("emailDocente").value = email;
+                document.getElementById("telefonoDocente").value = telefono;
+
+                var modal = new bootstrap.Modal(document.getElementById("modalEditarDocente"));
+                modal.show();
+            });
+        });
+
+        // Guardar cambios en el docente
+        document.getElementById("formEditarDocente").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let id = document.getElementById("docenteId").value;
+            let data = {
+                nombre: document.getElementById("nombreDocente").value,
+                apellido: document.getElementById("apellidoDocente").value,
+                email: document.getElementById("emailDocente").value,
+                telefono: document.getElementById("telefonoDocente").value
+            };
+
+            fetch(`/admin/editar-docente/${id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        title: "¡Guardado!",
+                        text: "Los cambios han sido guardados correctamente.",
+                        icon: "success",
+                        confirmButtonColor: "#3085d6"
+                    }).then(() => {
+                        location.reload(); // Recargar la página después de guardar
+                    });
+                } else {
+                    Swal.fire("Error", "Hubo un problema al guardar.", "error");
+                }
+            });
+        });
+
+        /// ✅ Eliminar docente con SweetAlert2 (CORREGIDO)
+        document.addEventListener("click", function(event) {
+            if (event.target.classList.contains("eliminar")) {
+                let id = event.target.getAttribute("data-id");
+
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "No podrás revertir esta acción",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/admin/eliminar-docente/${id}`, { method: "POST" })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        title: "¡Eliminado!",
+                                        text: "El docente ha sido eliminado correctamente.",
+                                        icon: "success",
+                                        confirmButtonColor: "#3085d6"
+                                    }).then(() => {
+                                        location.reload(); // Recargar la página después de la eliminación
+                                    });
+                                } else {
+                                    Swal.fire("Error", "Hubo un problema al eliminar.", "error");
+                                }
+                            });
+                    }
+                });
+            }
+        });
+
+    });
+</script>
+
+				<!-- FUNCIONES PARA ELIMINAR Y GUARDAR REPRESENTANTES -->
+				<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    // Abrir el modal de edición con los datos del representante
+    document.querySelectorAll(".editar-representante").forEach(button => {
+        button.addEventListener("click", function() {
+            let id = this.getAttribute("data-id");
+            let nombre = this.getAttribute("data-nombre");
+            let apellido = this.getAttribute("data-apellido");
+            let email = this.getAttribute("data-email");
+            let telefono = this.getAttribute("data-telefono");
+
+            document.getElementById("representanteId").value = id;
+            document.getElementById("nombreRepresentante").value = nombre;
+            document.getElementById("apellidoRepresentante").value = apellido;
+            document.getElementById("emailRepresentante").value = email;
+            document.getElementById("telefonoRepresentante").value = telefono;
+
+            var modal = new bootstrap.Modal(document.getElementById("modalEditarRepresentante"));
+            modal.show();
+        });
+    });
+
+    // Guardar cambios en el representante
+    document.getElementById("formEditarRepresentante").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        let id = document.getElementById("representanteId").value;
+        let data = {
+            nombre: document.getElementById("nombreRepresentante").value,
+            apellido: document.getElementById("apellidoRepresentante").value,
+            email: document.getElementById("emailRepresentante").value,
+            telefono: document.getElementById("telefonoRepresentante").value
+        };
+
+        fetch(`/admin/editar-representante/${id}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    title: "¡Guardado!",
+                    text: "Los cambios han sido guardados correctamente.",
+                    icon: "success",
+                    confirmButtonColor: "#3085d6"
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire("Error", "Hubo un problema al guardar.", "error");
+            }
+        });
+    });
+
+    // Eliminar representante (lógicamente)
+    document.querySelectorAll(".eliminar-representante").forEach(button => {
+        button.addEventListener("click", function() {
+            let id = this.getAttribute("data-id");
+
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "No podrás revertir esta acción",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/admin/eliminar-representante/${id}`, { method: "POST" })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    title: "¡Eliminado!",
+                                    text: "El representante ha sido eliminado correctamente.",
+                                    icon: "success",
+                                    confirmButtonColor: "#3085d6"
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire("Error", "Hubo un problema al eliminar.", "error");
+                            }
+                        });
+                }
+            });
+        });
+    });
+
+});
+</script>
+				<!-- ****************************************************-->
+				<!-- FUNCIONES PARA ELIMINAR Y GUARDAR ESTUDIANTES -->
+				<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    // Abrir el modal de edición con los datos del estudiante
+    document.querySelectorAll(".editar-estudiante").forEach(button => {
+        button.addEventListener("click", function() {
+            let id = this.getAttribute("data-id");
+            let nombre = this.getAttribute("data-nombre");
+            let apellido = this.getAttribute("data-apellido");
+            let cedula = this.getAttribute("data-cedula");
+            let curso = this.getAttribute("data-curso");
+
+            document.getElementById("estudianteId").value = id;
+            document.getElementById("nombreEstudiante").value = nombre;
+            document.getElementById("apellidoEstudiante").value = apellido;
+            document.getElementById("cedulaEstudiante").value = cedula;
+            document.getElementById("cursoEstudiante").value = curso;
+
+            var modal = new bootstrap.Modal(document.getElementById("modalEditarEstudiante"));
+            modal.show();
+        });
+    });
+
+    // Guardar cambios en el estudiante
+    document.getElementById("formEditarEstudiante").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        let id = document.getElementById("estudianteId").value;
+        let data = {
+            nombre: document.getElementById("nombreEstudiante").value,
+            apellido: document.getElementById("apellidoEstudiante").value,
+            cedula: document.getElementById("cedulaEstudiante").value,
+            curso: document.getElementById("cursoEstudiante").value
+        };
+
+        fetch(`/admin/editar-estudiante/${id}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire("Guardado", "El estudiante ha sido actualizado correctamente.", "success")
+                .then(() => location.reload());
+            } else {
+                Swal.fire("Error", "Hubo un problema al guardar.", "error");
+            }
+        });
+    });
+
+    // Eliminar estudiante (lógicamente)
+    document.querySelectorAll(".eliminar-estudiante").forEach(button => {
+        button.addEventListener("click", function() {
+            let id = this.getAttribute("data-id");
+
+            Swal.fire({
+                title: "¿Estás seguro?",
+                text: "No podrás revertir esta acción",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Sí, eliminar",
+                cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/admin/eliminar-estudiante/${id}`, { method: "POST" })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire("¡Eliminado!", "El estudiante ha sido eliminado correctamente.", "success")
+                                .then(() => location.reload());
+                            } else {
+                                Swal.fire("Error", "Hubo un problema al eliminar.", "error");
+                            }
+                        });
+                }
+            });
+        });
+    });
+
+});
+</script>
+</body>
+</html>

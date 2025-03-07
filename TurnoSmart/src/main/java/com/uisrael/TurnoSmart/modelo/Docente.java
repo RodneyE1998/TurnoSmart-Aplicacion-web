@@ -6,6 +6,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -33,6 +34,9 @@ public class Docente implements Serializable {
 	private String email;
 	private String telefono;
 	private String numeroIdentificacion;
+	
+	@Column(nullable = false)
+	private Boolean activo = true;
 
 	 @OneToMany(mappedBy = "docente", fetch = FetchType.LAZY)
 	    @JsonIgnore
@@ -49,5 +53,14 @@ public class Docente implements Serializable {
 	@JsonBackReference
     @ToString.Exclude
 	private List<Estudiante> estudiantes;
+	
+	// Getters y Setters
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,6 +31,9 @@ public class Estudiante implements Serializable {
 	private String apellido;
 	private String curso;
 	private String cedula;
+	
+	@Column(nullable = false)
+	private Boolean activo = true;
 
 	@ManyToOne
 	@JoinColumn(name = "id_representante")
@@ -42,5 +46,14 @@ public class Estudiante implements Serializable {
 	inverseJoinColumns = @JoinColumn(name = "id_docente"))
 	@ToString.Exclude
 	private List<Docente> docentes;
+	
+	// Getters y Setters
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
 
 }

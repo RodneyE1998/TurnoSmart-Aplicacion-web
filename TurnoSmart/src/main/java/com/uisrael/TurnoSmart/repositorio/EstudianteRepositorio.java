@@ -16,5 +16,7 @@ public interface EstudianteRepositorio extends JpaRepository<Estudiante, Integer
 	
 	@Query("SELECT e FROM Estudiante e JOIN e.docentes d WHERE d.idDocente = :idDocente")
     List<Estudiante> findByDocenteId(@Param("idDocente") Integer idDocente);
+	
+	 List<Estudiante> findByActivoTrue();
 
 }

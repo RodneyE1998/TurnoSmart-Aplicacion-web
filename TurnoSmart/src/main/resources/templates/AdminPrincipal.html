@@ -137,28 +137,10 @@
 										class="hide-menu"> CREAR USUARIOS </span></a></li>
 							</ul></li>
 						<li class="sidebar-item"><a
-							class="sidebar-link has-arrow waves-effect waves-dark"
-							href="javascript:void(0)" aria-expanded="false"><i
-								class="mdi mdi-receipt"></i><span class="hide-menu">CITAS
-							</span></a>
-							<ul aria-expanded="false" class="collapse first-level">
-								<li class="sidebar-item"><a href="/docente/citas"
-									class="sidebar-link"><i class="mdi mdi-note-outline"></i><span
-										class="hide-menu"> AGENDAR CITAS </span></a></li>
-								<li class="sidebar-item"><a href="/docente/citas/agendadas"
-									class="sidebar-link"><i class="mdi mdi-note-plus"></i><span
-										class="hide-menu"> CITAS AGENDADAS </span></a></li>
-							</ul></li>
-						<li class="sidebar-item"><a
 							class="sidebar-link waves-effect waves-dark sidebar-link"
-							href="/docente/horarios" aria-expanded="false"> <i
-								class="mdi mdi-view-dashboard"></i><span class="hide-menu">Horarios</span>
+							href="/admin/gestionar-datos" aria-expanded="false"> <i
+								class="mdi mdi-view-dashboard"></i><span class="hide-menu">Lista de Usuarios</span>
 						</a></li>
-						<li class="sidebar-item"><a
-							class="sidebar-link waves-effect waves-dark sidebar-link"
-							href="/docente/reportes" aria-expanded="false"><i
-								class="mdi mdi-chart-bubble"></i><span class="hide-menu">Reportes y Estadísticas</span></a>
-						</li>
 
 						<!-- Agregar elementos <li> vacíos para espacio adicional -->
 						<li class="sidebar-item" style="height: 250px;"></li>
@@ -194,26 +176,7 @@
 			<div class="page-content">
 				<h1
 					th:text="'Bienvenido(a) al Perfil Administrador'"></h1>
-				
 			</div>
-
-
-
-			<!--/* 
-			<!-- Imágenes de los Horarios -->
-			<div style="text-align: center; margin-top: 30px;">
-				<!-- Imagen del Horario Básica -->
-				<img th:src="@{/assets/images/HorarioBasica.png}"
-					alt="Horario Básica"
-					style="max-width: 800px; margin-bottom: 20px; border: 1px solid #ccc; border-radius: 10px;">
-
-				<!-- Imagen del Horario Bachillerato -->
-				<img th:src="@{/assets/images/HorarioBachillerato.png}"
-					alt="Horario Bachillerato"
-					style="max-width: 800px; border: 1px solid #ccc; border-radius: 10px;">
-			</div>
-			*/-->
-
 
 			<!-- ============================================================== -->
 			<!-- Container fluid  -->
@@ -269,13 +232,13 @@
 					</div>
 					<!-- Column -->
 					<div class="col-md-6 col-lg-2 col-xlg-3">
-						<a href="/docente/citas" class="card-link">
+						<a href="/admin/gestionar-datos" class="card-link">
 							<div class="card card-hover">
 								<div class="box bg-warning text-center">
 									<h1 class="font-light text-white">
 										<i class="mdi mdi-calendar-check"></i>
 									</h1>
-									<h6 class="text-white">CITAS</h6>
+									<h6 class="text-white">Lista de Usuarios</h6>
 								</div>
 							</div>
 						</a>
@@ -283,14 +246,14 @@
 
 					<!-- Columna Perfil -->
 					<div class="col-md-6 col-lg-2 col-xlg-3">
-						<a href="/docente/Perfil" class="card-link">
+						<a href="/admin/gestionar-usuarios" class="card-link">
 							<div class="card card-hover">
 								<div class="box bg-info text-center">
 									<h1 class="font-light text-white">
 										<!-- Ícono de perfil -->
 										<i class="mdi mdi-account-circle"></i>
 									</h1>
-									<h6 class="text-white">Perfil</h6>
+									<h6 class="text-white">Crear Usuarios</h6>
 									<!-- Texto debajo del ícono -->
 								</div>
 							</div>
