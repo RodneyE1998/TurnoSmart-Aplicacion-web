@@ -16,6 +16,8 @@ import org.springframework.security.web.firewall.StrictHttpFirewall;
 import com.uisrael.TurnoSmart.servicio.impl.UserDetailsServicioImpl;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+
 
 @Configuration
 @EnableWebSecurity
@@ -75,6 +77,13 @@ public class SecurityConfig {
                         response.sendRedirect("/admin/principal");
                         return;
                     }
+                    
+                    // 🔹 Crear y añadir cookie explícitamente
+                    Cookie cookieRepresentante = new Cookie("idRepresentante", String.valueOf(idRepresentante));
+                    cookieRepresentante.setPath("/");
+                    cookieRepresentante.setHttpOnly(false); // Debe ser false para ser accesible en tu móvil
+                    cookieRepresentante.setMaxAge(3600);
+                    response.addCookie(cookieRepresentante);
 
 	                // Devuelve JSON si la solicitud viene desde Postman o la app móvil
 	                String requestedWith = request.getHeader("X-Requested-With");
